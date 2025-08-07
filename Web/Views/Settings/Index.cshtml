@@ -1,0 +1,280 @@
+﻿@{
+    ViewBag.Title = "Settings";
+
+}
+
+<link rel="stylesheet" href="~/css/tabs.css" asp-append-version="true" />
+<h3 class="default-heading">
+    Settings
+</h3>
+<section class="tabs-section">
+    <div class="container-fluid" style=" min-height: calc(100vh - 240px);">
+        @*       <div class="tabs-menu">
+        <ul class="nav nav-tabs" id="settingsTab" role="tablist">
+        <li class="nav-item" role="presentation">
+        <button class="nav-link" id="accounts-tab" data-bs-target="Accounts">Accounts</button>
+        </li>
+        <li class="nav-item" role="presentation">
+        <button class="nav-link" id="general-tab" data-bs-target="General">General</button>
+        </li>
+        <li class="nav-item" role="presentation">
+        <button class="nav-link" id="assets-tab" data-bs-target="Assets">Assets</button>
+        </li>
+        <li class="nav-item" role="presentation">
+        <button class="nav-link" id="work-orders-tab" data-bs-target="Work Orders">Work Orders</button>
+        </li>
+        <li class="nav-item" role="presentation">
+        <button class="nav-link" id="inventory-tab" data-bs-target="Inventory">Inventory</button>
+        </li>
+        </ul>
+        </div> *@
+        <div class="mt-4">
+            <div id="menu-items-container" class="menu-items-container d-flex flex-wrap gap-2 mt-3">
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // const menuData = [
+    //     {
+    //         "section": "Accounts",
+    //         "items": [
+    //             {
+    //                 "name": "User Accounts",
+    //                 "link": "/User",
+    //                 "icon": "bi bi-person-circle",
+    //                 "description": "Manage and configure user accounts and permissions."
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "section": "General",
+    //         "items": [
+    //             {
+    //                 "name": "MUTCDs",
+    //                 "link": "/MUTCD/Index",
+    //                 "icon": "bi bi-signpost-2",
+    //                 "description": "Configure Manual on Uniform Traffic Control Devices settings."
+    //             },
+    //             {
+    //                 "name": "Geo-Json",
+    //                 "link": "#",
+    //                 "icon": "bi bi-geo-alt",
+    //                 "description": "Manage geographical data and mapping configurations."
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "section": "Assets",
+    //         "items": [
+    //             {
+    //                 "name": "Custom Fields",
+    //                 "link": "/AssetCustomFields/Index",
+    //                 "icon": "bi bi-input-cursor-text",
+    //                 "description": "Define and manage custom fields for assets."
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "section": "Work Orders",
+    //         "items": [
+    //             {
+    //                 "name": "Craft",
+    //                 "link": "/CraftSkill/Index",
+    //                 "icon": "bi bi-tools",
+    //                 "description": "Configure craft skills and qualifications."
+    //             },
+    //             {
+    //                 "name": "Custom Fields",
+    //                 "link": "/WorkOrderCustomFields/Index",
+    //                 "icon": "bi bi-input-cursor",
+    //                 "description": "Set up custom fields for work orders."
+    //             },
+    //             {
+    //                 "name": "Work Steps",
+    //                 "link": "/TaskType/Index",
+    //                 "icon": "bi bi-list-check",
+    //                 "description": "Define and organize work order task types and steps."
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "section": "Inventory",
+    //         "items": [
+    //             {
+    //                 "name": "Category",
+    //                 "link": "/Category/Index",
+    //                 "icon": "bi bi-folder",
+    //                 "description": "Organize and manage inventory categories."
+    //             },
+    //             {
+    //                 "name": "Location",
+    //                 "link": "/Location/Index",
+    //                 "icon": "bi bi-geo",
+    //                 "description": "Manage inventory storage locations."
+    //             },
+    //             {
+    //                 "name": "Manufacturers",
+    //                 "link": "/Manufacturer/Index",
+    //                 "icon": "bi bi-factory",
+    //                 "description": "Track and manage product manufacturers."
+    //             },
+    //             {
+    //                 "name": "Source",
+    //                 "link": "/Source/Index",
+    //                 "icon": "bi bi-box-seam",
+    //                 "description": "Configure inventory source locations."
+    //             },
+    //             {
+    //                 "name": "Supplier",
+    //                 "link": "/Supplier/Index",
+    //                 "icon": "bi bi-truck",
+    //                 "description": "Manage inventory suppliers and vendors."
+    //             },
+    //             {
+    //                 "name": "UOM",
+    //                 "link": "/UOM/Index",
+    //                 "icon": "bi bi-rulers",
+    //                 "description": "Configure units of measurement for inventory items."
+    //             }
+    //         ]
+    //     }
+    // ];
+
+    const menuData = [
+        {
+            "section": "Accounts",
+            "items": [
+                {
+                    "name": "User Accounts",
+                    "link": "/User",
+                    "icon": "fa-solid fa-user",
+                    "description": "Manage and configure user accounts and permissions."
+                },
+                {
+                    "name": "MUTCDs",
+                    "link": "/MUTCD/Index",
+                    "icon": "fa-solid fa-road",
+                    "description": "Configure Manual on Uniform Traffic Control Devices settings."
+                },
+                {
+                    "name": "Geo-Json",
+                    "link": "#",
+                    "icon": "fa-solid fa-map-location-dot",
+                    "description": "Manage geographical data and mapping configurations."
+                },
+                {
+                    "name": "Custom Fields",
+                    "link": "/AssetCustomFields/Index",
+                    "icon": "fa-solid fa-list",
+                    "description": "Define and manage custom fields for assets."
+                },
+                {
+                    "name": "Craft",
+                    "link": "/CraftSkill/Index",
+                    "icon": "fa-solid fa-hammer",
+                    "description": "Configure craft skills and qualifications."
+                },
+                {
+                    "name": "Custom Fields",
+                    "link": "/WorkOrderCustomFields/Index",
+                    "icon": "fa-solid fa-clipboard-list",
+                    "description": "Set up custom fields for work orders."
+                },
+                {
+                    "name": "Work Steps",
+                    "link": "/TaskType/Index",
+                    "icon": "fa-solid fa-list-check",
+                    "description": "Define and organize work order task types and steps."
+                },
+                {
+                    "name": "Category",
+                    "link": "/Category/Index",
+                    "icon": "fa-solid fa-folder",
+                    "description": "Organize and manage inventory categories."
+                },
+                {
+                    "name": "Location",
+                    "link": "/Location/Index",
+                    "icon": "fa-solid fa-location-dot",
+                    "description": "Manage inventory storage locations."
+                },
+                {
+                    "name": "Manufacturers",
+                    "link": "/Manufacturer/Index",
+                    "icon": "fa-solid fa-industry",
+                    "description": "Track and manage product manufacturers."
+                },
+                {
+                    "name": "Source",
+                    "link": "/Source/Index",
+                    "icon": "fa-solid fa-box",
+                    "description": "Configure inventory source locations."
+                },
+                {
+                    "name": "Supplier",
+                    "link": "/Supplier/Index",
+                    "icon": "fa-solid fa-truck",
+                    "description": "Manage inventory suppliers and vendors."
+                },
+                {
+                    "name": "UOM",
+                    "link": "/UOM/Index",
+                    "icon": "fa-solid fa-ruler",
+                    "description": "Configure units of measurement for inventory items."
+                },
+                {
+                    "name": "Asset Type",
+                    "link": "/AssetType/Index",
+                    "icon": "fa-solid fa-tape",
+                    "description": "Organize and manage asset types for assets."
+                }
+            ]
+        }
+    ];
+
+
+    function renderMenuItems(sectionName) {
+        const section = menuData.find(s => s.section === sectionName);
+
+        const $container = $('#menu-items-container');
+
+
+        $container.empty();
+
+        if (section) {
+            $.each(section.items, function (index, item) {
+                let cardLink = `<a href="${item.link}" class="card-link" style="text-decoration: none;"`;
+
+                // Check if target exists, and if it does, add it to the link
+                if (item.target) {
+                    cardLink += ` target="${item.target}"`;
+                }
+
+                cardLink += `>
+                                                                            <div class="custom-card">
+                                                                                <div class="d-flex align-items-start">
+                                                                                    <i class="${item.icon}"></i>
+                                                                                    <div>
+                                                                                        <h6 class="card-title">${item.name}</h6>
+                                                                                        <p class="card-text">${item.description}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </a>`;
+
+                $container.append(cardLink);
+            });
+        }
+    }
+
+    $('.nav-link').on('click', function () {
+        $('.nav-link').removeClass('active');
+        $(this).addClass('active');
+
+        const sectionName = $(this).data('bs-target');
+        renderMenuItems(sectionName);
+    });
+
+    renderMenuItems('Accounts');</script>

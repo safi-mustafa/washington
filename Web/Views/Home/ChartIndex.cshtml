@@ -1,0 +1,117 @@
+﻿@using ViewModels.Dashboard
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Administrator Dashboard";
+}
+
+<style>
+    .chart-container {
+        background-color: transparent;
+        @* border: 1px solid #666666 !important; *@
+    }
+
+    .chart-container .card-footer {
+        background-color: #CACACA;
+        color: #666666;
+    }
+
+    .card-header {
+        background: none;
+        font-weight: 600;
+    }
+
+    .dashboard-header {
+        padding: 15px 0px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .dashboard-title {
+        font-weight: 700;
+        font-size: 36px;
+        margin: 0;
+    }
+
+    .header-actions .btn {
+        padding: 16px 18px;
+        display: flex;
+        border-radius: 12px;
+    }
+
+    .search-container i,
+    .header-actions i {
+        font-size: 20px;
+    }
+</style>
+<script src="~/js/views/dashboard/dashboard-card.js"></script>
+<script src="~/js/views/dashboard/dashboard-table.js"></script>
+@await Html.PartialAsync("~/Views/Shared/Charts/_Css.cshtml")
+@await Html.PartialAsync("~/Views/Shared/Charts/_Scripts.cshtml")
+<div class="container-fluid">
+
+    <div class="dashboard-header">
+        <div class="container-fluid p-0">
+            <div class="row align-items-center">
+                <div class="col-md-4 pl-0">
+                    <h2 class="dashboard-title">Dashboard</h2>
+                </div>
+                <div class="col-md-8 text-end">
+                    <div class="d-flex justify-content-end align-items-center header-actions">
+                        <div class="search-container me-3">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="text" class="form-control search-input" placeholder="Search">
+                        </div>
+                        <button class="btn btn-light bg-white me-3">
+                            <i class="fa-solid fa-sliders"></i>
+                        </button>
+                        <button class="btn btn-light bg-white">
+                            <i class="fa-solid fa-bell"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row total_counting">
+        <div class="col item">
+            @await Html.PartialAsync("~/Views/Dashboard/Common/Card/_Index.cshtml", Model.GetAverageLaborCost)
+        </div>
+        <div class="col item">
+            @await Html.PartialAsync("~/Views/Dashboard/Common/Card/_Index.cshtml", Model.GetAverageMaterialCost)
+        </div>
+        <div class="col item">
+            @await Html.PartialAsync("~/Views/Dashboard/Common/Card/_Index.cshtml", Model.GetAverageEquipmentCost)
+        </div>
+        <div class="col item">
+            @await Html.PartialAsync("~/Views/Dashboard/Common/Card/_Index.cshtml", Model.AverageCompletionTime)
+        </div>
+    </div>
+
+    <div class="row col-md-12">
+        <div class="col-md-4 mb-3">
+            @await Html.PartialAsync("~/Views/Shared/Charts/Index.cshtml", Model.WorkOrder)
+        </div>
+        <div class="col-md-4 mb-3">
+            @await Html.PartialAsync("~/Views/Shared/Charts/Index.cshtml", Model.WorkOrderByAssetType)
+        </div>
+        <div class="col-md-4 mb-3 pe-0">
+            @await Html.PartialAsync("~/Views/Shared/Charts/Index.cshtml", Model.WorkOrderByRepairType)
+        </div>
+        <div class="col-md-4 mb-3">
+            @await Html.PartialAsync("~/Views/Shared/Charts/Index.cshtml", Model.WorkOrderByTechnician)
+        </div>
+        <div class="col-md-4 mb-3">
+            @await Html.PartialAsync("~/Views/Shared/Charts/Index.cshtml", Model.AssetByCondition)
+        </div>
+        <div class="col-md-4 mb-3 pe-0">
+            @await Html.PartialAsync("~/Views/Shared/Charts/Index.cshtml", Model.AssetMaintenanceDue)
+        </div>
+        <div class="col-md-4 mb-3">
+            @await Html.PartialAsync("~/Views/Shared/Charts/Index.cshtml", Model.AssetReplacementDue)
+        </div>
+        <div class="col-md-4 mb-3">
+            @await Html.PartialAsync("~/Views/Shared/Charts/Index.cshtml", Model.GetCostAccuracy)
+        </div>
+    </div>
+</div>
