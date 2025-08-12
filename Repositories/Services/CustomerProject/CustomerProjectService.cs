@@ -28,6 +28,7 @@ using Repositories.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -64,16 +65,26 @@ namespace Repositories.Services.CustomerProject
             _fileHelper = fileHelper;
         }
 
-        //public async override Task<IRepositoryResponse> Create(CreateViewModel model)
-        //{
-        //    var viewModel = model as CustomerProjectModifyViewModel;
-        //    var totalEquipmentCount = await _db.Equipments.IgnoreQueryFilters().CountAsync();
-        //    viewModel.SystemGeneratedId = "EQP-" + (totalEquipmentCount + 1).ToString("D4");
-        //    return await base.Create(model);
+        public override async Task<Expression<Func<Models.CustomerProject, bool>>> SetQueryFilter(IBaseSearchModel filters)
+        {
+            var searchFilters = filters as CustomerProjectSearchViewModel;
 
-
-        //}
-
+            return x =>
+                        (
+                            (
+                                string.IsNullOrEmpty(searchFilters.Search.value)
+                                ||
+                                x.JobCode.ToLower().Contains(searchFilters.Search.value.ToLower())
+                                ||
+                                x.JobName.ToLower().Contains(searchFilters.Search.value.ToLower())
+                            )
+                        )
+                        &&
+                        (searchFilters.Customer.Id == null || x.CustomerId == searchFilters.Customer.Id)
+                        &&
+                        (searchFilters.ProjectManager.Id == null || x.ProjectManagerId == searchFilters.ProjectManager.Id)
+                        ;
+        }
         public async override Task<IRepositoryResponse> Create(CreateViewModel model)
         {
 
@@ -104,9 +115,10 @@ namespace Repositories.Services.CustomerProject
         {
             try
             {
+                var filters = await SetQueryFilter(search);
 
                 var assetsQueryable =
-                            from project in _db.CustomerProjects
+                            from project in _db.CustomerProjects.Where(filters)
                             join companyInfo in _db.CompanyInformations
                                 on (long?)project.CustomerId equals (long?)companyInfo.Id into companyGroup
                             from company in companyGroup.DefaultIfEmpty()
@@ -191,14 +203,14 @@ namespace Repositories.Services.CustomerProject
                                     .Where(x => x.Id == id)
                                     .FirstOrDefaultAsync();
 
-                var dbModelCI = await _db.CompanyInformations
-                                    .Where(x => x.Id == dbModel.CustomerId)
-                                    .FirstOrDefaultAsync();
+                //var dbModelCI = await _db.CompanyInformations
+                //                    .Where(x => x.Id == dbModel.CustomerId)
+                //                    .FirstOrDefaultAsync();
 
 
-                var dbModelCG = await _db.CompanyContacts
-                                    .Where(x => x.Id == dbModel.ProjectManagerId)
-                                    .FirstOrDefaultAsync();
+                //var dbModelCG = await _db.CompanyContacts
+                //                    .Where(x => x.Id == dbModel.ProjectManagerId)
+                //                    .FirstOrDefaultAsync();
 
                 if (dbModel != null)
                 {

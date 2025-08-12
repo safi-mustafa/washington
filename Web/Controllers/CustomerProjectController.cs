@@ -116,5 +116,15 @@ namespace Web.Controllers
             var invalidFieldErrors = ModelState.Where(x => x.Value.Errors.Any()).ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray());
             return Json(new { status = false, fieldErrors = invalidFieldErrors });
         }
+
+        protected override async Task<JsonResult> ProcessSearchResult(CustomerProjectSearchViewModel searchModel, PaginatedResultModel<CustomerProjectDetailViewModel> model)
+        {
+            //var totalInventoryPrice = await _service.GetTotalInventoryPrice(searchModel);
+            var result = ConvertToDataTableModel(model, searchModel);
+            //result.AdditionalData.Add("TotalPrice", totalInventoryPrice.ToString("C"));
+            SetDatatableActions(result);
+            var jsonResult = Json(result);
+            return jsonResult;
+        }
     }
 }

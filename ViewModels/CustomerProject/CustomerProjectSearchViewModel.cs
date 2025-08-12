@@ -14,5 +14,8 @@ namespace ViewModels.CustomerProject
         public UserSearchSettingBriefViewModel UserSearchSetting { get; set; } = new();
         public SearchFilterTypeCatalog? Type { get; set; }
         public string SearchView { get; set; }
+
+        public CustomerProjectBriefViewModel Customer { get; set; } = new();
+        public ProjectManagerBriefViewModel ProjectManager { get; set; } = new();
     }
 }
