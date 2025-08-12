@@ -1,0 +1,281 @@
+@model ViewModels.CRUD.TabViewModel
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">@Model.Title</h2>
+            <div class="text-muted fs-5">Manage your company profiles and related information</div>
+        </div>
+        <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#addCompanyProfileModal">
+            <i class="fa fa-plus me-2"></i> Add New Company Profile
+        </button>
+    </div>
+    <div class="row g-4">
+        @foreach (var company in Model.CompanyProfiles ?? Enumerable.Empty<ViewModels.CRUD.CompanyProfileViewModel>())
+        {
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="fw-bold">@company.Name</h4>
+                        <div class="mb-2 text-secondary">@company.Industry</div>
+                        <div class="mb-2">
+                            <i class="fa fa-location-dot me-1"></i> @company.Location
+                        </div>
+                        <div class="mb-2">
+                            <i class="fa fa-phone me-1"></i> @company.Phone
+                        </div>
+                        <div class="mb-2">
+                            <i class="fa fa-globe me-1"></i> <a href="@company.Website" target="_blank">Website</a>
+                        </div>
+                        <div class="row text-center my-3">
+                            <div class="col">
+                                <div class="fw-bold fs-4">@company.ContactsCount</div>
+                                <div class="text-muted">Contacts</div>
+                            </div>
+                            <div class="col">
+                                <div class="fw-bold fs-4">@company.JobSitesCount</div>
+                                <div class="text-muted">Job Sites</div>
+                            </div>
+                            <div class="col">
+                                <div class="fw-bold fs-4">@company.ProjectsCount</div>
+                                <div class="text-muted">Projects</div>
+                            </div>
+                        </div>
+                        <div class="text-muted small mb-2">
+                            Created: @company.CreatedDate.ToShortDateString() <br />
+                            Updated: @company.UpdatedDate.ToShortDateString()
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="@company.ViewUrl" class="btn btn-primary flex-fill"><i class="fa fa-eye me-1"></i> View</a>
+                            <a href="@company.EditUrl" class="btn btn-light flex-fill"><i class="fa fa-pen me-1"></i> Edit</a>
+                            <a href="@company.DeleteUrl" class="btn btn-link text-danger flex-fill"><i class="fa fa-trash"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal for Add New Company Profile -->
+<div class="modal fade" id="addCompanyProfileModal" tabindex="-1" aria-labelledby="addCompanyProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCompanyProfileModalLabel">Add New Company Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="companyProfileForm">
+                    <ul class="nav nav-tabs mb-3" id="companyProfileTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="company-info-tab" data-bs-toggle="tab" data-bs-target="#company-info" type="button" role="tab" aria-controls="company-info" aria-selected="true">Company Information</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="company-contacts-tab" data-bs-toggle="tab" data-bs-target="#company-contacts" type="button" role="tab" aria-controls="company-contacts" aria-selected="false">Company Contacts</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="job-sites-tab" data-bs-toggle="tab" data-bs-target="#job-sites" type="button" role="tab" aria-controls="job-sites" aria-selected="false">Job Sites</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="companyProfileTabContent">
+                        <div class="tab-pane fade show active" id="company-info" role="tabpanel" aria-labelledby="company-info-tab">
+                            <h6 class="fw-bold">Company Information</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Company Name</label>
+                                <input type="text" class="form-control" id="companyName" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Industry</label>
+                                <select class="form-select" id="industry">
+                                    <option>Oil & Gas</option>
+                                    <option>Construction</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <fieldset class="mb-3">
+                                <legend class="fs-6">Address</legend>
+                                <div class="row g-2">
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label">Street</label>
+                                        <input type="text" class="form-control" id="street" />
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label">City</label>
+                                        <input type="text" class="form-control" id="city" />
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label">State</label>
+                                        <input type="text" class="form-control" id="state" />
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label">Zip Code</label>
+                                        <input type="text" class="form-control" id="zipCode" />
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <div class="mb-3">
+                                <label class="form-label">Telephone</label>
+                                <input type="tel" class="form-control" id="telephone" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Web Address</label>
+                                <input type="url" class="form-control" id="webAddress" />
+                            </div>
+                            <div class="d-flex justify-content-end gap-2 mt-3">
+                                <button type="button" class="btn btn-primary" id="nextToContacts">Next</button>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="company-contacts" role="tabpanel" aria-labelledby="company-contacts-tab">
+                            <h6 class="fw-bold">Company Contacts</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Contact Person Name</label>
+                                <input type="text" class="form-control" id="contactPersonName" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Role</label>
+                                <select class="form-select" id="contactRole">
+                                    <option>Project Manager</option>
+                                    <option>Admin</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="contactPhone" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="contactEmail" />
+                            </div>
+                            <div class="d-flex justify-content-between gap-2 mt-3">
+                                <button type="button" class="btn btn-secondary" id="prevToInfo">Previous</button>
+                                <button type="button" class="btn btn-success" id="saveContact">Save</button>
+                                <button type="button" class="btn btn-primary" id="nextToJobSites">Next</button>
+                            </div>
+                            <div class="mt-4">
+                                <h6>Saved Contacts</h6>
+                                <ul class="list-group" id="contactsList"></ul>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="job-sites" role="tabpanel" aria-labelledby="job-sites-tab">
+                            <h6 class="fw-bold">Job Sites</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Site Name</label>
+                                <input type="text" class="form-control" id="siteName" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Contact Person Name</label>
+                                <input type="text" class="form-control" id="jobContactPersonName" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Contact Person’s Email</label>
+                                <input type="email" class="form-control" id="jobContactPersonEmail" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Contact Person’s Mobile</label>
+                                <input type="tel" class="form-control" id="jobContactPersonMobile" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Special Notes</label>
+                                <textarea class="form-control" id="specialNotes"></textarea>
+                            </div>
+                            <div class="d-flex justify-content-between gap-2 mt-3">
+                                <button type="button" class="btn btn-secondary" id="prevToContacts">Previous</button>
+                                <button type="button" class="btn btn-success" id="saveJobSite">Save</button>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                            <div class="mt-4">
+                                <h6>Saved Job Sites</h6>
+                                <ul class="list-group" id="jobSitesList"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Tab navigation
+        document.getElementById('nextToContacts').addEventListener('click', function () {
+            var tab = new bootstrap.Tab(document.querySelector('#company-contacts-tab'));
+            tab.show();
+        });
+        document.getElementById('nextToJobSites').addEventListener('click', function () {
+            var tab = new bootstrap.Tab(document.querySelector('#job-sites-tab'));
+            tab.show();
+        });
+        document.getElementById('prevToInfo').addEventListener('click', function () {
+            var tab = new bootstrap.Tab(document.querySelector('#company-info-tab'));
+            tab.show();
+        });
+        document.getElementById('prevToContacts').addEventListener('click', function () {
+            var tab = new bootstrap.Tab(document.querySelector('#company-contacts-tab'));
+            tab.show();
+        });
+
+        // Company Contacts logic
+        let contacts = [];
+        document.getElementById('saveContact').addEventListener('click', function () {
+            const name = document.getElementById('contactPersonName').value.trim();
+            const role = document.getElementById('contactRole').value;
+            const phone = document.getElementById('contactPhone').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            if (name && role && phone && email) {
+                contacts.push({ name, role, phone, email });
+                renderContacts();
+                document.getElementById('contactPersonName').value = '';
+                document.getElementById('contactRole').selectedIndex = 0;
+                document.getElementById('contactPhone').value = '';
+                document.getElementById('contactEmail').value = '';
+            }
+        });
+        function renderContacts() {
+            const list = document.getElementById('contactsList');
+            list.innerHTML = '';
+            contacts.forEach((c, i) => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.innerHTML = `<span>${c.name} (${c.role}) - ${c.phone} - ${c.email}</span><button type="button" class="btn btn-sm btn-danger" onclick="removeContact(${i})">Remove</button>`;
+                list.appendChild(li);
+            });
+        }
+        window.removeContact = function(idx) {
+            contacts.splice(idx, 1);
+            renderContacts();
+        };
+
+        // Job Sites logic
+        let jobSites = [];
+        document.getElementById('saveJobSite').addEventListener('click', function () {
+            const siteName = document.getElementById('siteName').value.trim();
+            const contactName = document.getElementById('jobContactPersonName').value.trim();
+            const contactEmail = document.getElementById('jobContactPersonEmail').value.trim();
+            const contactMobile = document.getElementById('jobContactPersonMobile').value.trim();
+            const notes = document.getElementById('specialNotes').value.trim();
+            if (siteName && contactName && contactEmail && contactMobile) {
+                jobSites.push({ siteName, contactName, contactEmail, contactMobile, notes });
+                renderJobSites();
+                document.getElementById('siteName').value = '';
+                document.getElementById('jobContactPersonName').value = '';
+                document.getElementById('jobContactPersonEmail').value = '';
+                document.getElementById('jobContactPersonMobile').value = '';
+                document.getElementById('specialNotes').value = '';
+            }
+        });
+        function renderJobSites() {
+            const list = document.getElementById('jobSitesList');
+            list.innerHTML = '';
+            jobSites.forEach((j, i) => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.innerHTML = `<span>${j.siteName} - ${j.contactName} - ${j.contactEmail} - ${j.contactMobile}</span><button type="button" class="btn btn-sm btn-danger" onclick="removeJobSite(${i})">Remove</button>`;
+                list.appendChild(li);
+            });
+        }
+        window.removeJobSite = function(idx) {
+            jobSites.splice(idx, 1);
+            renderJobSites();
+        };
+    });
+</script>
