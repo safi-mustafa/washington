@@ -37,6 +37,13 @@ namespace Web.Controllers
                 Title = "Inventory",
                 TabItems = new List<TabItemViewModel>()
                 {
+                     new TabItemViewModel()
+                    {
+                        Id="equipment",
+                        Name="Equipment",
+                        Url="/Equipment/Index"
+
+                    },
                     new TabItemViewModel()
                     {
                         Id="inventory",
@@ -44,13 +51,7 @@ namespace Web.Controllers
                         Url="/Inventory/Index"
 
                     },
-                    new TabItemViewModel()
-                    {
-                        Id="equipment",
-                        Name="Equipment",
-                        Url="/Equipment/Index"
 
-                    },
                     new TabItemViewModel()
                     {
                         Id="orders",
