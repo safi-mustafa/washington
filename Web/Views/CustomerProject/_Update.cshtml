@@ -1,0 +1,83 @@
+﻿@using Enums
+@using ViewModels.CustomerProject;
+@model CustomerProjectModifyViewModel
+@{
+    Layout = null;
+}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <partial name="~/Views/Shared/Select2/CustomerProject/_CustomerProject.cshtml" for="CustomerProject" />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="JobName" class="form-label fw-600">Job Name</label>
+                    <input asp-for="JobName" type="text" class="form-control" />
+                    <span asp-validation-for="JobName" class="validation-invalid-label"></span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="JobCode" class="form-label fw-600">Job Code</label>
+                    <input asp-for="JobCode" type="text" class="form-control" />
+                    <span asp-validation-for="JobCode" class="validation-invalid-label"></span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="PurchaseOrderNumber" class="form-label fw-600">Purchase Order Number</label>
+                    <input asp-for="PurchaseOrderNumber" type="text" class="form-control" />
+                    <span asp-validation-for="PurchaseOrderNumber" class="validation-invalid-label"></span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="WorkOrderNumber" class="form-label fw-600">Work Order Number</label>
+                    <input asp-for="WorkOrderNumber" type="text" class="form-control" />
+                    <span asp-validation-for="WorkOrderNumber" class="validation-invalid-label"></span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <div class="mb-3 form-group">
+                        <label asp-for="ProjectStartDate" class="form-label fw-600">Project Start Date <span class="required">*</span></label>
+                        <input asp-for="ProjectStartDate" type="date" class="form-control" />
+                        <span asp-validation-for="ProjectStartDate" class="validation-invalid-label"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <div class="mb-3 form-group">
+                        <label asp-for="ProjectEndDate" class="form-label fw-600">Project End Date <span class="required">*</span></label>
+                        <input asp-for="ProjectEndDate" type="date" class="form-control" />
+                        <span asp-validation-for="ProjectEndDate" class="validation-invalid-label"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="ProjectLocation" class="form-label fw-600">Project Location</label>
+                    <input asp-for="ProjectLocation" type="text" class="form-control" />
+                    <span asp-validation-for="ProjectLocation" class="validation-invalid-label"></span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <partial name="~/Views/Shared/Select2/ProjectManager/_ProjectManager.cshtml" for="ProjectManager" />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="Notes" class="form-label fw-600">Notes</label>
+                    <input asp-for="Notes" type="text" class="form-control" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" asp-for="Id" />

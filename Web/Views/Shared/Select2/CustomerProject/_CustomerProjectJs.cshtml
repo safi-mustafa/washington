@@ -1,0 +1,17 @@
+﻿<script>
+    function SetCustomerProjectSelect2(identifier) {
+        let id = identifier;
+        let pageSize = 10;
+        let url = '/CustomerProject/CustomerSelect2DropDown';
+        let dataArray = function (params) {
+            params.page = params.page || 1;
+            return {
+                prefix: params.term,
+                pageSize: pageSize,
+                pageNumber: params.page,
+                customParams: JSON.stringify({ })
+            };
+        };
+        Select2AutoCompleteAjax(id, url, dataArray, pageSize, "Select Customer Project");
+    }
+</script>

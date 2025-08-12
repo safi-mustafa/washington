@@ -1,64 +1,81 @@
 ﻿using Authorization.Providers;
+
+using BoilerPlate.Authorization;
 using BoilerPlate.Authorization.Handlers;
+
 using Centangle.Common.ResponseHelpers.Models;
+
+using CorrelationId.DependencyInjection;
+
 using DataLibrary;
+
 using Helpers.File;
+
 using IdentityManager;
+
 using IdentityProvider.Seed;
+
 using IdentityStore;
+
+using Interfaces;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+
 using Models;
 using Models.Mapper;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+
+using NotificationWorkerService.Interface;
+using NotificationWorkerService.Repository;
+
+using Repositories;
+using Repositories.Common;
+using Repositories.Common.AdministratorService;
+using Repositories.Common.AdministratorService.Interface;
 using Repositories.Common.Example;
 using Repositories.Common.Example.Interface;
+using Repositories.Common.GuestService;
+using Repositories.Common.GuestService.Interface;
+using Repositories.Common.ManagerService;
+using Repositories.Common.ManagerService.Interface;
 using Repositories.Common.Permission;
 using Repositories.Common.Permission.Interface;
 using Repositories.Common.Role;
 using Repositories.Common.Role.Interface;
+using Repositories.Common.TechnicianService;
+using Repositories.Common.TechnicianService.Interface;
 using Repositories.Common.Users;
 using Repositories.Common.Users.Interface;
+using Repositories.Services.AttachmentService;
+using Repositories.Services.AttachmentService.Interface;
 using Repositories.Services.AuthenticationService;
 using Repositories.Services.AuthenticationService.Interface;
+using Repositories.Services.CustomerProject;
 using Repositories.Services.Dashboard;
 using Repositories.Services.Dashboard.Interface;
-using Repositories.Shared.UserInfoServices;
-using Repositories.Shared.UserInfoServices.Interface;
-using BoilerPlate.Authorization;
-using CorrelationId.DependencyInjection;
-using Repositories.Common;
-using Repositories.Services.AttachmentService.Interface;
-using Repositories.Services.AttachmentService;
-using Repositories.Shared.NotificationServices.Interface;
-using Repositories.Shared.NotificationServices;
-using Interfaces;
-using NotificationWorkerService.Interface;
-using NotificationWorkerService.Repository;
-using Repository;
-using Repositories.Common.AdministratorService.Interface;
-using Repositories.Common.GuestService;
-using Repositories.Common.GuestService.Interface;
-using Repositories.Common.AdministratorService;
-using Repositories.Common.ManagerService.Interface;
-using Repositories.Common.ManagerService;
-using Repositories.Services.Report.Interface;
+using Repositories.Services.ExcelHelper;
+using Repositories.Services.ExcelHelper.Interface;
 using Repositories.Services.Report;
 using Repositories.Services.Report.Common;
 using Repositories.Services.Report.Common.interfaces;
-using ViewModels.Dashboard.interfaces;
+using Repositories.Services.Report.Interface;
+using Repositories.Shared.NotificationServices;
+using Repositories.Shared.NotificationServices.Interface;
+using Repositories.Shared.UserInfoServices;
+using Repositories.Shared.UserInfoServices.Interface;
+
+using Repository;
+
 using ViewModels.Dashboard;
-using Repositories.Common.TechnicianService.Interface;
-using Repositories.Common.TechnicianService;
-using Repositories.Services.ExcelHelper.Interface;
-using Repositories.Services.ExcelHelper;
+using ViewModels.Dashboard.interfaces;
 using ViewModels.Report.Factory.interfaces;
-using Repositories;
 
 namespace Web.Extensions
 {
@@ -197,7 +214,7 @@ namespace Web.Extensions
 
             services.AddScoped(typeof(IUserSearchSettingService<,,>), typeof(UserSearchSettingService<,,>));
             services.AddScoped(typeof(IReportFactory), typeof(ReportFactory));
-
+            services.AddScoped(typeof(ICustomerProjectService<,,>), typeof(CustomerProjectService<,,>));
             services.AddDefaultCorrelationId();
         }
     }

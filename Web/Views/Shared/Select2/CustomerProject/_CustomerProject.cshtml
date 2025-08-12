@@ -1,0 +1,14 @@
+﻿@model ViewModels.BaseSelect2VM
+@{
+    var elementId = ViewData["Id"] != null && !string.IsNullOrEmpty(ViewData["Id"].ToString()) ? ViewData["Id"].ToString() : "customer-project-id";
+}
+<partial name="~/Views/Shared/Select2/CustomerProject/_CustomerProjectHtml.cshtml" model="@Model" />
+<partial name="~/Views/Shared/Select2/CustomerProject/_CustomerProjectJs.cshtml" />
+
+<script src="~/js/custom/select2/select2-methods.js"></script>
+<script>
+    $(function () {
+        var id = "#" + "@elementId";
+        SetCustomerProjectSelect2(id);
+    });
+</script>

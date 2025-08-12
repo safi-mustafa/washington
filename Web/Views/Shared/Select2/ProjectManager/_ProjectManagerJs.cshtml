@@ -1,0 +1,18 @@
+﻿<script>
+    function SetProjectManagerSelect2(identifier) {
+        let id = identifier;
+        let pageSize = 10;
+        let customerValue= $("#customer-project-id").val();
+        let url = '/CustomerProject/ProjectSelect2DropDown';
+        let dataArray = function (params) {
+            params.page = params.page || 1;
+            return {
+                prefix: params.term,
+                pageSize: pageSize,
+                pageNumber: params.page,
+                customParams: JSON.stringify({ SearchView : customerValue })
+            };
+        };
+        Select2AutoCompleteAjax(id, url, dataArray, pageSize, "Select Project Manager");
+    }
+</script>

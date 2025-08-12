@@ -1,23 +1,27 @@
 ﻿using AutoMapper;
-using ViewModels;
-using ViewModels.Example;
-using ViewModels.Permission;
-using ViewModels.AssignedPermissions;
-using ViewModels.Users;
-using ViewModels.Role;
-using ViewModels.Authentication;
-using ViewModels.Employee;
-using ViewModels.Shared.Notification;
-using ViewModels.Guest;
-using ViewModels.Administrator;
-using ViewModels.Shared;
+
 using Models.Models.Shared;
-using ViewModels.Manager;
-using ViewModels.Technician;
-using ViewModels.WorkOrderTechnician;
-using ViewModels.WorkOrderTasks;
+
 using Pagination;
+
+using ViewModels;
+using ViewModels.Administrator;
+using ViewModels.AssignedPermissions;
+using ViewModels.Authentication;
+using ViewModels.CustomerProject;
+using ViewModels.Employee;
+using ViewModels.Example;
+using ViewModels.Guest;
+using ViewModels.Manager;
+using ViewModels.Permission;
+using ViewModels.Role;
+using ViewModels.Shared;
+using ViewModels.Shared.Notification;
+using ViewModels.Technician;
 using ViewModels.Timesheet;
+using ViewModels.Users;
+using ViewModels.WorkOrderTasks;
+using ViewModels.WorkOrderTechnician;
 
 namespace Models.Mapper
 {
@@ -696,6 +700,21 @@ namespace Models.Mapper
             CreateMap<TimesheetBriefViewModel, TimesheetWebUpdateViewModel>().ReverseMap();
             CreateMap<TimesheetBriefViewModel, Timesheet>().ReverseMap();
             CreateMap<TimesheetBreakdownUpdateViewModel, TimesheetWebUpdateViewModel>().ReverseMap();
+
+            //CustomerProjects
+            CreateMap<CustomerProjectModifyViewModel, CustomerProject>()
+               .ReverseMap();
+            // Map from entity to view model
+            CreateMap<CustomerProject, CustomerProjectDetailViewModel>().ReverseMap();
+            CreateMap<CustomerProjectDetailViewModel, CustomerProjectModifyViewModel>().ReverseMap();
+
+            CreateMap<CompanyInformation, CustomerProjectBriefViewModel>()
+                .ForMember(p => p.Name, a => a.MapFrom(d => d.CompanyName))
+                .ReverseMap();
+
+            CreateMap<CompanyContact, CustomerProjectBriefViewModel>()
+                .ForMember(p => p.Name, a => a.MapFrom(d => d.Role))
+                .ReverseMap();
 
             //IgnoreGlobalProperties();
         }

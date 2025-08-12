@@ -4,6 +4,7 @@ using DataLibrary;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLibrary.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250811105015_add-customerid")]
+    partial class addcustomerid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -797,6 +800,73 @@ namespace DataLibrary.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CraftSkills");
+                });
+
+            modelBuilder.Entity("Models.CustomerProject", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JobCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JobName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ProjectEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProjectLocation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ProjectManagerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ProjectStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PurchaseOrderNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WorkOrderNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CustomerProjects");
                 });
 
             modelBuilder.Entity("Models.DynamicColumn", b =>
@@ -3795,7 +3865,7 @@ namespace DataLibrary.Migrations
             modelBuilder.Entity("Models.WorkOrderComment", b =>
                 {
                     b.HasOne("Models.WorkOrder", "WorkOrder")
-                        .WithMany()
+                        .WithMany("WorkOrderComments")
                         .HasForeignKey("WorkOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -3960,73 +4030,9 @@ namespace DataLibrary.Migrations
             modelBuilder.Entity("Models.WorkOrder", b =>
                 {
                     b.Navigation("Technicians");
+
+                    b.Navigation("WorkOrderComments");
                 });
-            modelBuilder.Entity("Models.CustomerProject", b =>
-            {
-                b.Property<long>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bigint");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                b.Property<int>("ActiveStatus")
-                    .HasColumnType("int");
-
-                b.Property<long>("CreatedBy")
-                    .HasColumnType("bigint");
-
-                b.Property<DateTime>("CreatedOn")
-                    .HasColumnType("datetime2");
-
-                b.Property<int?>("CustomerId")
-                    .HasColumnType("int");
-
-                b.Property<bool>("IsDeleted")
-                    .HasColumnType("bit");
-
-                b.Property<string>("JobCode")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("JobName")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("Notes")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<DateTime?>("ProjectEndDate")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("ProjectLocation")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<int?>("ProjectManagerId")
-                    .HasColumnType("int");
-
-                b.Property<DateTime?>("ProjectStartDate")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("PurchaseOrderNumber")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<long>("UpdatedBy")
-                    .HasColumnType("bigint");
-
-                b.Property<DateTime>("UpdatedOn")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("WorkOrderNumber")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.HasKey("Id");
-
-                b.ToTable("CustomerProjects");
-            });
 #pragma warning restore 612, 618
         }
     }

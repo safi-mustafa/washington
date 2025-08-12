@@ -1,0 +1,14 @@
+﻿@model ViewModels.BaseSelect2VM
+@{
+    var elementId = ViewData["Id"] != null && !string.IsNullOrEmpty(ViewData["Id"].ToString()) ? ViewData["Id"].ToString() : "project-manager-id";
+}
+<partial name="~/Views/Shared/Select2/ProjectManager/_ProjectManagerHtml.cshtml" model="@Model" />
+<partial name="~/Views/Shared/Select2/ProjectManager/_ProjectManagerJs.cshtml" />
+
+<script src="~/js/custom/select2/select2-methods.js"></script>
+<script>
+    $(function () {
+        var id = "#" + "@elementId";
+        SetProjectManagerSelect2(id);
+    });
+</script>
