@@ -16,12 +16,13 @@ namespace ViewModels.CustomerProject
         public string JobCode { get; set; } = default!;
         public string PurchaseOrderNumber { get; set; } = default!;
         public string WorkOrderNumber { get; set; } = default!;
-        public DateTime? ProjectStartDate { get; set; } = default!;
-        public DateTime? ProjectEndDate { get; set; } = default!;
-        public string ProjectManager { get; set; } = default!;
+        public string ProjectStartDate { get; set; } = default!;
+        public string ProjectEndDate { get; set; } = default!;
+        public string ProjectLocation { get; set; } = default!;
+        public string ProjectManagerName { get; set; } = default!;
         public int? ProjectManagerId { get; set; } = default!;
         public string Notes { get; set; } = default!;
         public CustomerProjectBriefViewModel Customer { get; set; } = new();
-        public ProjectManagerBriefViewModel ProjectManagerBVM { get; set; } = new();
+        public ProjectManagerBriefViewModel ProjectManager { get; set; } = new();
     }
 }

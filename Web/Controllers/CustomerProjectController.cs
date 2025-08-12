@@ -39,7 +39,7 @@ namespace Web.Controllers
             return new List<DataTableViewModel>()
             {
                 new DataTableViewModel{title = "Customer",data = "CustomerName", orderable = true, sortingColumn = "Customer"},
-                new DataTableViewModel{title = "Project Manager",data = "ProjectManager", orderable = true, sortingColumn = "ProjectManager"},
+                new DataTableViewModel{title = "Project Manager",data = "ProjectManagerName", orderable = true, sortingColumn = "ProjectManagerName"},
                 new DataTableViewModel{title = "Job Name",data = "JobName", orderable = true},
                 new DataTableViewModel{title = "Job Code",data = "JobCode", orderable = true},
                 new DataTableViewModel{title = "Project Start Date",data = "ProjectStartDate", orderable = true},
@@ -50,6 +50,10 @@ namespace Web.Controllers
 
         public override async Task<ActionResult> Create(CustomerProjectModifyViewModel model)
         {
+
+            model.CustomerId = (int?)model.CustomerProject.Id;
+            model.ProjectManagerId = (int?)model.ProjectManager.Id;
+
             if (ModelState.IsValid)
             {
                 return await base.Create(model);
@@ -100,9 +104,17 @@ namespace Web.Controllers
             }
         }
 
-        //private List<Select2OptionModel<ISelect2BaseVM>> GetSelect2List(PaginatedResultModel<ProjectManagerBriefViewModel> items)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public async override Task<ActionResult> Update(CustomerProjectModifyViewModel model)
+        {
+            model.CustomerId = (int?)model.CustomerProject.Id;
+            model.ProjectManagerId = (int?)model.ProjectManager.Id;
+
+            if (ModelState.IsValid)
+            {
+                return await base.Update(model);
+            }
+            var invalidFieldErrors = ModelState.Where(x => x.Value.Errors.Any()).ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray());
+            return Json(new { status = false, fieldErrors = invalidFieldErrors });
+        }
     }
 }

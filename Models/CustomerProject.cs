@@ -9,7 +9,7 @@ namespace Models
 {
     public class CustomerProject : BaseDBModel
     {
-        public long CustomerId { get; set; }
+        public int? CustomerId { get; set; }
         public string JobName { get; set; }
         public string JobCode { get; set; }
         public string PurchaseOrderNumber { get; set; }
@@ -17,7 +17,7 @@ namespace Models
         public DateTime? ProjectStartDate { get; set; }
         public DateTime? ProjectEndDate { get; set; }
         public string ProjectLocation { get; set; }
-        public long ProjectManagerId { get; set; }
+        public int? ProjectManagerId { get; set; }
         public string Notes { get; set; }
     }
 }

@@ -84,6 +84,7 @@ namespace Repositories.Services.CustomerProject
                 {
                     return UnAuthorizedResponse();
                 }
+
                 var mappedModel = _mapper.Map<Models.CustomerProject>(model);
                 await _db.AddAsync(mappedModel);
                 await _db.SaveChangesAsync();
@@ -103,55 +104,30 @@ namespace Repositories.Services.CustomerProject
         {
             try
             {
-                //var companyInformation = await _db.CompanyInformations.AsNoTracking()
-                //    .ToListAsync();
-
-                //var searchFilters = search as CustomerProjectSearchViewModel;
-                //var assetsQueryable = _db.CustomerProjects.Select(a => new CustomerProjectDetailViewModel
-                //{
-                //    ActiveStatus = a.ActiveStatus,
-                //    CustomerId = a.CustomerId,
-                //    JobCode = a.JobCode,
-                //    JobName = a.JobName,
-                //    CustomerName = string.Empty,
-                //    Id = a.Id,
-                //    Customer = new CustomerProjectBriefViewModel()
-                //    {
-                //        Id = companyInformation.Select(x => x.CompanyInformationId).FirstOrDefault(),
-                //        Name = companyInformation.Select(x => x.CompanyName).FirstOrDefault(),
-                //    },
-                //}).AsQueryable();
 
                 var assetsQueryable =
-                                from project in _db.CustomerProjects
-                                join companyInfo in _db.CompanyInformations
-                                    on project.CustomerId equals companyInfo.Id into companyGroup
-                                from company in companyGroup.DefaultIfEmpty()
-                                join contact in _db.CompanyContacts
-                                    on company.Id equals contact.CompanyInformationId into contactGroup
-                                from companyContact in contactGroup.DefaultIfEmpty()
-                                select new CustomerProjectDetailViewModel
-                                {
-                                    ActiveStatus = project.ActiveStatus,
-                                    CustomerId = project.CustomerId,
-                                    JobCode = project.JobCode,
-                                    JobName = project.JobName,
-                                    ProjectStartDate = project.ProjectStartDate,
-                                    ProjectEndDate = project.ProjectEndDate,
-                                    CustomerName = company != null ? company.CompanyName : "-",
-                                    ProjectManager = companyContact != null ? companyContact.Role : "-",
-                                    Id = project.Id,
-                                    Customer = new CustomerProjectBriefViewModel()
-                                    {
-                                        Id = company != null ? company.Id : 0,
-                                        Name = company != null ? company.CompanyName : "-",
-                                    },
-                                    ProjectManagerBVM = new ProjectManagerBriefViewModel()
-                                    {
-                                        Id = companyContact != null ? companyContact.Id : 0,
-                                        Role = companyContact != null ? companyContact.Role : "-",
-                                    },
-                                };
+                            from project in _db.CustomerProjects
+                            join companyInfo in _db.CompanyInformations
+                                on (long?)project.CustomerId equals (long?)companyInfo.Id into companyGroup
+                            from company in companyGroup.DefaultIfEmpty()
+
+                            join contact in _db.CompanyContacts
+                                on (long?)company.Id equals (long?)contact.CompanyInformationId into contactGroup
+                            from companyContact in contactGroup.DefaultIfEmpty()
+
+                            select new CustomerProjectDetailViewModel
+                            {
+                                ActiveStatus = project.ActiveStatus,
+                                CustomerId = (long)project.CustomerId,
+                                JobCode = project.JobCode,
+                                JobName = project.JobName,
+                                ProjectStartDate = project.ProjectStartDate.Value.Date.ToString("MM/dd/yyyy"),
+                                ProjectEndDate = project.ProjectEndDate.Value.Date.ToString("MM/dd/yyyy"),
+                                CustomerName = company.CompanyName ?? "-",
+                                ProjectManagerName = companyContact.Role ?? "-",
+                                Id = project.Id,
+
+                            };
 
 
                 var result = await assetsQueryable.Paginate(search);
@@ -212,8 +188,17 @@ namespace Repositories.Services.CustomerProject
             try
             {
                 var dbModel = await _db.CustomerProjects
-                                        .Where(x => x.Id == id)
-                                        .FirstOrDefaultAsync();
+                                    .Where(x => x.Id == id)
+                                    .FirstOrDefaultAsync();
+
+                var dbModelCI = await _db.CompanyInformations
+                                    .Where(x => x.Id == dbModel.CustomerId)
+                                    .FirstOrDefaultAsync();
+
+
+                var dbModelCG = await _db.CompanyContacts
+                                    .Where(x => x.Id == dbModel.ProjectManagerId)
+                                    .FirstOrDefaultAsync();
 
                 if (dbModel != null)
                 {
