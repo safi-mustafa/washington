@@ -272,11 +272,24 @@ button.close {
 .login-page {
     width: 100%;
     min-height: 100vh;
-    background-image: url(../../img/streets-division-login.jpg);
+    background-image: url(../../img/login-background.jpeg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    z-index: 9;
+    position: relative;
 }
+
+    .login-page::before {
+        content: '';
+        background: rgb(0 0 0 / 27%);
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100vh;
+        display: block;
+        z-index: -1;
+    }
 
     .login-page .container-fluid {
         min-height: 100vh;
@@ -3454,43 +3467,43 @@ div#tab-content-loader {
     white-space: nowrap;
 }
 
-#crud-list-table_wrapper .table.dataTable tbody td.exclude-form-export{
-    white-space: nowrap;
+    #crud-list-table_wrapper .table.dataTable tbody td.exclude-form-export {
+        white-space: nowrap;
+    }
+
+/* Right side modal styling */
+#crudModalPanel.modal-right {
+    padding-right: 0 !important;
 }
 
-  /* Right side modal styling */
-  #crudModalPanel.modal-right {
-    padding-right: 0 !important;
-  }
-  
-  #crudModalPanel.modal-right .modal-dialog {
-    margin: 0;
-    margin-right: 0;
-    height: 100vh;
-    max-width: 60%;
-    min-width: 60% !important;
-    position: fixed;
-    right: 0;
-    top: 0;
-    transform: translateX(100%);
-    transition: transform 0.3s ease-out;
-  }
-  
-  #crudModalPanel.modal-right.show .modal-dialog {
-    transform: translateX(0);
-  }
-  
-  #crudModalPanel.modal-right .modal-content {
-    height: 100vh;
-    border-radius: 0;
-    overflow-y: auto;
-  }
-  
-  #crudModalPanel.modal-right + .modal-backdrop {
-    background-color: rgba(0, 0, 0, 0.3);
-  }
+    #crudModalPanel.modal-right .modal-dialog {
+        margin: 0;
+        margin-right: 0;
+        height: 100vh;
+        max-width: 60%;
+        min-width: 60% !important;
+        position: fixed;
+        right: 0;
+        top: 0;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-out;
+    }
 
-  .loader-floating{
+    #crudModalPanel.modal-right.show .modal-dialog {
+        transform: translateX(0);
+    }
+
+    #crudModalPanel.modal-right .modal-content {
+        height: 100vh;
+        border-radius: 0;
+        overflow-y: auto;
+    }
+
+    #crudModalPanel.modal-right + .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+
+.loader-floating {
     display: block !important;
     position: absolute;
     left: 0;
@@ -3504,9 +3517,9 @@ div#tab-content-loader {
     width: 300px;
     border-radius: 8px;
     color: #fff;
-  }
+}
 
-  .dt-badge {
+.dt-badge {
     border-radius: 25px;
     text-align: center;
     font-weight: 300;
@@ -3521,34 +3534,34 @@ div#tab-content-loader {
     max-width: fit-content;
 }
 
-.dt-badge.NeedsReplacement{
-    background-color: #ffe0e2;
-}
+    .dt-badge.NeedsReplacement {
+        background-color: #ffe0e2;
+    }
 
-.dt-badge.Fair{
-    background-color: #fff3d6;
-}
+    .dt-badge.Fair {
+        background-color: #fff3d6;
+    }
 
-.dt-badge.Good{
-    background-color: #eaffe9;
-}
+    .dt-badge.Good {
+        background-color: #eaffe9;
+    }
 
-.dt-badge .custom-badge {
-    width: 10px;
-    height: 10px;
-}
+    .dt-badge .custom-badge {
+        width: 10px;
+        height: 10px;
+    }
 
-.dt-badge.Working{
-    background-color: #00800020;
-}
+    .dt-badge.Working {
+        background-color: #00800020;
+    }
 
-.dt-badge.Approved{
-    background-color: #4792bf20;
-}
+    .dt-badge.Approved {
+        background-color: #4792bf20;
+    }
 
-.dt-badge.Open{
-    background-color: #ff000020;
-}
+    .dt-badge.Open {
+        background-color: #ff000020;
+    }
 
 
 .gantt-container {
@@ -3717,11 +3730,11 @@ div#tab-content-loader {
     background-color: #eee;
 }
 
-.task-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+    .task-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
 .task-title-container {
     flex-grow: 1;
@@ -3762,7 +3775,7 @@ div#tab-content-loader {
     position: relative;
 }
 
-.no-date{
+.no-date {
     box-shadow: none;
     background: transparent;
 }
@@ -3782,11 +3795,11 @@ div#tab-content-loader {
     overflow: hidden;
 }
 
-.gantt-card .icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+    .gantt-card .icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
 .gantt-card .title {
     font-size: 14px;
@@ -3868,18 +3881,32 @@ div#tab-content-loader {
     display: flex;
 }
 
-.desk_wrap .list_cards .card_footer > div:before{
+.desk_wrap .list_cards .card_footer > div:before {
     position: relative;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeOut {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 0; transform: translateY(20px); }
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
 }
 
 /* Responsive adjustments */
@@ -3887,4 +3914,26 @@ div#tab-content-loader {
     .task-card {
         width: 100%;
     }
+}
+/*********************Sidebar related css by dhara*************************************/
+.menu-collapsed .toggle-menu .fa-bars {
+    display: block;
+}
+
+.menu-collapsed .toggle-menu .fa-close {
+    display: none;
+}
+
+.menu-collapsed .logo {
+    display: none;
+}
+
+.customSidebar .collapse_toggle_wrap button {
+    color: #f54e00 !important;
+    font-size: 22px;
+    background-color: transparent !important;
+}
+
+.sidebar .cartIcon a {
+    padding: 0;
 }

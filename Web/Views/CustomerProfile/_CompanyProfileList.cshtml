@@ -1,11 +1,83 @@
 @model ViewModels.CRUD.TabViewModel
+<style>
+    /**********************Common CSS for new design 12-08-25 by dhara*************************/
+    .btn.CommonAddBtn {
+        font-size: 17px;
+    }
+
+    .CommonListCard .company-info {
+        color: #999999;
+        font-size: 15px;
+    }
+
+    .CommonListCard .websiteLink {
+        color: #F54E00;
+    }
+
+    .small-card {
+        background: #f54e0012;
+    }
+
+        .small-card .fw-bold {
+            font-size: 18px;
+        }
+
+        .small-card .text-muted {
+            font-family: sans-serif;
+            font-size: 14px;
+        }
+
+    .dateInfo {
+        font-size: 14px;
+        font-family: sans-serif;
+    }
+
+    .ButtonGroup .btn-link:hover{
+        background: #e22335 !important;
+        color: #fff !important;
+
+    }
+
+    .CustomTab .nav-link {
+        border:none;
+        color: #2f2f2f !important;
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+
+    .CustomTab .nav-link:hover {
+        color: #000 !important;
+        border-bottom: 0px solid #000 !important;
+    }
+    .CustomTab .nav-link.active{
+            color: #f54e00 !important;
+            border-bottom: 1px solid #f54e00 !important;
+    }
+    .CustomTab .nav-link.active:hover{
+                color: #f54e00 !important;
+        border-bottom: 1px solid #f54e00 !important;
+    }
+
+    .CustomTab .nav-item {
+        margin-bottom: 0 !important;
+    }
+
+    .CustomTab .nav-link .fa {
+        margin-right: 10px !important;
+    }
+
+    .InfoCard {
+        border-radius: 6px;
+        background: #f7f7f7;
+    }
+</style>
+
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-1">@Model.Title</h2>
-            <div class="text-muted fs-5">Manage your company profiles and related information</div>
+            <h4 class="fw-bold mb-1">@Model.Title</h4>
+            <div class="text-muted fs-6">Manage your company profiles and related information</div>
         </div>
-        <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#addCompanyProfileModal">
+        <button type="button" class="btn btn-primary btn-lg CommonAddBtn" data-bs-toggle="modal" data-bs-target="#addCompanyProfileModal">
             <i class="fa fa-plus me-2"></i> Add New Company Profile
         </button>
     </div>
@@ -13,11 +85,16 @@
         @foreach (var company in Model.CompanyProfiles ?? Enumerable.Empty<ViewModels.CRUD.CompanyProfileViewModel>())
         {
             <div class="col-md-6">
-                <div class="card h-100 shadow-sm">
+                <div class="card h-100 shadow-sm CommonListCard">
                     <div class="card-body">
-                        <h4 class="fw-bold">@company.Name</h4>
+                        <h5 class="fw-bold">@company.Name</h5>
                         <div class="mb-2 text-secondary">@company.Industry</div>
-                        <div class="mb-2">
+                         <div class="mb-2">
+                            <div class="company-info"><i class="fa fa-location-dot"></i>  @company.Location</div>
+                            <div class="company-info"><i class="fa fa-phone"></i>  @company.Phone</div>
+                            <div class="company-info"><i class="fa fa-globe"></i> <a href="@company.Website" target="_blank" class="websiteLink">Website</a></div>
+                        </div>
+                        @* <div class="mb-2 ">
                             <i class="fa fa-location-dot me-1"></i> @company.Location
                         </div>
                         <div class="mb-2">
@@ -25,10 +102,10 @@
                         </div>
                         <div class="mb-2">
                             <i class="fa fa-globe me-1"></i> <a href="@company.Website" target="_blank">Website</a>
-                        </div>
-                        <div class="row text-center my-3">
+                        </div> *@
+                        @* <div class="row text-center my-3">
                             <div class="col">
-                                <div class="fw-bold fs-4">@company.ContactsCount</div>
+                                <div class="fw-bold fs-4"></div>
                                 <div class="text-muted">Contacts</div>
                             </div>
                             <div class="col">
@@ -39,12 +116,30 @@
                                 <div class="fw-bold fs-4">@company.ProjectsCount</div>
                                 <div class="text-muted">Projects</div>
                             </div>
+                        </div> *@
+                        <div class="d-flex text-center mb-3">
+                            <div class="flex-fill  rounded p-2 me-1 small-card">
+                                <div class="fw-bold">@company.ContactsCount</div>
+                                <small class="text-muted">Contacts</small>
+                            </div>
+                            <div class="flex-fill  rounded p-2 me-1 small-card">
+                                <div class="fw-bold">@company.JobSitesCount</div>
+                                <small class="text-muted">Job Sites</small>
+                            </div>
+                            <div class="flex-fill  rounded p-2 small-card">
+                                <div class="fw-bold">@company.ProjectsCount</div>
+                                <small class="text-muted">Projects</small>
+                            </div>
                         </div>
-                        <div class="text-muted small mb-2">
-                            Created: @company.CreatedDate.ToShortDateString() <br />
-                            Updated: @company.UpdatedDate.ToShortDateString()
+                        <div class="text-muted small mb-2 DateInformation">
+                            <small class="text-muted d-block dateInfo">
+                                Created: @company.CreatedDate.ToShortDateString()
+                            </small>
+                            <small class="text-muted d-block mb-3 dateInfo">
+                                Updated: @company.UpdatedDate.ToShortDateString()
+                            </small>
                         </div>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 ButtonGroup">
                             <a href="@company.ViewUrl" class="btn btn-primary flex-fill"><i class="fa fa-eye me-1"></i> View</a>
                             <a href="@company.EditUrl" class="btn btn-light flex-fill"><i class="fa fa-pen me-1"></i> Edit</a>
                             <a href="@company.DeleteUrl" class="btn btn-link text-danger flex-fill"><i class="fa fa-trash"></i></a>
@@ -66,126 +161,135 @@
             </div>
             <div class="modal-body">
                 <form id="companyProfileForm">
-                    <ul class="nav nav-tabs mb-3" id="companyProfileTab" role="tablist">
+                    <ul class="nav nav-tabs mb-3 CustomTab" id="companyProfileTab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="company-info-tab" data-bs-toggle="tab" data-bs-target="#company-info" type="button" role="tab" aria-controls="company-info" aria-selected="true">Company Information</button>
+                            <button class="nav-link active" id="company-info-tab" data-bs-toggle="tab" data-bs-target="#company-info" type="button" role="tab" aria-controls="company-info" aria-selected="true"><i class="fa fa-building"></i>Company Information</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="company-contacts-tab" data-bs-toggle="tab" data-bs-target="#company-contacts" type="button" role="tab" aria-controls="company-contacts" aria-selected="false">Company Contacts</button>
+                            <button class="nav-link" id="company-contacts-tab" data-bs-toggle="tab" data-bs-target="#company-contacts" type="button" role="tab" aria-controls="company-contacts" aria-selected="false"><i class="fa fa-users"></i>Company Contacts</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="job-sites-tab" data-bs-toggle="tab" data-bs-target="#job-sites" type="button" role="tab" aria-controls="job-sites" aria-selected="false">Job Sites</button>
+                            <button class="nav-link" id="job-sites-tab" data-bs-toggle="tab" data-bs-target="#job-sites" type="button" role="tab" aria-controls="job-sites" aria-selected="false"><i class="fa fa-location-dot"></i>Job Sites</button>
                         </li>
                     </ul>
                     <div class="tab-content" id="companyProfileTabContent">
                         <div class="tab-pane fade show active" id="company-info" role="tabpanel" aria-labelledby="company-info-tab">
-                            <h6 class="fw-bold">Company Information</h6>
-                            <div class="mb-3">
-                                <label class="form-label">Company Name</label>
-                                <input type="text" class="form-control" id="companyName" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Industry</label>
-                                <select class="form-select" id="industry">
-                                    <option>Oil & Gas</option>
-                                    <option>Construction</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-                            <fieldset class="mb-3">
-                                <legend class="fs-6">Address</legend>
-                                <div class="row g-2">
-                                    <div class="col-md-6 mb-2">
-                                        <label class="form-label">Street</label>
-                                        <input type="text" class="form-control" id="street" />
-                                    </div>
-                                    <div class="col-md-6 mb-2">
-                                        <label class="form-label">City</label>
-                                        <input type="text" class="form-control" id="city" />
-                                    </div>
-                                    <div class="col-md-6 mb-2">
-                                        <label class="form-label">State</label>
-                                        <input type="text" class="form-control" id="state" />
-                                    </div>
-                                    <div class="col-md-6 mb-2">
-                                        <label class="form-label">Zip Code</label>
-                                        <input type="text" class="form-control" id="zipCode" />
-                                    </div>
+                            <div class="shadow-sm border border-gray-200 card-body InfoCard">
+                                <h6 class="fw-bold mb-3">Company Information</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Company Name</label>
+                                    <input type="text" class="form-control" id="companyName" />
                                 </div>
-                            </fieldset>
-                            <div class="mb-3">
-                                <label class="form-label">Telephone</label>
-                                <input type="tel" class="form-control" id="telephone" />
+                                <div class="mb-3">
+                                    <label class="form-label">Industry</label>
+                                    <select class="form-select" id="industry">
+                                        <option>Oil & Gas</option>
+                                        <option>Construction</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                                <fieldset class="mb-3">
+                                    <legend class="fs-6">Address</legend>
+                                    <div class="row g-2">
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label">Street</label>
+                                            <input type="text" class="form-control" id="street" />
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label">City</label>
+                                            <input type="text" class="form-control" id="city" />
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label">State</label>
+                                            <input type="text" class="form-control" id="state" />
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label">Zip Code</label>
+                                            <input type="text" class="form-control" id="zipCode" />
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <div class="mb-3">
+                                    <label class="form-label">Telephone</label>
+                                    <input type="tel" class="form-control" id="telephone" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Web Address</label>
+                                    <input type="url" class="form-control" id="webAddress" />
+                                </div>
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <button type="button" class="btn btn-primary" id="nextToContacts">Next</button>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Web Address</label>
-                                <input type="url" class="form-control" id="webAddress" />
-                            </div>
-                            <div class="d-flex justify-content-end gap-2 mt-3">
-                                <button type="button" class="btn btn-primary" id="nextToContacts">Next</button>
-                            </div>
+
                         </div>
                         <div class="tab-pane fade" id="company-contacts" role="tabpanel" aria-labelledby="company-contacts-tab">
-                            <h6 class="fw-bold">Company Contacts</h6>
-                            <div class="mb-3">
-                                <label class="form-label">Contact Person Name</label>
-                                <input type="text" class="form-control" id="contactPersonName" />
+                            <div class="shadow-sm border border-gray-200 card-body InfoCard">
+                                <h6 class="fw-bold mb-3">Company Contacts</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Contact Person Name</label>
+                                    <input type="text" class="form-control" id="contactPersonName" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Role</label>
+                                    <select class="form-select" id="contactRole">
+                                        <option>Project Manager</option>
+                                        <option>Admin</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="contactPhone" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="contactEmail" />
+                                </div>
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <button type="button" class="btn btn-secondary" id="prevToInfo">Previous</button>
+                                    <button type="button" class="btn btn-success" id="saveContact">Save</button>
+                                    <button type="button" class="btn btn-primary" id="nextToJobSites">Next</button>
+                                </div>
+                                <div class="mt-5 savedDetail">
+                                    <h6>Saved Contacts</h6>
+                                    <ul class="list-group" id="contactsList"></ul>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Role</label>
-                                <select class="form-select" id="contactRole">
-                                    <option>Project Manager</option>
-                                    <option>Admin</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" id="contactPhone" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" class="form-control" id="contactEmail" />
-                            </div>
-                            <div class="d-flex justify-content-between gap-2 mt-3">
-                                <button type="button" class="btn btn-secondary" id="prevToInfo">Previous</button>
-                                <button type="button" class="btn btn-success" id="saveContact">Save</button>
-                                <button type="button" class="btn btn-primary" id="nextToJobSites">Next</button>
-                            </div>
-                            <div class="mt-4">
-                                <h6>Saved Contacts</h6>
-                                <ul class="list-group" id="contactsList"></ul>
-                            </div>
+
                         </div>
                         <div class="tab-pane fade" id="job-sites" role="tabpanel" aria-labelledby="job-sites-tab">
-                            <h6 class="fw-bold">Job Sites</h6>
-                            <div class="mb-3">
-                                <label class="form-label">Site Name</label>
-                                <input type="text" class="form-control" id="siteName" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Contact Person Name</label>
-                                <input type="text" class="form-control" id="jobContactPersonName" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Contact Person’s Email</label>
-                                <input type="email" class="form-control" id="jobContactPersonEmail" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Contact Person’s Mobile</label>
-                                <input type="tel" class="form-control" id="jobContactPersonMobile" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Special Notes</label>
-                                <textarea class="form-control" id="specialNotes"></textarea>
-                            </div>
-                            <div class="d-flex justify-content-between gap-2 mt-3">
-                                <button type="button" class="btn btn-secondary" id="prevToContacts">Previous</button>
-                                <button type="button" class="btn btn-success" id="saveJobSite">Save</button>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
-                            <div class="mt-4">
-                                <h6>Saved Job Sites</h6>
-                                <ul class="list-group" id="jobSitesList"></ul>
+                            <div class="shadow-sm border border-gray-200 card-body InfoCard">
+                                <h6 class="fw-bold mb-3">Job Sites</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Site Name</label>
+                                    <input type="text" class="form-control" id="siteName" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Contact Person Name</label>
+                                    <input type="text" class="form-control" id="jobContactPersonName" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Contact Person’s Email</label>
+                                    <input type="email" class="form-control" id="jobContactPersonEmail" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Contact Person’s Mobile</label>
+                                    <input type="tel" class="form-control" id="jobContactPersonMobile" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Special Notes</label>
+                                    <textarea class="form-control" id="specialNotes"></textarea>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <button type="button" class="btn btn-secondary" id="prevToContacts">Previous</button>
+                                    <button type="button" class="btn btn-success" id="saveJobSite">Save</button>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                                <div class="mt-5 savedDetail">
+                                    <h6>Saved Job Sites</h6>
+                                    <ul class="list-group" id="jobSitesList"></ul>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -232,12 +336,45 @@
         });
         function renderContacts() {
             const list = document.getElementById('contactsList');
-            list.innerHTML = '';
+            // list.innerHTML = '';
+            // contacts.forEach((c, i) => {
+            //     const li = document.createElement('li');
+            //      li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            //      li.innerHTML = `<span>${c.name} (${c.role}) - ${c.phone} - ${c.email}</span><button type="button" class="btn btn-sm btn-danger" onclick="removeContact(${i})">Remove</button>`;
+                
+            //     list.appendChild(li);
+            // });
+            list.innerHTML=`
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Role</th>
+                      <th scope="col">Phone</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="contactsTableBody"></tbody>
+                </table>
+                `;
+
+            const tableBody = document.getElementById('contactsTableBody');
+
             contacts.forEach((c, i) => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                li.innerHTML = `<span>${c.name} (${c.role}) - ${c.phone} - ${c.email}</span><button type="button" class="btn btn-sm btn-danger" onclick="removeContact(${i})">Remove</button>`;
-                list.appendChild(li);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <th scope="row">${i + 1}</th>
+                    <td>${c.name}</td>
+                    <td>${c.role}</td>
+                    <td>${c.phone}</td>
+                    <td>${c.email}</td>
+                    <td>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeContact(${i})">Remove</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
             });
         }
         window.removeContact = function(idx) {
@@ -265,13 +402,46 @@
         });
         function renderJobSites() {
             const list = document.getElementById('jobSitesList');
-            list.innerHTML = '';
-            jobSites.forEach((j, i) => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                li.innerHTML = `<span>${j.siteName} - ${j.contactName} - ${j.contactEmail} - ${j.contactMobile}</span><button type="button" class="btn btn-sm btn-danger" onclick="removeJobSite(${i})">Remove</button>`;
-                list.appendChild(li);
-            });
+            // list.innerHTML = '';
+            // jobSites.forEach((j, i) => {
+            //     const li = document.createElement('li');
+            //     li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            //     li.innerHTML = `<span>${j.siteName} - ${j.contactName} - ${j.contactEmail} - ${j.contactMobile}</span><button type="button" class="btn btn-sm btn-danger" onclick="removeJobSite(${i})">Remove</button>`;
+            //     list.appendChild(li);
+            // });
+            list.innerHTML = `
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Site Name</th>
+                        <th scope="col">Contact Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Mobile</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="jobSitesTableBody"></tbody>
+                </table>
+                `;
+
+                // Append rows for each job site
+                const tableBody = document.getElementById('jobSitesTableBody');
+
+                jobSites.forEach((j, i) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <th scope="row">${i + 1}</th>
+                        <td>${j.siteName}</td>
+                        <td>${j.contactName}</td>
+                        <td>${j.contactEmail}</td>
+                        <td>${j.contactMobile}</td>
+                        <td>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="removeJobSite(${i})">Remove</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
         }
         window.removeJobSite = function(idx) {
             jobSites.splice(idx, 1);
