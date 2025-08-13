@@ -29,6 +29,7 @@ using Repositories.Common;
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -126,7 +127,7 @@ namespace Repositories.Services.CustomerProject
                             from company in companyGroup.DefaultIfEmpty()
 
                             join contact in _db.CompanyContacts
-                                on (long?)company.Id equals (long?)contact.CompanyInformationId into contactGroup
+                                on (long?)project.ProjectManagerId equals (long?)contact.Id into contactGroup
                             from companyContact in contactGroup.DefaultIfEmpty()
 
                             select new CustomerProjectDetailViewModel
@@ -140,7 +141,6 @@ namespace Repositories.Services.CustomerProject
                                 CustomerName = company.CompanyName ?? "-",
                                 ProjectManagerName = companyContact.ContactPersonName ?? "-",
                                 Id = project.Id,
-
                             };
 
 
