@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using Repositories.Common;
 using ViewModels;
@@ -75,6 +76,20 @@ namespace Web.Controllers
                 _logger.LogError(ex, ex.Message);
                 return View(response);
             }
+        }
+
+        public async Task<ActionResult> Step1()
+        {
+            return View("Step1");
+        }
+        public async Task<ActionResult> Step2()
+        {
+            return View("Step2");
+        }
+
+        public async Task<ActionResult> Step3()
+        {
+            return View("Step3");
         }
 
         [HttpPost]
@@ -202,5 +217,49 @@ namespace Web.Controllers
             return cart;
         }
 
+        //public class Step1Model : PageModel
+        //{
+        //    public IActionResult OnPost()
+        //    {
+        //        return RedirectToPage("Step2");
+        //    }
+        //}
+        //public class Step2Model : PageModel
+        //{
+        //    [BindProperty] public string ProjectName { get; set; }
+        //    [BindProperty] public string SpecialInstructions { get; set; }
+
+        //    public void OnGet()
+        //    {
+        //        // load if coming back
+        //        ProjectName = TempData.Peek("ProjectName") as string;
+        //        SpecialInstructions = TempData.Peek("SpecialInstructions") as string;
+        //    }
+
+        //    public IActionResult OnPost()
+        //    {
+        //        TempData["ProjectName"] = ProjectName;
+        //        TempData["SpecialInstructions"] = SpecialInstructions;
+        //        return RedirectToPage("Step3");
+        //    }
+        //}
+        //public class Step3Model : PageModel
+        //{
+        //    public string ProjectName { get; set; }
+        //    public string SpecialInstructions { get; set; }
+
+        //    public void OnGet()
+        //    {
+        //        ProjectName = TempData.Peek("ProjectName") as string;
+        //        SpecialInstructions = TempData.Peek("SpecialInstructions") as string;
+        //    }
+
+        //    public IActionResult OnPost()
+        //    {
+        //        // Save to DB here...
+        //        TempData.Clear();
+        //        return RedirectToPage("OrderConfirmation");
+        //    }
+        //}
     }
 }

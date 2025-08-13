@@ -32,6 +32,7 @@ namespace Web.Controllers
             {
                 new DataTableViewModel{title = "<input type='checkbox' class='select-all-checkbox' onclick='selectAllCheckBoxChanged(this)'>",className="select-all-checkbox action text-right exclude-from-export", data = "Id"},
                 new DataTableViewModel{title = "", data = "Id",format="expand",className="action dt-control expand exclude-form-export"},
+                 new DataTableViewModel{title = "Image",data = "ImageUrl", format = "html", formatValue="image", className = "image-thumbnail action"},
                 new DataTableViewModel{title = "Inventory #",data = "FormattedSystemGeneratedId", orderable = true, sortingColumn = "SystemGeneratedId"},
                 new DataTableViewModel{title = "Item #",data = "ItemNo", orderable = true},
                 new DataTableViewModel{title = "Category",data = "Category.Name", orderable = true, filterId="categoryId", hasFilter = true},
@@ -42,7 +43,6 @@ namespace Web.Controllers
                 new DataTableViewModel{title = "UOM",data = "UOM.Name", orderable = true, filterId="uomId", hasFilter = true},
                 new DataTableViewModel{title = "OH Qty",data = "Quantity", orderable = true},
                 new DataTableViewModel{title = "Total Value",data = "TotalValue", className = "dt-currency" ,orderable = true},
-                //new DataTableViewModel{title = "Image",data = "FormattedGridImageUrl", format = "html", formatValue="image", className = "image-thumbnail action"},
                 new DataTableViewModel{title = "Action",data = null,className="action action-td text-right exclude-form-export"}
 
             };
@@ -70,7 +70,7 @@ namespace Web.Controllers
             viewModel.SearchBarHtml = @"
                     <ul class=""temp-nav-tabs-action-buttons""> 
                        <li>
-                        <button type=""button"" class="""" onclick=""loadCreateModalPanel('/Inventory/Create')"" data-bs-target=""#newSupModal"">
+                        <button type=""button"" class="""" onclick="" loadCreateModalPanel('/Inventory/Create')"" data-bs-target=""#newSupModal"">
                               <svg width=""17"" height=""16"" viewBox=""0 0 17 16"" fill=""none"" xmlns=""http://www.w3.org/2000/svg"">
 							<path d=""M8.225 12.3498H8.925V8.3498H12.925V7.6498H8.925V3.6498H8.225V7.6498H4.225V8.3498H8.225V12.3498ZM2.375 15.6998C1.94167 15.6998 1.58333 15.5581 1.3 15.2748C1.01667 14.9915 0.875 14.6331 0.875 14.1998V1.7998C0.875 1.36647 1.01667 1.00814 1.3 0.724805C1.58333 0.441471 1.94167 0.299805 2.375 0.299805H14.775C15.2083 0.299805 15.5667 0.441471 15.85 0.724805C16.1333 1.00814 16.275 1.36647 16.275 1.7998V14.1998C16.275 14.6331 16.1333 14.9915 15.85 15.2748C15.5667 15.5581 15.2083 15.6998 14.775 15.6998H2.375ZM2.375 14.9998H14.775C14.975 14.9998 15.1583 14.9165 15.325 14.7498C15.4917 14.5831 15.575 14.3998 15.575 14.1998V1.7998C15.575 1.5998 15.4917 1.41647 15.325 1.2498C15.1583 1.08314 14.975 0.999805 14.775 0.999805H2.375C2.175 0.999805 1.99167 1.08314 1.825 1.2498C1.65833 1.41647 1.575 1.5998 1.575 1.7998V14.1998C1.575 14.3998 1.65833 14.5831 1.825 14.7498C1.99167 14.9165 2.175 14.9998 2.375 14.9998Z"" fill=""#F54C00""/>
 						</svg>
@@ -84,7 +84,15 @@ namespace Web.Controllers
 						</svg>
                             Add Shipment
                         </button>
-                       </li></ul>";
+                       </li>
+<li class=favoriteIcon>
+                        <button type=""button"" >
+                            <svg xmlns=""http://www.w3.org/2000/svg"" width=""16"" height=""16"" viewBox=""0 0 24 24"" fill=""none"" stroke=""#f54e00"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round"" class=""lucide lucide-heart  ""><path d=""M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z""></path></svg>
+                            Favorites Only
+                        </button>
+                    </li>
+                
+</ul>";
             viewModel.HideTitle = true;
             viewModel.HideTopSearchBar = true;
             viewModel.IsLayoutNull = true;

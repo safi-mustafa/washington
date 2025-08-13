@@ -1,0 +1,140 @@
+﻿@* <h2>Order Details</h2>
+
+    
+        <div class="mb-4">
+            <label class="form-label fw-bold">Select Project</label>
+            <select class="form-select"  required>
+                <option value="">Select a project...</option>
+                <option>Construction Site A</option>
+                <option>Construction Site B</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-bold">Order Notes & Attachments</label>
+            <div class="mb-3">
+                <label class="form-label small">Special Instructions</label>
+                <textarea class="form-control" rows="4" ></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label small">Attachments</label>
+                <input class="form-control" type="file" multiple />
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a class="btn btn-outline-secondary">Back</a>
+        <a  class="btn btn-primary" asp-controller="Cart" asp-action="Step3">Next</a>
+        </div>
+   *@
+<style>
+    .stepper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .ProgressTitle {
+        display: flex;
+        align-items: center;
+    }
+
+    .step.active {
+        color: #f54e00;
+    }
+
+    .step .icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e9ecef;
+        margin-right: 8px;
+    }
+
+    .step.active .icon {
+        background-color: #f54e00;
+        color: #fff;
+    }
+
+    .step.completed .icon {
+        background-color: #198754;
+        color: #fff;
+    }
+
+    .step.completed .line {
+        background-color: #198754;
+        color: #fff;
+    }
+
+    .line {
+        flex: 1;
+        height: 3px;
+        margin: 0 26px;
+        background-color: #b2b2b2;
+        width: 19vw;
+    }
+</style>
+<h4 class="text-xl font-bold text-gray-900  mb-4">Checkout</h4>
+<!---------------new----------------->
+<div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+    <div class="stepper mb-0">
+        <div class="flex-1 d-flex align-items-center step completed">
+            <div class="ProgressTitle">
+                <div class="icon"><i class="fa fa-cart-shopping"></i></div>
+                Review Cart
+            </div>
+            <div class="line"></div>
+        </div>
+        <div class="flex-1 d-flex align-items-center step active">
+            <div class="ProgressTitle ">
+                <div class="icon"><i class="fa fa-pencil"></i></div>
+                Order Details
+            </div>
+            <div class="line"></div>
+        </div>
+        <div class="flex-1 d-flex align-items-center step">
+            <div class="ProgressTitle">
+                <div class="icon"><i class="fa fa-check-circle"></i></div>
+                Review & Submit
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="card p-4">
+
+    <h5 class="mb-3 fw-bold">Order Details</h5>
+
+
+    <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+        <div class="mb-4">
+            <h6 class="fw-bold mb-3">Select Project</h6>
+            <select class="form-select">
+                <option selected>Select a project...</option>
+                <option>Project A</option>
+                <option>Project B</option>
+            </select>
+        </div>  
+    </div>
+
+    <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+        <h6 class="fw-bold mb-3">Order Notes & Attachments</h6>
+        <label class="form-label mt-2">Special Instructions</label>
+        <textarea class="form-control" rows="3" placeholder="Add any special instructions or notes for this order..."></textarea>
+
+        <label class="form-label mt-3">Attachments</label>
+        <input type="file" class="form-control" multiple>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+        <a asp-controller="Cart" asp-action="Step1" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Cart
+        </a>
+        <a asp-controller="Cart" asp-action="Step3" class="btn btn-primary" >Review Order</a>
+    </div>
+</div>
