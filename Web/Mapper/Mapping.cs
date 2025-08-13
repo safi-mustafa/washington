@@ -713,7 +713,7 @@ namespace Models.Mapper
                 .ReverseMap();
 
             CreateMap<CompanyContact, CustomerProjectBriefViewModel>()
-                .ForMember(p => p.Name, a => a.MapFrom(d => d.Role))
+                .ForMember(p => p.Name, a => a.MapFrom(d => d.ContactPersonName))
                 .ReverseMap();
 
 

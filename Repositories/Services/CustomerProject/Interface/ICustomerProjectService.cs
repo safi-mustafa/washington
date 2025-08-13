@@ -1,5 +1,6 @@
 ﻿using Centangle.Common.ResponseHelpers.Models;
 
+using Models;
 using Models.Common.Interfaces;
 
 using Pagination;
@@ -20,5 +21,7 @@ namespace Repositories.Common
     {
         Task<PaginatedResultModel<T>> GetCustomerDropdown<T>(CustomerProjectSearchViewModel searchVM);
         Task<PaginatedResultModel<T>> GetProjectDropdown<T>(ProjectManagerSearchViewModel searchVM);
+        Task<CompanyInformation> GetCompanyInfoById(long id);
+        Task<CompanyContact> GetCompanyContactInfoById(long id);
     }
 }

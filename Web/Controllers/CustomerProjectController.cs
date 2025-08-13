@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 
+using Centangle.Common.ResponseHelpers.Models;
+
 using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
@@ -10,6 +12,8 @@ using Repositories.Common;
 
 using Select2;
 using Select2.Model;
+
+using System.Net;
 
 using ViewModels;
 using ViewModels.CustomerProject;
@@ -26,12 +30,14 @@ namespace Web.Controllers
 
         private readonly ICustomerProjectService<CustomerProjectModifyViewModel, CustomerProjectModifyViewModel, CustomerProjectDetailViewModel> _service;
         private readonly ILogger<CustomerProjectController> _logger;
+        private readonly IMapper _mapper;
         public CustomerProjectController(ICustomerProjectService<CustomerProjectModifyViewModel, CustomerProjectModifyViewModel, CustomerProjectDetailViewModel> service,
             ILogger<CustomerProjectController> logger,
             IMapper mapper) : base(service, logger, mapper, "CustomerProject", "Customer Project")
         {
             _service = service;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public override List<DataTableViewModel> GetColumns()
@@ -119,12 +125,58 @@ namespace Web.Controllers
 
         protected override async Task<JsonResult> ProcessSearchResult(CustomerProjectSearchViewModel searchModel, PaginatedResultModel<CustomerProjectDetailViewModel> model)
         {
-            //var totalInventoryPrice = await _service.GetTotalInventoryPrice(searchModel);
             var result = ConvertToDataTableModel(model, searchModel);
-            //result.AdditionalData.Add("TotalPrice", totalInventoryPrice.ToString("C"));
             SetDatatableActions(result);
             var jsonResult = Json(result);
             return jsonResult;
+        }
+
+        public override async Task<ActionResult> Update(int id)
+        {
+            try
+            {
+                var response = await _service.GetById(id);
+                CustomerProjectModifyViewModel model = new();
+                CustomerProjectDetailViewModel detailModel = new();
+                if (response.Status == HttpStatusCode.OK)
+                {
+                    var parsedModel = response as RepositoryResponseWithModel<CustomerProjectDetailViewModel>;
+                    detailModel = parsedModel.ReturnModel;
+                    model = _mapper.Map<CustomerProjectModifyViewModel>(parsedModel.ReturnModel);
+                }
+                if (model != null)
+                {
+                    var companyInfo = await _service.GetCompanyInfoById((long)model.CustomerId);
+                    var companyContactInfo = await _service.GetCompanyContactInfoById((long)model.ProjectManagerId);
+
+                    model.CustomerProject = new CustomerProjectBriefViewModel()
+                    {
+                        Id = companyInfo.Id,
+                        Name = companyInfo.CompanyName,
+                        Select2Text = companyInfo.CompanyName,
+                    };
+
+                    model.ProjectManager = new ProjectManagerBriefViewModel()
+                    {
+                        Id = companyContactInfo?.Id,
+                        ContactPersonName = companyContactInfo?.ContactPersonName,
+                        Select2Text = companyContactInfo?.ContactPersonName,
+                    };
+
+                    var updateVM = GetUpdateViewModel("Update", model);
+                    updateVM = await OverrideUpdateViewModel(updateVM);
+                    return UpdateView(updateVM);
+                }
+                else
+                {
+
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
+            }
         }
     }
 }

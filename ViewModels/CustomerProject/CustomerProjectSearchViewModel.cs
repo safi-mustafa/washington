@@ -1,10 +1,13 @@
 ﻿using Enums;
+
 using Pagination;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using ViewModels.CRUD.Interfaces;
 
 namespace ViewModels.CustomerProject
@@ -15,7 +18,7 @@ namespace ViewModels.CustomerProject
         public SearchFilterTypeCatalog? Type { get; set; }
         public string SearchView { get; set; }
 
-        public CustomerProjectBriefViewModel Customer { get; set; } = new();
-        public ProjectManagerBriefViewModel ProjectManager { get; set; } = new();
+        public CustomerProjectBriefViewModel Customer { get; set; } = new(false, "");
+        public ProjectManagerBriefViewModel ProjectManager { get; set; } = new(false, "");
     }
 }

@@ -12,6 +12,8 @@ using Enums;
 using Helpers.Extensions;
 using Helpers.File;
 
+using Irony.Parsing;
+
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -136,7 +138,7 @@ namespace Repositories.Services.CustomerProject
                                 ProjectStartDate = project.ProjectStartDate.Value.Date.ToString("MM/dd/yyyy"),
                                 ProjectEndDate = project.ProjectEndDate.Value.Date.ToString("MM/dd/yyyy"),
                                 CustomerName = company.CompanyName ?? "-",
-                                ProjectManagerName = companyContact.Role ?? "-",
+                                ProjectManagerName = companyContact.ContactPersonName ?? "-",
                                 Id = project.Id,
 
                             };
@@ -195,44 +197,45 @@ namespace Repositories.Services.CustomerProject
             }
         }
 
-        public async override Task<IRepositoryResponse> GetById(long id)
+        public async Task<CompanyInformation> GetCompanyInfoById(long id)
         {
             try
             {
-                var dbModel = await _db.CustomerProjects
-                                    .Where(x => x.Id == id)
-                                    .FirstOrDefaultAsync();
+                var companyInformation = await _db.CompanyInformations
+                              .FirstOrDefaultAsync(x => x.Id == id);
 
-                //var dbModelCI = await _db.CompanyInformations
-                //                    .Where(x => x.Id == dbModel.CustomerId)
-                //                    .FirstOrDefaultAsync();
-
-
-                //var dbModelCG = await _db.CompanyContacts
-                //                    .Where(x => x.Id == dbModel.ProjectManagerId)
-                //                    .FirstOrDefaultAsync();
-
-                if (dbModel != null)
-                {
-                    var result = _mapper.Map<DetailViewModel>(dbModel);
-                    var response = new RepositoryResponseWithModel<DetailViewModel> { ReturnModel = result };
-                    return response;
-                }
-                _logger.LogWarning($"No record found for id:{id} for {typeof(Asset).FullName} in GetById()");
-                return Response.NotFoundResponse(_response);
+                return companyInformation;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"GetById() for {typeof(Asset).FullName} threw the following exception");
-                return Response.BadRequestResponse(_response);
+                _logger.LogError(ex, $"GetCompanyInfoById() for {typeof(Models.CompanyInformation).FullName} threw an exception");
+                return (CompanyInformation)Response.BadRequestResponse(_response);
             }
         }
+
+        public async Task<CompanyContact> GetCompanyContactInfoById(long id)
+        {
+            try
+            {
+                var CompanyContactInfo = await _db.CompanyContacts
+                              .FirstOrDefaultAsync(x => x.Id == id);
+
+                return CompanyContactInfo;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"GetCompanyContactInfoById() for {typeof(Models.CompanyContact).FullName} threw an exception");
+                return (CompanyContact)Response.BadRequestResponse(_response);
+            }
+        }
+
 
         public async Task<PaginatedResultModel<T>> GetCustomerDropdown<T>(CustomerProjectSearchViewModel searchVM)
         {
             try
             {
-                var companyInformation = await _db.CompanyInformations.AsNoTracking().ToListAsync();
+                var companyInformation = await _db.CompanyInformations
+                    .Where(p => !p.IsDeleted && p.ActiveStatus == ActiveStatus.Active).AsNoTracking().ToListAsync();
 
                 // Paginate the CompanyInformation list
                 var paginated = await companyInformation
@@ -260,18 +263,10 @@ namespace Repositories.Services.CustomerProject
         {
             try
             {
-                var companyContacts = new List<CompanyContact>();
-                if (string.IsNullOrWhiteSpace(searchVM.SearchView))
-                {
-                    companyContacts = await _db.CompanyContacts.AsNoTracking().ToListAsync();
-                }
-                else
-                {
-                    companyContacts = await _db.CompanyContacts.Where(p => p.CompanyInformationId == Convert.ToInt64(searchVM.SearchView)).AsNoTracking().ToListAsync();
-                }
+                var companyContacts = await _db.CompanyContacts.Where(p => !p.IsDeleted && p.ActiveStatus == ActiveStatus.Active).AsNoTracking().ToListAsync();
 
                 var paginated = await companyContacts
-                    .OrderBy(x => x.Role)
+                    .OrderBy(x => x.ContactPersonName)
                     .ToList()
                     .PaginateList(searchVM);
 
@@ -289,6 +284,8 @@ namespace Repositories.Services.CustomerProject
                 return new PaginatedResultModel<T>();
             }
         }
+
+
 
     }
 }
