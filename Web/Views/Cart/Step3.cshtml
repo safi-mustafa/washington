@@ -1,0 +1,207 @@
+﻿<style>
+    .leftInfo p{
+        font-weight:400;
+        color:#1a1a1a;
+        font-size:16px;
+    }
+
+    .rightInfo p {
+        font-weight:500;
+        color:#000000;
+        font-size:16px;
+    }
+
+    
+    .stepper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .ProgressTitle {
+        display: flex;
+        align-items: center;
+    }
+
+    .step.active {
+        color: #f54e00;
+    }
+
+    .step .icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e9ecef;
+        margin-right: 8px;
+    }
+
+    .step.active .icon {
+        background-color: #f54e00;
+        color: #fff;
+    }
+
+    .step.completed .icon {
+        background-color: #198754;
+        color: #fff;
+    }
+
+    .step.completed .line {
+        background-color: #198754;
+        color: #fff;
+    }
+
+    .line {
+        flex: 1;
+        height: 3px;
+        margin: 0 26px;
+        background-color: #b2b2b2;
+        width: 19vw;
+    }
+
+
+</style>
+@* <h2>Review & Submit Order</h2>
+
+<div class="mb-4">
+    <p>test</p>
+    <div class="card p-3 mb-3">
+        <h5 class="fw-bold">Order Summary</h5>
+        <div class="d-flex justify-content-between">
+            <div>
+                <p>Project:</p>
+                <p>Project Code: CSA-001</p>
+                <p>Items: 1 items</p>
+                <p>Estimated Total: <strong>$5,950</strong></p>
+                <p>Special Instructions: <strong>test</strong></p>
+            </div>
+        </div>
+    </div>
+
+   <div class="card p-3">
+        <h5 class="fw-bold">Items to Order</h5>
+        <div class="d-flex justify-content-between">
+            <div>
+                <strong>Crane Mobile 50T</strong><br />
+                <span>2025-08-13 to 2025-08-20 • Daily • Qty: 1</span>
+            </div>
+            <div><strong>$850</strong></div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between">
+    <a asp-controller="Cart" asp-action="Step2" class="btn btn-outline-secondary">Back to Details</a>
+    <form method="post">
+        <button type="submit" class="btn btn-success">Submit Order</button>
+    </form>
+</div> *@
+
+
+<h4 class="text-xl font-bold text-gray-900  mb-4">Checkout</h4>
+<!---------------new----------------->
+<div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+    <div class="stepper mb-0">
+        <div class="flex-1 d-flex align-items-center step completed">
+            <div class="ProgressTitle">
+                <div class="icon"><i class="fa fa-cart-shopping"></i></div>
+                Review Cart
+            </div>
+            <div class="line"></div>
+        </div>
+        <div class="flex-1 d-flex align-items-center step completed">
+            <div class="ProgressTitle ">
+                <div class="icon"><i class="fa fa-pencil"></i></div>
+                Order Details
+            </div>
+            <div class="line"></div>
+        </div>
+        <div class="flex-1 d-flex align-items-center step active">
+            <div class="ProgressTitle">
+                <div class="icon"><i class="fa fa-check-circle"></i></div>
+                Review & Submit
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h5 class="fw-bold mb-3">Review & Submit Order</h5>
+
+            <!-- Order Summary -->
+            
+            <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+                    <h6 class="fw-semibold mb-3">Order Summary</h6>
+                    <div class="row">
+                        <div class="col-6 leftInfo">
+                            <p class="mb-1">Project:</p>
+                            <p class="mb-1">Project Code:</p>
+                            <p class="mb-1">Items:</p>
+                            <p class="mb-0">Estimated Total:</p>
+                        </div>
+                        <div class="col-6 text-end rightInfo">
+                        <p class="mb-1">Pipeline Installation Phase 1</p>
+                        <p class="mb-1">PIP-001</p>
+                            <p class="mb-1">3 items</p>
+                            <p class="mb-0 fs-5 fw-bold text-dark">$9940</p>
+                        </div>
+                    </div>
+                </div>
+           
+
+            <!-- Items to Order -->
+            
+            <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+                    <h6 class="fw-semibold mb-3">Items to Order</h6>
+                          <div class="row">
+                              <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center p-3 mb-2 rounded" style="background-color: #f8f9fa;">
+                                    <div>
+                                        <strong>Crane Mobile 50T</strong>
+                                        <div class="text-muted small">
+                                            2025-08-13 to 2025-08-20  • Daily  • Qty: 1
+                                        </div>
+                                    </div>
+                                    <div class="fw-semibold">$850</div>
+                                </div>
+                              </div>
+                              <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center p-3 mb-2 rounded" style="background-color: #f8f9fa;">
+                                    <div>
+                                        <strong>Crane Mobile 50T</strong>
+                                        <div class="text-muted small">
+                                            2025-08-13 to 2025-08-20  • Daily  • Qty: 1
+                                        </div>
+                                    </div>
+                                    <div class="fw-semibold">$850</div>
+                                </div>
+                              </div>
+                              <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center p-3 mb-2 rounded" style="background-color: #f8f9fa;">
+                                    <div>
+                                        <strong>Crane Mobile 50T</strong>
+                                        <div class="text-muted small">
+                                            2025-08-13 to 2025-08-20  • Daily  • Qty: 1
+                                        </div>
+                                    </div>
+                                    <div class="fw-semibold">$850</div>
+                                </div>
+                              </div>
+                          </div>
+                      
+                    
+                </div>
+            
+
+            <!-- Navigation Buttons -->
+            <div class="d-flex justify-content-between">
+            <a asp-controller="Cart" asp-action="Step2" class="btn btn-outline-secondary" >Back to Details</a>
+            <button type="submit" form="submitOrderForm" class="btn btn-success" >Submit Order</button>
+            </div>
+        </div>
+    </div>
+

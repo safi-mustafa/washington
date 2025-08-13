@@ -47,7 +47,7 @@ namespace ViewModels
         {
             get
             {
-                return Quantity < MinimumQuantity ? "row-low-stock" : "";
+                return Quantity < MinimumQuantity ? "" : "";
             }
         }
 
