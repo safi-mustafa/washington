@@ -57,6 +57,8 @@ using Repositories.Services.AttachmentService;
 using Repositories.Services.AttachmentService.Interface;
 using Repositories.Services.AuthenticationService;
 using Repositories.Services.AuthenticationService.Interface;
+using Repositories.Services.CustomerProfile;
+using Repositories.Services.CustomerProfile.Interface;
 using Repositories.Services.CustomerProject;
 using Repositories.Services.Dashboard;
 using Repositories.Services.Dashboard.Interface;
@@ -215,6 +217,7 @@ namespace Web.Extensions
             services.AddScoped(typeof(IUserSearchSettingService<,,>), typeof(UserSearchSettingService<,,>));
             services.AddScoped(typeof(IReportFactory), typeof(ReportFactory));
             services.AddScoped(typeof(ICustomerProjectService<,,>), typeof(CustomerProjectService<,,>));
+            services.AddScoped<ICustomerProfileService, CustomerProfileService>();
             services.AddDefaultCorrelationId();
         }
     }

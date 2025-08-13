@@ -1,4 +1,4 @@
-@model ViewModels.CRUD.TabViewModel
+@model ViewModels.CustomerProfile.CustomerProfileViewModel
 <style>
     /**********************Common CSS for new design 12-08-25 by dhara*************************/
     .btn.CommonAddBtn {
@@ -69,6 +69,32 @@
         border-radius: 6px;
         background: #f7f7f7;
     }
+
+    .is-invalid {
+        border-color: #dc3545;
+    }
+
+    .invalid-feedback {
+        display: block;
+        color: #dc3545;
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+    }
+
+    .view-mode .contact-inputs,
+    .view-mode .jobsite-inputs {
+        display: none;
+    }
+
+    .view-mode .btn-danger,
+    .view-mode .btn-primary {
+        display: none;
+    }
+
+    .view-mode th:last-child,
+    .view-mode td:last-child {
+        display: none;
+    }
 </style>
 
 <div class="container py-4">
@@ -77,12 +103,12 @@
             <h4 class="fw-bold mb-1">@Model.Title</h4>
             <div class="text-muted fs-6">Manage your company profiles and related information</div>
         </div>
-        <button type="button" class="btn btn-primary btn-lg CommonAddBtn" data-bs-toggle="modal" data-bs-target="#addCompanyProfileModal">
+        <button type="button" class="btn btn-primary btn-lg CommonAddBtn" onclick="resetModalForAdd()" data-bs-toggle="modal" data-bs-target="#addCompanyProfileModal">
             <i class="fa fa-plus me-2"></i> Add New Company Profile
         </button>
     </div>
     <div class="row g-4">
-        @foreach (var company in Model.CompanyProfiles ?? Enumerable.Empty<ViewModels.CRUD.CompanyProfileViewModel>())
+        @foreach (var company in Model.CompanyProfiles ?? Enumerable.Empty<ViewModels.CustomerProfile.CompanyProfileViewModel>())
         {
             <div class="col-md-6">
                 <div class="card h-100 shadow-sm CommonListCard">
@@ -140,9 +166,9 @@
                             </small>
                         </div>
                         <div class="d-flex gap-2 ButtonGroup">
-                            <a href="@company.ViewUrl" class="btn btn-primary flex-fill"><i class="fa fa-eye me-1"></i> View</a>
-                            <a href="@company.EditUrl" class="btn btn-light flex-fill"><i class="fa fa-pen me-1"></i> Edit</a>
-                            <a href="@company.DeleteUrl" class="btn btn-link text-danger flex-fill"><i class="fa fa-trash"></i></a>
+                            <button type="button" class="btn btn-primary flex-fill" onclick="viewCompany('@company.EditUrl')"><i class="fa fa-eye me-1"></i> View</button>
+                            <button type="button" class="btn btn-light flex-fill" onclick="editCompany('@company.EditUrl')"><i class="fa fa-pen me-1"></i> Edit</button>
+                            <button type="button" class="btn btn-link text-danger flex-fill" onclick="deleteCompany('@company.DeleteUrl')"><i class="fa fa-trash"></i></button>
                         </div>
                     </div>
                 </div>
@@ -177,45 +203,54 @@
                             <div class="shadow-sm border border-gray-200 card-body InfoCard">
                                 <h6 class="fw-bold mb-3">Company Information</h6>
                                 <div class="mb-3">
-                                    <label class="form-label">Company Name</label>
-                                    <input type="text" class="form-control" id="companyName" />
+                                    <label class="form-label">Company Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="companyName" required />
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Industry</label>
-                                    <select class="form-select" id="industry">
+                                    <label class="form-label">Industry <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="industry" required>
+                                        <option value="">Select Industry</option>
                                         <option>Oil & Gas</option>
                                         <option>Construction</option>
                                         <option>Other</option>
                                     </select>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <fieldset class="mb-3">
                                     <legend class="fs-6">Address</legend>
                                     <div class="row g-2">
                                         <div class="col-md-6 mb-2">
-                                            <label class="form-label">Street</label>
-                                            <input type="text" class="form-control" id="street" />
+                                            <label class="form-label">Street <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="street" required />
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="col-md-6 mb-2">
-                                            <label class="form-label">City</label>
-                                            <input type="text" class="form-control" id="city" />
+                                            <label class="form-label">City <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="city" required />
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="col-md-6 mb-2">
-                                            <label class="form-label">State</label>
-                                            <input type="text" class="form-control" id="state" />
+                                            <label class="form-label">State <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="state" required />
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="col-md-6 mb-2">
-                                            <label class="form-label">Zip Code</label>
-                                            <input type="text" class="form-control" id="zipCode" />
+                                            <label class="form-label">Zip Code <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="zipCode" required pattern="[0-9]{5}(-[0-9]{4})?" />
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
                                 </fieldset>
                                 <div class="mb-3">
-                                    <label class="form-label">Telephone</label>
-                                    <input type="tel" class="form-control" id="telephone" />
+                                    <label class="form-label">Telephone <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="telephone" required pattern="[0-9\-\(\)\+\s]{10,}" />
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Web Address</label>
                                     <input type="url" class="form-control" id="webAddress" />
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 mt-3">
                                     <button type="button" class="btn btn-primary" id="nextToContacts">Next</button>
@@ -226,29 +261,36 @@
                         <div class="tab-pane fade" id="company-contacts" role="tabpanel" aria-labelledby="company-contacts-tab">
                             <div class="shadow-sm border border-gray-200 card-body InfoCard">
                                 <h6 class="fw-bold mb-3">Company Contacts</h6>
-                                <div class="mb-3">
-                                    <label class="form-label">Contact Person Name</label>
-                                    <input type="text" class="form-control" id="contactPersonName" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Role</label>
-                                    <select class="form-select" id="contactRole">
-                                        <option>Project Manager</option>
-                                        <option>Admin</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="contactPhone" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="contactEmail" />
-                                </div>
-                                <div class="d-flex justify-content-end gap-2 mt-3">
-                                    <button type="button" class="btn btn-secondary" id="prevToInfo">Previous</button>
-                                    <button type="button" class="btn btn-success" id="saveContact">Save</button>
-                                    <button type="button" class="btn btn-primary" id="nextToJobSites">Next</button>
+                                <div class="contact-inputs">
+                                    <div class="mb-3">
+                                        <label class="form-label">Contact Person Name</label>
+                                        <input type="text" class="form-control" id="contactPersonName" />
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Role</label>
+                                        <select class="form-select" id="contactRole">
+                                            <option value="">Select Role</option>
+                                            <option>Project Manager</option>
+                                            <option>Admin</option>
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="contactPhone" pattern="[0-9\-\(\)\+\s]{10,}" />
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="contactEmail" />
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-end gap-2 mt-3">
+                                        <button type="button" class="btn btn-secondary" id="prevToInfo">Previous</button>
+                                        <button type="button" class="btn btn-success" id="saveContact">Save</button>
+                                        <button type="button" class="btn btn-primary" id="nextToJobSites">Next</button>
+                                    </div>
                                 </div>
                                 <div class="mt-5 savedDetail">
                                     <h6>Saved Contacts</h6>
@@ -260,21 +302,26 @@
                         <div class="tab-pane fade" id="job-sites" role="tabpanel" aria-labelledby="job-sites-tab">
                             <div class="shadow-sm border border-gray-200 card-body InfoCard">
                                 <h6 class="fw-bold mb-3">Job Sites</h6>
-                                <div class="mb-3">
-                                    <label class="form-label">Site Name</label>
+                                <div class="jobsite-inputs">
+                                    <div class="mb-3">
+                                        <label class="form-label">Site Name</label>
                                     <input type="text" class="form-control" id="siteName" />
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Contact Person Name</label>
                                     <input type="text" class="form-control" id="jobContactPersonName" />
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Contact Person’s Email</label>
+                                    <label class="form-label">Contact Person's Email</label>
                                     <input type="email" class="form-control" id="jobContactPersonEmail" />
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Contact Person’s Mobile</label>
+                                    <label class="form-label">Contact Person's Mobile</label>
                                     <input type="tel" class="form-control" id="jobContactPersonMobile" />
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Special Notes</label>
@@ -283,7 +330,9 @@
                                 <div class="d-flex justify-content-end gap-2 mt-3">
                                     <button type="button" class="btn btn-secondary" id="prevToContacts">Previous</button>
                                     <button type="button" class="btn btn-success" id="saveJobSite">Save</button>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button type="button" class="btn btn-primary" id="submitForm">Submit</button>
+                                    <button type="button" class="btn btn-success" id="updateForm" style="display:none;">Update</button>
+                                    </div>
                                 </div>
                                 <div class="mt-5 savedDetail">
                                     <h6>Saved Job Sites</h6>
@@ -300,10 +349,65 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Tab navigation
+        // Validation functions
+        function validateField(field) {
+            const value = field.value.trim();
+            const isValid = field.checkValidity() && value !== '';
+            
+            field.classList.toggle('is-invalid', !isValid);
+            
+            const feedback = field.nextElementSibling;
+            if (feedback && feedback.classList.contains('invalid-feedback')) {
+                if (!isValid) {
+                    if (field.type === 'email') {
+                        feedback.textContent = 'Please enter a valid email address.';
+                    } else if (field.type === 'tel') {
+                        feedback.textContent = 'Please enter a valid phone number (minimum 10 digits).';
+                    } else if (field.type === 'url') {
+                        feedback.textContent = 'Please enter a valid URL.';
+                    } else if (field.id === 'zipCode') {
+                        feedback.textContent = 'Please enter a valid zip code (e.g., 12345 or 12345-6789).';
+                    } else {
+                        feedback.textContent = 'This field is required.';
+                    }
+                } else {
+                    feedback.textContent = '';
+                }
+            }
+            
+            return isValid;
+        }
+
+        function validateTab(tabId) {
+            const tab = document.getElementById(tabId);
+            const fields = tab.querySelectorAll('input[required], select[required]');
+            let isValid = true;
+            
+            fields.forEach(field => {
+                if (!validateField(field)) {
+                    isValid = false;
+                }
+            });
+            
+            return isValid;
+        }
+
+        // Add real-time validation
+        document.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('blur', () => validateField(field));
+            field.addEventListener('input', () => {
+                if (field.classList.contains('is-invalid')) {
+                    validateField(field);
+                }
+            });
+        });
+
+        // Tab navigation with validation
         document.getElementById('nextToContacts').addEventListener('click', function () {
-            var tab = new bootstrap.Tab(document.querySelector('#company-contacts-tab'));
-            tab.show();
+            if (validateTab('company-info')) {
+                var tab = new bootstrap.Tab(document.querySelector('#company-contacts-tab'));
+                tab.show();
+            }
         });
         document.getElementById('nextToJobSites').addEventListener('click', function () {
             var tab = new bootstrap.Tab(document.querySelector('#job-sites-tab'));
@@ -319,22 +423,84 @@
         });
 
         // Company Contacts logic
-        let contacts = [];
+        window.contacts = [];
+        window.editingContactIndex = -1;
         document.getElementById('saveContact').addEventListener('click', function () {
-            const name = document.getElementById('contactPersonName').value.trim();
-            const role = document.getElementById('contactRole').value;
-            const phone = document.getElementById('contactPhone').value.trim();
-            const email = document.getElementById('contactEmail').value.trim();
-            if (name && role && phone && email) {
-                contacts.push({ name, role, phone, email });
-                renderContacts();
-                document.getElementById('contactPersonName').value = '';
-                document.getElementById('contactRole').selectedIndex = 0;
-                document.getElementById('contactPhone').value = '';
-                document.getElementById('contactEmail').value = '';
+            const nameField = document.getElementById('contactPersonName');
+            const roleField = document.getElementById('contactRole');
+            const phoneField = document.getElementById('contactPhone');
+            const emailField = document.getElementById('contactEmail');
+            
+            // Validate required fields for saving
+            let isValid = true;
+            if (!nameField.value.trim()) {
+                nameField.classList.add('is-invalid');
+                nameField.nextElementSibling.textContent = 'Contact name is required.';
+                isValid = false;
+            } else {
+                nameField.classList.remove('is-invalid');
+                nameField.nextElementSibling.textContent = '';
+            }
+            
+            if (!roleField.value) {
+                roleField.classList.add('is-invalid');
+                roleField.nextElementSibling.textContent = 'Role is required.';
+                isValid = false;
+            } else {
+                roleField.classList.remove('is-invalid');
+                roleField.nextElementSibling.textContent = '';
+            }
+            
+            if (!phoneField.value.trim() || !phoneField.checkValidity()) {
+                phoneField.classList.add('is-invalid');
+                phoneField.nextElementSibling.textContent = 'Valid phone number is required.';
+                isValid = false;
+            } else {
+                phoneField.classList.remove('is-invalid');
+                phoneField.nextElementSibling.textContent = '';
+            }
+            
+            if (!emailField.value.trim() || !emailField.checkValidity()) {
+                emailField.classList.add('is-invalid');
+                emailField.nextElementSibling.textContent = 'Valid email is required.';
+                isValid = false;
+            } else {
+                emailField.classList.remove('is-invalid');
+                emailField.nextElementSibling.textContent = '';
+            }
+            
+            if (isValid) {
+                const contactData = { 
+                    name: nameField.value.trim(), 
+                    role: roleField.value, 
+                    phone: phoneField.value.trim(), 
+                    email: emailField.value.trim() 
+                };
+                
+                if (window.editingContactIndex >= 0) {
+                    window.contacts[window.editingContactIndex] = contactData;
+                    window.editingContactIndex = -1;
+                } else {
+                    window.contacts.push(contactData);
+                }
+                
+                window.renderContacts();
+                nameField.value = '';
+                roleField.selectedIndex = 0;
+                phoneField.value = '';
+                emailField.value = '';
+                
+                // Clear validation states
+                [nameField, roleField, phoneField, emailField].forEach(field => {
+                    field.classList.remove('is-invalid');
+                    const feedback = field.nextElementSibling;
+                    if (feedback && feedback.classList.contains('invalid-feedback')) {
+                        feedback.textContent = '';
+                    }
+                });
             }
         });
-        function renderContacts() {
+        window.renderContacts = function() {
             const list = document.getElementById('contactsList');
             // list.innerHTML = '';
             // contacts.forEach((c, i) => {
@@ -362,45 +528,143 @@
 
             const tableBody = document.getElementById('contactsTableBody');
 
-            contacts.forEach((c, i) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <th scope="row">${i + 1}</th>
-                    <td>${c.name}</td>
-                    <td>${c.role}</td>
-                    <td>${c.phone}</td>
-                    <td>${c.email}</td>
-                    <td>
-                    <button type="button" class="btn btn-sm btn-danger" onclick="removeContact(${i})">Remove</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
+                window.contacts.forEach((c, i) => {
+        const row = document.createElement('tr');
+
+        const name = c.name?.trim()
+            ? c.name
+            : (c.Name?.trim() ? c.Name : "");
+
+        const role = c.role?.trim()
+            ? c.role
+            : (c.Role?.trim() ? c.Role : "");
+
+        const phone = c.phone?.trim()
+            ? c.phone
+            : (c.Phone?.trim() ? c.Phone : "");
+
+        const email = c.email?.trim()
+            ? c.email
+            : (c.Email?.trim() ? c.Email : "");
+
+        row.innerHTML = `
+            <th scope="row">${i + 1}</th>
+            <td>${name}</td>
+            <td>${role}</td>
+            <td>${phone}</td>
+            <td>${email}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-primary me-1" onclick="editContact(${i})"><i class="fa fa-edit"></i></button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="removeContact(${i})"><i class="fa fa-trash"></i></button>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+
         }
+        window.editContact = function(idx) {
+            const contact = window.contacts[idx];
+            const name = contact.name || contact.Name || '';
+            const role = contact.role || contact.Role || '';
+            const phone = contact.phone || contact.Phone || '';
+            const email = contact.email || contact.Email || '';
+            
+            document.getElementById('contactPersonName').value = name;
+            document.getElementById('contactRole').value = role;
+            document.getElementById('contactPhone').value = phone;
+            document.getElementById('contactEmail').value = email;
+            
+            window.editingContactIndex = idx;
+        };
+        
         window.removeContact = function(idx) {
-            contacts.splice(idx, 1);
-            renderContacts();
+            window.contacts.splice(idx, 1);
+            window.renderContacts();
         };
 
         // Job Sites logic
-        let jobSites = [];
+        window.jobSites = [];
+        window.editingJobSiteIndex = -1;
         document.getElementById('saveJobSite').addEventListener('click', function () {
-            const siteName = document.getElementById('siteName').value.trim();
-            const contactName = document.getElementById('jobContactPersonName').value.trim();
-            const contactEmail = document.getElementById('jobContactPersonEmail').value.trim();
-            const contactMobile = document.getElementById('jobContactPersonMobile').value.trim();
-            const notes = document.getElementById('specialNotes').value.trim();
-            if (siteName && contactName && contactEmail && contactMobile) {
-                jobSites.push({ siteName, contactName, contactEmail, contactMobile, notes });
-                renderJobSites();
-                document.getElementById('siteName').value = '';
-                document.getElementById('jobContactPersonName').value = '';
-                document.getElementById('jobContactPersonEmail').value = '';
-                document.getElementById('jobContactPersonMobile').value = '';
-                document.getElementById('specialNotes').value = '';
+            const siteNameField = document.getElementById('siteName');
+            const contactNameField = document.getElementById('jobContactPersonName');
+            const contactEmailField = document.getElementById('jobContactPersonEmail');
+            const contactMobileField = document.getElementById('jobContactPersonMobile');
+            const notesField = document.getElementById('specialNotes');
+            
+            // Validate required fields for saving
+            let isValid = true;
+            if (!siteNameField.value.trim()) {
+                siteNameField.classList.add('is-invalid');
+                siteNameField.nextElementSibling.textContent = 'Site name is required.';
+                isValid = false;
+            } else {
+                siteNameField.classList.remove('is-invalid');
+                siteNameField.nextElementSibling.textContent = '';
+            }
+            
+            if (!contactNameField.value.trim()) {
+                contactNameField.classList.add('is-invalid');
+                contactNameField.nextElementSibling.textContent = 'Contact name is required.';
+                isValid = false;
+            } else {
+                contactNameField.classList.remove('is-invalid');
+                contactNameField.nextElementSibling.textContent = '';
+            }
+            
+            if (!contactEmailField.value.trim() || !contactEmailField.checkValidity()) {
+                contactEmailField.classList.add('is-invalid');
+                contactEmailField.nextElementSibling.textContent = 'Valid email is required.';
+                isValid = false;
+            } else {
+                contactEmailField.classList.remove('is-invalid');
+                contactEmailField.nextElementSibling.textContent = '';
+            }
+            
+            if (!contactMobileField.value.trim() || !contactMobileField.checkValidity()) {
+                contactMobileField.classList.add('is-invalid');
+                contactMobileField.nextElementSibling.textContent = 'Valid mobile number is required.';
+                isValid = false;
+            } else {
+                contactMobileField.classList.remove('is-invalid');
+                contactMobileField.nextElementSibling.textContent = '';
+            }
+            
+            if (isValid) {
+                const jobSiteData = { 
+                    siteName: siteNameField.value.trim(), 
+                    contactName: contactNameField.value.trim(), 
+                    contactEmail: contactEmailField.value.trim(), 
+                    contactMobile: contactMobileField.value.trim(), 
+                    notes: notesField.value.trim() 
+                };
+                
+                if (window.editingJobSiteIndex >= 0) {
+                    window.jobSites[window.editingJobSiteIndex] = jobSiteData;
+                    window.editingJobSiteIndex = -1;
+                } else {
+                    window.jobSites.push(jobSiteData);
+                }
+                
+                window.renderJobSites();
+                siteNameField.value = '';
+                contactNameField.value = '';
+                contactEmailField.value = '';
+                contactMobileField.value = '';
+                notesField.value = '';
+                
+                // Clear validation states
+                [siteNameField, contactNameField, contactEmailField, contactMobileField].forEach(field => {
+                    field.classList.remove('is-invalid');
+                    const feedback = field.nextElementSibling;
+                    if (feedback && feedback.classList.contains('invalid-feedback')) {
+                        feedback.textContent = '';
+                    }
+                });
             }
         });
-        function renderJobSites() {
+        window.renderJobSites = function() {
             const list = document.getElementById('jobSitesList');
             // list.innerHTML = '';
             // jobSites.forEach((j, i) => {
@@ -428,24 +692,350 @@
                 // Append rows for each job site
                 const tableBody = document.getElementById('jobSitesTableBody');
 
-                jobSites.forEach((j, i) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <th scope="row">${i + 1}</th>
-                        <td>${j.siteName}</td>
-                        <td>${j.contactName}</td>
-                        <td>${j.contactEmail}</td>
-                        <td>${j.contactMobile}</td>
-                        <td>
-                        <button type="button" class="btn btn-sm btn-danger" onclick="removeJobSite(${i})">Remove</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
+                        window.jobSites.forEach((j, i) => {
+        const row = document.createElement('tr');
+
+        const siteName = j.siteName?.trim()
+            ? j.siteName
+            : (j.SiteName?.trim() ? j.SiteName : "");
+
+        const contactName = j.contactName?.trim()
+            ? j.contactName
+            : (j.ContactName?.trim() ? j.ContactName : "");
+
+        const contactEmail = j.contactEmail?.trim()
+            ? j.contactEmail
+            : (j.ContactEmail?.trim() ? j.ContactEmail : "");
+
+        const contactMobile = j.contactMobile?.trim()
+            ? j.contactMobile
+            : (j.ContactMobile?.trim() ? j.ContactMobile : "");
+
+        row.innerHTML = `
+            <th scope="row">${i + 1}</th>
+            <td>${siteName}</td>
+            <td>${contactName}</td>
+            <td>${contactEmail}</td>
+            <td>${contactMobile}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-primary me-1" onclick="editJobSite(${i})"><i class="fa fa-edit"></i></button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="removeJobSite(${i})"><i class="fa fa-trash"></i></button>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+
+
         }
-        window.removeJobSite = function(idx) {
-            jobSites.splice(idx, 1);
-            renderJobSites();
+        window.editJobSite = function(idx) {
+            const jobSite = window.jobSites[idx];
+            const siteName = jobSite.siteName || jobSite.SiteName || '';
+            const contactName = jobSite.contactName || jobSite.ContactName || '';
+            const contactEmail = jobSite.contactEmail || jobSite.ContactEmail || '';
+            const contactMobile = jobSite.contactMobile || jobSite.ContactMobile || '';
+            const notes = jobSite.notes || jobSite.Notes || '';
+            
+            document.getElementById('siteName').value = siteName;
+            document.getElementById('jobContactPersonName').value = contactName;
+            document.getElementById('jobContactPersonEmail').value = contactEmail;
+            document.getElementById('jobContactPersonMobile').value = contactMobile;
+            document.getElementById('specialNotes').value = notes;
+            
+            window.editingJobSiteIndex = idx;
         };
+        
+        window.removeJobSite = function(idx) {
+            window.jobSites.splice(idx, 1);
+            window.renderJobSites();
+        };
+
+        // Form submission
+        window.currentCompanyId = null;
+        
+        document.getElementById('submitForm').addEventListener('click', function() {
+            // Validate all required fields
+            const companyInfoValid = validateTab('company-info');
+            
+            if (!companyInfoValid) {
+                // Switch to company info tab to show errors
+                var tab = new bootstrap.Tab(document.querySelector('#company-info-tab'));
+                tab.show();
+                return;
+            }
+            
+            const formData = {
+                CompanyName: document.getElementById('companyName').value,
+                Industry: document.getElementById('industry').value,
+                Street: document.getElementById('street').value,
+                City: document.getElementById('city').value,
+                State: document.getElementById('state').value,
+                ZipCode: document.getElementById('zipCode').value,
+                Telephone: document.getElementById('telephone').value,
+                WebAddress: document.getElementById('webAddress').value,
+                Contacts: window.contacts,
+                JobSites: window.jobSites
+            };
+
+            fetch('/CustomerProfile/Create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error saving data');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error saving data');
+            });
+        });
+
+        document.getElementById('updateForm').addEventListener('click', function() {
+            // Validate all required fields
+            const companyInfoValid = validateTab('company-info');
+            
+            if (!companyInfoValid) {
+                // Switch to company info tab to show errors
+                var tab = new bootstrap.Tab(document.querySelector('#company-info-tab'));
+                tab.show();
+                return;
+            }
+            
+            const formData = {
+                Id: window.currentCompanyId,
+                CompanyName: document.getElementById('companyName').value,
+                Industry: document.getElementById('industry').value,
+                Street: document.getElementById('street').value,
+                City: document.getElementById('city').value,
+                State: document.getElementById('state').value,
+                ZipCode: document.getElementById('zipCode').value,
+                Telephone: document.getElementById('telephone').value,
+                WebAddress: document.getElementById('webAddress').value,
+                Contacts: window.contacts,
+                JobSites: window.jobSites
+            };
+
+            fetch('/CustomerProfile/Update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error updating data');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating data');
+            });
+        });
+    });
+
+    function deleteCompany(deleteUrl) {
+        if (confirm('Are you sure you want to delete this company profile?')) {
+            fetch(deleteUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error deleting company: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting company');
+            });
+        }
+    }
+
+    function viewCompany(getUrl) {
+        fetch(getUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error loading company data: ' + data.error);
+                    return;
+                }
+                
+                // Fill form fields
+                document.getElementById('companyName').value = data.CompanyName || '';
+                document.getElementById('industry').value = data.Industry || '';
+                document.getElementById('street').value = data.Street || '';
+                document.getElementById('city').value = data.City || '';
+                document.getElementById('state').value = data.State || '';
+                document.getElementById('zipCode').value = data.ZipCode || '';
+                document.getElementById('telephone').value = data.Telephone || '';
+                document.getElementById('webAddress').value = data.WebAddress || '';
+                
+                // Load contacts and job sites
+                window.contacts = data.Contacts || [];
+                window.renderContacts();
+                window.jobSites = data.JobSites || [];
+                window.renderJobSites();
+                
+                // Set all fields to readonly
+                document.querySelectorAll('#companyProfileForm input, #companyProfileForm select, #companyProfileForm textarea').forEach(field => {
+                    field.readOnly = true;
+                    field.disabled = true;
+                });
+                
+                // Add view-mode class to hide input fields in contacts and job sites
+                document.getElementById('addCompanyProfileModal').classList.add('view-mode');
+                
+                // Hide action buttons
+                document.getElementById('nextToContacts').style.display = 'none';
+                document.getElementById('prevToInfo').style.display = 'none';
+                document.getElementById('saveContact').style.display = 'none';
+                document.getElementById('nextToJobSites').style.display = 'none';
+                document.getElementById('prevToContacts').style.display = 'none';
+                document.getElementById('saveJobSite').style.display = 'none';
+                document.getElementById('submitForm').style.display = 'none';
+                document.getElementById('updateForm').style.display = 'none';
+                
+                // Update modal title
+                document.getElementById('addCompanyProfileModalLabel').textContent = 'View Company Profile';
+                
+                // Show modal
+                var modal = new bootstrap.Modal(document.getElementById('addCompanyProfileModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading company data');
+            });
+    }
+
+    function editCompany(getUrl) {
+        fetch(getUrl)
+            .then(response => response.json())
+            .then(data => {
+                debugger
+                if (data.error) {
+                    alert('Error loading company data: ' + data.error);
+                    return;
+                }
+                
+                // Fill form fields
+                document.getElementById('companyName').value = data.CompanyName || '';
+                document.getElementById('industry').value = data.Industry || '';
+                document.getElementById('street').value = data.Street || '';
+                document.getElementById('city').value = data.City || '';
+                document.getElementById('state').value = data.State || '';
+                document.getElementById('zipCode').value = data.ZipCode || '';
+                document.getElementById('telephone').value = data.Telephone || '';
+                document.getElementById('webAddress').value = data.WebAddress || '';
+                
+                // Store company ID for update
+                window.currentCompanyId = data.Id;
+                
+                // Load contacts
+                window.contacts = data.Contacts || [];
+                window.renderContacts();
+                
+                // Load job sites
+                window.jobSites = data.JobSites || [];
+                window.renderJobSites();
+                
+                // Reset readonly state for editing
+                document.querySelectorAll('#companyProfileForm input, #companyProfileForm select, #companyProfileForm textarea').forEach(field => {
+                    field.readOnly = false;
+                    field.disabled = false;
+                });
+                
+                // Remove view-mode class
+                document.getElementById('addCompanyProfileModal').classList.remove('view-mode');
+                
+                // Show action buttons
+                document.getElementById('nextToContacts').style.display = 'inline-block';
+                document.getElementById('prevToInfo').style.display = 'inline-block';
+                document.getElementById('saveContact').style.display = 'inline-block';
+                document.getElementById('nextToJobSites').style.display = 'inline-block';
+                document.getElementById('prevToContacts').style.display = 'inline-block';
+                document.getElementById('saveJobSite').style.display = 'inline-block';
+                
+                // Update row index
+                window.rowIndex = Math.max(window.contacts.length, window.jobSites.length);
+                
+                // Change modal title and button
+                document.getElementById('addCompanyProfileModalLabel').textContent = 'Update Company Profile';
+                document.getElementById('submitForm').style.display = 'none';
+                document.getElementById('updateForm').style.display = 'inline-block';
+                
+                // Show modal
+                var modal = new bootstrap.Modal(document.getElementById('addCompanyProfileModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading company data');
+            });
+    }
+
+    function resetModalForAdd() {
+        // Reset form
+        document.getElementById('companyProfileForm').reset();
+        
+        // Clear arrays
+        window.contacts = [];
+        window.jobSites = [];
+        window.currentCompanyId = null;
+        window.editingContactIndex = -1;
+        window.editingJobSiteIndex = -1;
+        
+        // Clear lists
+        document.getElementById('contactsList').innerHTML = '';
+        document.getElementById('jobSitesList').innerHTML = '';
+        
+        // Reset readonly state
+        document.querySelectorAll('#companyProfileForm input, #companyProfileForm select, #companyProfileForm textarea').forEach(field => {
+            field.readOnly = false;
+            field.disabled = false;
+        });
+        
+        // Remove view-mode class
+        document.getElementById('addCompanyProfileModal').classList.remove('view-mode');
+        
+        // Show action buttons
+        document.getElementById('nextToContacts').style.display = 'inline-block';
+        document.getElementById('prevToInfo').style.display = 'inline-block';
+        document.getElementById('saveContact').style.display = 'inline-block';
+        document.getElementById('nextToJobSites').style.display = 'inline-block';
+        document.getElementById('prevToContacts').style.display = 'inline-block';
+        document.getElementById('saveJobSite').style.display = 'inline-block';
+        
+        // Reset modal title and buttons
+        document.getElementById('addCompanyProfileModalLabel').textContent = 'Add New Company Profile';
+        document.getElementById('submitForm').style.display = 'inline-block';
+        document.getElementById('updateForm').style.display = 'none';
+        
+        // Reset to first tab
+        var tab = new bootstrap.Tab(document.querySelector('#company-info-tab'));
+        tab.show();
+    }
+
+    // Ensure first tab is selected when modal opens
+    document.getElementById('addCompanyProfileModal').addEventListener('shown.bs.modal', function () {
+        var tab = new bootstrap.Tab(document.querySelector('#company-info-tab'));
+        tab.show();
     });
 </script>
