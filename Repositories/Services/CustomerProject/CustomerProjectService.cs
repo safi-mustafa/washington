@@ -234,7 +234,8 @@ namespace Repositories.Services.CustomerProject
         {
             try
             {
-                var companyInformation = await _db.CompanyInformations.AsNoTracking().ToListAsync();
+                var companyInformation = await _db.CompanyInformations
+                    .Where(p => !p.IsDeleted && p.ActiveStatus == ActiveStatus.Active).AsNoTracking().ToListAsync();
 
                 // Paginate the CompanyInformation list
                 var paginated = await companyInformation
@@ -262,7 +263,7 @@ namespace Repositories.Services.CustomerProject
         {
             try
             {
-                var companyContacts = await _db.CompanyContacts.AsNoTracking().ToListAsync();
+                var companyContacts = await _db.CompanyContacts.Where(p => !p.IsDeleted && p.ActiveStatus == ActiveStatus.Active).AsNoTracking().ToListAsync();
 
                 var paginated = await companyContacts
                     .OrderBy(x => x.ContactPersonName)
