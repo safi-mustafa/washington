@@ -5,18 +5,23 @@ namespace ViewModels
 {
     public class ProjectManagerBriefViewModel : BaseSelect2VM, ISelect2BaseVM
     {
-        public ProjectManagerBriefViewModel() : base(false, "")
+        public ProjectManagerBriefViewModel() : base(true, "Project manager is required.")
         {
 
         }
-        [DisplayName("Role")]
-        public string? Role { get; set; }
+        public ProjectManagerBriefViewModel(bool isValidationEnabled, string errorMessage) : base(isValidationEnabled, errorMessage)
+        {
+
+        }
+
+        [DisplayName("ContactPersonName")]
+        public string? ContactPersonName { get; set; }
 
         public override string? Select2Text
         {
             get
             {
-                return Role;
+                return ContactPersonName;
             }
         }
     }

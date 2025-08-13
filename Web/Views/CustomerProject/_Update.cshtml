@@ -9,6 +9,7 @@
         <div class="row">
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
+                    <span asp-validation-for="CustomerId" class="validation-invalid-label"></span>
                     <partial name="~/Views/Shared/Select2/CustomerProject/_CustomerProject.cshtml" for="CustomerProject" />
                 </div>
             </div>
@@ -67,13 +68,14 @@
             </div>
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
+                    <span asp-validation-for="ProjectManagerId" class="validation-invalid-label"></span>
                     <partial name="~/Views/Shared/Select2/ProjectManager/_ProjectManager.cshtml" for="ProjectManager" />
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="Notes" class="form-label fw-600">Notes</label>
-                    <input asp-for="Notes" type="text" class="form-control" />
+                    <input asp-for="Notes" type="text" multiple="true" class="form-control" />
                 </div>
             </div>
         </div>

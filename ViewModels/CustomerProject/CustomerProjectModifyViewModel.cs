@@ -21,7 +21,7 @@ namespace ViewModels.CustomerProject
         public DateTime? ProjectEndDate { get; set; }
         public string ProjectLocation { get; set; }
         public int? ProjectManagerId { get; set; }
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
         public CustomerProjectBriefViewModel CustomerProject { get; set; } = new();
         public ProjectManagerBriefViewModel ProjectManager { get; set; } = new();
     }
