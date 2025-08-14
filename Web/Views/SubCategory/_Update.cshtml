@@ -1,0 +1,25 @@
+﻿@using ViewModels
+@model SubCategoryModifyViewModel
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="mb-3 form-group">
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <partial name="~/Views/Shared/Select2/_Category.cshtml" for="Category" />
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3 form-group">
+            <label asp-for="Name" class="form-label fw-600"></label>
+            <input asp-for="Name" type="text" class="form-control" />
+            <span asp-validation-for="Name" class="validation-invalid-label"></span>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" asp-for="Id" />

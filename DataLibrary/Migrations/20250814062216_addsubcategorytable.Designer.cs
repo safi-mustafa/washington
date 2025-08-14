@@ -4,6 +4,7 @@ using DataLibrary;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLibrary.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250814062216_addsubcategorytable")]
+    partial class addsubcategorytable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1129,22 +1132,6 @@ namespace DataLibrary.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DefaultRentalRateDaily")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DefaultRentalRateMonthly")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DefaultRentalRateOneTime")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DefaultRentalRateWeekly")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -1165,9 +1152,6 @@ namespace DataLibrary.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("ManufacturerId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SubcategoryId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("SystemGeneratedId")
@@ -1191,8 +1175,6 @@ namespace DataLibrary.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("ManufacturerId");
-
-                    b.HasIndex("SubcategoryId");
 
                     b.HasIndex("UOMId");
 
@@ -3724,10 +3706,6 @@ namespace DataLibrary.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.Subcategory", "Subcategory")
-                        .WithMany()
-                        .HasForeignKey("SubcategoryId");
-
                     b.HasOne("Models.UOM", "UOM")
                         .WithMany()
                         .HasForeignKey("UOMId")
@@ -3737,8 +3715,6 @@ namespace DataLibrary.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Manufacturer");
-
-                    b.Navigation("Subcategory");
 
                     b.Navigation("UOM");
                 });

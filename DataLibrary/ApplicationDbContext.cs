@@ -94,6 +94,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<CompanyInformation> CompanyInformations { get; set; }
     public DbSet<CompanyContact> CompanyContacts { get; set; }
     public DbSet<JobSite> JobSites { get; set; }
+    public DbSet<Subcategory> Subcategories { get; set; }
 
 
     [DbFunction("GetWeekNumber", "dbo")]

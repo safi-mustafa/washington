@@ -28,5 +28,12 @@ namespace Models
 
         public string? ImageUrl { get; set; }
         public List<EquipmentTransaction> EquipmentTransactions { get; set; }
+        [ForeignKey("SubcategoryId")]
+        public long? SubcategoryId { get; set; }
+        public Subcategory Subcategory { get; set; }
+        public string DefaultRentalRateOneTime { get; set; }
+        public string DefaultRentalRateDaily { get; set; }
+        public string DefaultRentalRateWeekly { get; set; }
+        public string DefaultRentalRateMonthly { get; set; }
     }
 }

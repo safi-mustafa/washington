@@ -68,6 +68,8 @@ using Repositories.Services.Report;
 using Repositories.Services.Report.Common;
 using Repositories.Services.Report.Common.interfaces;
 using Repositories.Services.Report.Interface;
+using Repositories.Services.SubCategory;
+using Repositories.Services.SubCategory.Interface;
 using Repositories.Shared.NotificationServices;
 using Repositories.Shared.NotificationServices.Interface;
 using Repositories.Shared.UserInfoServices;
@@ -218,6 +220,7 @@ namespace Web.Extensions
             services.AddScoped(typeof(IReportFactory), typeof(ReportFactory));
             services.AddScoped(typeof(ICustomerProjectService<,,>), typeof(CustomerProjectService<,,>));
             services.AddScoped<ICustomerProfileService, CustomerProfileService>();
+            services.AddScoped(typeof(ISubCategoryService<,,>), typeof(SubCategoryService<,,>));
             services.AddDefaultCorrelationId();
         }
     }

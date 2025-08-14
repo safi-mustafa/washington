@@ -716,7 +716,18 @@ namespace Models.Mapper
                 .ForMember(p => p.Name, a => a.MapFrom(d => d.ContactPersonName))
                 .ReverseMap();
 
+            ////SubCategory
+            CreateMap<SubCategoryModifyViewModel, Subcategory>()
+            .ForMember(s => s.CategoryId, d => d.MapFrom(x => x.Category.Id))
+                .ForMember(s => s.Category, d => d.Ignore())
+                .ReverseMap();
+            CreateMap<Subcategory, SubCategoryBriefViewModel>()
+            .ForMember(s => s.Name, d => d.MapFrom(x => x.Category.Name))
+                .ReverseMap();
 
+            CreateMap<SubCategoryDetailViewModel, Subcategory>().ReverseMap();
+            CreateMap<SubCategoryBriefViewModel, Subcategory>().ReverseMap();
+            CreateMap<SubCategoryModifyViewModel, SubCategoryDetailViewModel>().ReverseMap();
 
             //IgnoreGlobalProperties();
         }
