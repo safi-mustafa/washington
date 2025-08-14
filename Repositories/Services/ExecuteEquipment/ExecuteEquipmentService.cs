@@ -84,7 +84,7 @@ namespace Repositories.Common
                                               Id = x.Key.SupplierId,
                                               Name = x.Max(y => y.SupplierName)
                                           },
-                                          PurchaseDate = x.Key.PurchaseDate,
+                                          PurchaseDate = x.Max(x => x.CreatedOn),
                                           Location = new LocationBriefViewModel()
                                           {
                                               Id = x.Key.LocationId,

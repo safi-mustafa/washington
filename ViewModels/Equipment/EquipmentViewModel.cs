@@ -23,5 +23,12 @@ namespace ViewModels
         public double TotalPrice { get; set; }
         public double HourlyRate { get; set; }
         public string? ImageUrl { get; set; }
+        public string? DefaultRentalRateOneTime { get; set; }
+        public string DefaultRentalRateDaily { get; set; }
+        public string DefaultRentalRateWeekly { get; set; }
+        public string DefaultRentalRateMonthly { get; set; }
+        public string UsefulLifeMonths { get; set; }
+        public long SubCategoryId { get; set; }
+        public string? SubCategoryName { get; set; }
     }
 }

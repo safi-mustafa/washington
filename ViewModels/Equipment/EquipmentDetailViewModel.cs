@@ -35,6 +35,11 @@ namespace ViewModels
         public double HourlyRate { get; set; }
 
         public string? ImageUrl { get; set; }
+        public string? DefaultRentalRateOneTime { get; set; }
+        public string DefaultRentalRateDaily { get; set; }
+        public string DefaultRentalRateWeekly { get; set; }
+        public string DefaultRentalRateMonthly { get; set; }
+        public string UsefulLifeMonths { get; set; }
         public string FormattedImageUrl
         {
             get
@@ -44,6 +49,7 @@ namespace ViewModels
         }
 
         public CategoryBriefViewModel Category { get; set; } = new();
+        public SubCategoryBriefViewModel SubCategory { get; set; } = new();
         public ManufacturerBriefViewModel Manufacturer { get; set; } = new();
         public UOMBriefViewModel UOM { get; set; } = new();
 
