@@ -54,5 +54,8 @@ namespace ViewModels
         public UOMBriefViewModel UOM { get; set; } = new();
 
         public List<EquipmentSubLineViewModel> EquipmentSublines { get; set; } = new();
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+
     }
 }

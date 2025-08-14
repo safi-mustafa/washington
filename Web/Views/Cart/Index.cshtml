@@ -52,7 +52,8 @@
     <form class="cart-create-form">
         @Html.AntiForgeryToken()
 
-        
+        @*@await Html.PartialAsync("_FormFirstStep")
+        @await Html.PartialAsync("_FormSecondStep")*@
 
 
         <div class="step-title d-flex justify-content-between align-items-start gap-3 mb-3">
@@ -68,7 +69,7 @@
         <div id="grd_Cart_Wrapper" class="order-report-table table-responsive" role="grid">
             <table id="grd_Cart" class="table table-bordered dataTable dataTable table-sm w-100">
                 <thead>
-                  
+                    @* class="thead-primary" *@
                     <tr>
                         <th>Item # </th>
                         <th>Description</th>

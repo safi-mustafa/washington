@@ -18,6 +18,9 @@ namespace ViewModels
         public List<OrderItemModifyViewModel> OrderItems { get; set; } = new();
 
         public OrderTypeCatalog Type { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string Frequency { get; set; }
     }
 
 }
