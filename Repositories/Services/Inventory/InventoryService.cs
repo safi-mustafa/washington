@@ -79,6 +79,8 @@ namespace Repositories.Common
                                         .Include(x => x.UOM)
                                         .Include(x => x.Manufacturer)
                                         .Include(x => x.MUTCD)
+                                        .Include(x => x.SubCategory)
+                                        .Include(x => x.Location)
                                         .Where(x => x.Id == id)
                                         .FirstOrDefaultAsync();
                 if (dbModel != null)

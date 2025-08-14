@@ -30,7 +30,7 @@ namespace ViewModels
         {
             get
             {
-                return DatetimeHelper.FormatDatetimeInPST(CreatedOn);
+                return DatetimeHelper.FormatDateInPST(CreatedOn);
             }
         }
 
