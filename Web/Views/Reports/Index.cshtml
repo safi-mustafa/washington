@@ -1,4 +1,4 @@
-﻿@model ViewModels.CRUD.TabViewModel
+﻿@* @model ViewModels.CRUD.TabViewModel
 @{
     ViewBag.Title = "Reports";
 }
@@ -6,9 +6,9 @@
 @await Html.PartialAsync("~/Views/Shared/Crud/Tabs/_Tabs.cshtml", Model)
 <script src="~/js/bundles/datatable.js"></script>
 <script src="~/js/bundles/datatable-buttons.js"></script>
-<script src="~/js/custom/loader/loader.js"></script>
+<script src="~/js/custom/loader/loader.js"></script> *@
 @* <script src="~/js/bundles/custom-datatable.js"></script> *@
-<script src="~/js/custom/datatable/auto-datatable.js" asp-append-version="true"></script>
+@* <script src="~/js/custom/datatable/auto-datatable.js" asp-append-version="true"></script>
 
 <script>
     class InventoryDataTableManager extends DataTableManager {
@@ -31,4 +31,567 @@
             // ReInitializeDataTables();
         }
     </script>
-}
+} *@
+<style>
+    .reportFilter .nav-item .nav-link {
+        background: #f3f4f6;
+        color: #374151;
+        font-size: .875rem;
+        line-height: 1.25rem;
+        margin-right: 14px;
+    }
+
+        .reportFilter .nav-item .nav-link.active {
+        background: #f54e00;
+        color: #ffffff;
+    }
+
+    .totalPercentage{
+        font-size:13px;
+    }
+
+    .projectPrice{
+        font-size:21px
+    }
+
+    .CostByProjectSection .progress-bar {
+        background-color:#f54e00;
+    }
+
+    .costByStatus .progress-bar {
+        background-color:#f54e00;
+    }
+
+    .projectName{
+        font-size:17px;
+    }
+
+    .ActiveRental .ontime{
+        background-color: #dcfce7;
+        color: #15803d;
+        border-radius:9999px;
+        padding:4px 8px;
+    }
+
+    .ActiveRental .overdue {
+        background-color: #fee2e2;
+        color: #b91c1c;
+        border-radius:9999px;
+        padding: 4px 8px;
+    }
+
+    .ActiveRental .duesoon {
+        background-color: #ffedd5;
+        color: #c2410c;
+        border-radius:9999px;
+        padding: 4px 8px;
+    }
+
+    .AlertFlags .alert-warning {
+        border-color: #fef08a;
+        background-color: #fefce8;
+    }
+
+    .AlertFlags .alert-warning .fa {
+        color: #ca8a04;
+    }
+
+    .AlertFlags .alert-danger {
+        border-color: #fecaca;
+        background-color: #fef2f2;
+    }
+
+    .AlertFlags .alert-danger .fa {
+            color: #dc2626;
+    }
+    .AlertFlags .alert-primary {
+        border-color: #bfdbfe;
+        background-color: #eff6ff;
+    }
+
+    .AlertFlags .alert-primary .fa {
+            color: #2563eb;
+    }
+
+    .AlertFlags .alert .alertInfo {
+        font-size: 15px;
+        font-weight: 400;
+    }
+
+    .AlertFlags .alert .alertTitle {
+        font-size:18px;
+
+    }
+
+    .AlertFlags .alert .AltName {
+        font-size: 14px;
+        font-weight: 200;
+    }
+
+    .status span {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+        .status span.fw-bold {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .costByStatus .precentageShow {
+        text-align: right;
+        font-size: 14px;
+        font-weight: 200;
+    }
+
+    .topCard .card h6 {
+        font-size:14px;
+        font-weight:500;
+    }
+
+    .topCard .card .iconSec {
+        padding:0.75rem;
+        border-radius:0.5rem;
+        background-color: #f3f4f6;
+        font-size:16px;
+    }
+</style>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Reports</h3>
+@*         <div class="d-flex align-items-center">
+            <select class="form-select me-2">
+                <option>This Month</option>
+                <option>Last Month</option>
+                <option>Last 3 Months</option>
+            </select>
+            <button class="btn btn-primary d-flex align-items-center">
+                <i class="fa fa-download me-3"></i> Export
+            </button>
+        </div> *@
+    </div>
+
+
+
+    <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+        <!-- Status Tabs -->
+        <ul class="nav nav-pills reportFilter" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pills-dashboard-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-dashboard" type="button" role="tab">
+                    <i class="fa fa-bar-chart me-1"></i>Overview Dashboard
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link " id="pills-cost-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-cost" type="button" role="tab">
+                    <i class="fa fa-dollar me-1"></i>Cost Analysis
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link " id="pills-rentals-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-rentals" type="button" role="tab">
+                    <i class="fa fa-box me-1"></i>Active Rentals
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link " id="pills-alert-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-alert" type="button" role="tab">
+                    <i class="fa fa-warning me-1"></i>Alerts & Flags
+                </button>
+            </li>
+            
+
+        </ul>
+    </div>
+
+    <!-- Orders List -->
+    <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-dashboard" role="tabpanel">
+            <!------------------------top card-------------->
+            <div class="dashboard">
+                <div class="row g-3 mb-4 topCard">
+                    <div class="col-md-3 totalOrder">
+                        <div class="card shadow-sm p-3 ">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">Total Orders</h6>
+                                    <h4>47</h4>
+                                    @* <small class="text-success"><i class="fa fa-arrow-up"></i> +12% from last month</small> *@
+                                </div>
+                                <div class="iconSec">
+                                    <i class="fa fa-bar-chart fs-3 text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 totalCost">
+                        <div class="card shadow-sm p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">Total Cost</h6>
+                                    <h4>$127,450</h4>
+                                    @* <small class="text-success"><i class="fa fa-arrow-up"></i> +8% from last month</small> *@
+                                </div>
+                                <div class="iconSec">
+                                 <i class="fa fa-dollar fs-3 text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 ActiveRental">
+                        <div class="card shadow-sm p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">Active Rentals</h6>
+                                    <h4>23</h4>
+                                    @* <small class="text-danger"><i class="fa fa-arrow-down"></i> -3% from last month</small> *@
+                                </div>
+                                <div class="iconSec">
+                                    <i class="fa fa-box fs-3 text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 OverdueReturn">
+                        <div class="card shadow-sm p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">Overdue Returns</h6>
+                                    <h4>3</h4>
+                                    @* <small class="text-success"><i class="fa fa-arrow-up"></i> +50% from last month</small> *@
+                                </div>
+                                <div class="iconSec">
+                                    <i class="fa fa-warning fs-3 text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="costByStatus">
+                    <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">Cost by Status</h6>
+                            <div class="status rentStatus mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>On Rent</span>
+                                    <span class="fw-bold">$45,200</span>
+                                </div>
+                                <div class="progress mb-1" style="height: 12px;">
+                                    <div class="progress-bar "
+                                         role="progressbar"
+                                         style="width: 35%;"
+                                         aria-valuenow="35"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                                @* <div class="mb-2 precentageShow">35%</div> *@
+                            
+                            </div>
+                            <div class="status deliveredStatus mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Delivered</span>
+                                    <span class="fw-bold">$32,100</span>
+                                </div>
+                                <div class="progress mb-1" style="height: 12px;">
+                                    <div class="progress-bar green"
+                                         role="progressbar"
+                                         style="width: 16%;"
+                                         aria-valuenow="16"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                                @* <div class="precentageShow mb-2">16%</div> *@
+
+                        </div>
+                            <div class="status ScheduledStatus mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Scheduled</span>
+                                    <span class="fw-bold">$28,750</span>
+                                </div>
+                            <div class="progress mb-1" style="height: 12px;">
+                                <div class="progress-bar green"
+                                     role="progressbar"
+                                     style="width: 25%;"
+                                     aria-valuenow="25"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                                @* <div class="mb-2 precentageShow">25%</div> *@
+
+                        </div>
+                            <div class="status PendingStatus mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Pending</span>
+                                    <span class="fw-bold">$21,400</span>
+                                </div>
+                            <div class="progress mb-1" style="height: 12px;">
+                                <div class="progress-bar green"
+                                     role="progressbar"
+                                     style="width: 22%;"
+                                     aria-valuenow="22"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                             @* <div class="precentageShow mb-2">22%</div> *@
+
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+          
+        </div>
+
+        <div class="tab-pane fade " id="pills-cost" role="tabpanel">
+            <div class="CostByProjectSection">
+
+                <!-- Cost by Project -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold  mb-4">Cost by Project</h6>
+
+                        <!-- Project 1 -->
+                        <div class="d-flex justify-content-between align-items-center bg-light rounded p-3 my-2">
+                            <div>
+                                <div class="fw-semibold mb-2 projectName">Pipeline Installation Phase 1</div>
+                                <div class="progress " style="height: 6px;">
+                                    <div class="progress-bar green"
+                                         role="progressbar"
+                                         style="width: 53%;"
+                                         aria-valuenow="53"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold projectPrice">$67,500</div>
+                                @* <small class="text-muted totalPercentage">53% of total</small> *@
+                            </div>
+                        </div>
+
+                        <!-- Project 2 -->
+                        <div class="d-flex justify-content-between align-items-center bg-light rounded p-3 my-2">
+                            <div>
+                                <span class="fw-semibold projectName">Construction Site A</span>
+                                <div class="progress mb-3" style="height: 6px;">
+                                    <div class="progress-bar green"
+                                         role="progressbar"
+                                         style="width: 27%;"
+                                         aria-valuenow="27"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold projectPrice">$34,200</div>
+                                @* <small class="text-muted totalPercentage">27% of total</small> *@
+                            </div>
+                        </div>
+
+                        <!-- Project 3 -->
+                        <div class="d-flex justify-content-between align-items-center bg-light rounded p-3 my-2">
+                            <div>
+                                <span class="fw-semibold projectName">Maintenance Work</span>
+                                <div class="progress mb-3" style="height: 6px;">
+                                    <div class="progress-bar green"
+                                         role="progressbar"
+                                         style="width: 15%;"
+                                         aria-valuenow="15"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold projectPrice">$18,900</div>
+                                @* <small class="text-muted totalPercentage">15% of total</small> *@
+                            </div>
+                        </div>
+
+                        <!-- Project 4 -->
+                        <div class="d-flex justify-content-between align-items-center bg-light rounded p-3 my-2">
+                            <div>
+                                <span class="fw-semibold projectName">Emergency Repair</span>
+                                <div class="progress mb-3" style="height: 6px;">
+                                    <div class="progress-bar green"
+                                         role="progressbar"
+                                         style="width: 5%;"
+                                         aria-valuenow="5"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold projectPrice">$6,850</div>
+                                @* <small class="text-muted totalPercentage">5% of total</small> *@
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Monthly Cost Trend -->
+               @*  <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-4">Monthly Cost Trend</h6>
+                        <div class="bg-light text-center rounded p-5">
+                            <i class="bi bi-bar-chart fs-1 text-muted"></i>
+                            <p class="text-muted mb-0">Chart visualization would be implemented here</p>
+                            <small class="text-muted">Integration with Chart.js or Recharts</small>
+                        </div>
+                    </div>
+                </div> *@
+
+            </div>
+        </div>
+
+
+        <div class="tab-pane fade " id="pills-rentals" role="tabpanel">
+            <div class="ActiveRental">
+                <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Active Rentals</h5>
+                   
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light text-uppercase small">
+                            <tr>
+                                <th>Order</th>
+                                <th>Item</th>
+                                <th>Project</th>
+                                <th>Due Date</th>
+                                <th>Days Left</th>
+                                <th>Daily Cost</th>
+                                @* <th>Status</th> *@
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+                            <tr>
+                                <td class="fw-bold text-primary">ORD-001</td>
+                                <td>Excavator CAT 320</td>
+                                <td>Pipeline Installation</td>
+                                <td>2025-01-20</td>
+                                <td>
+                                    <span class="text-dark fw-medium">5 days</span>
+
+                                </td>
+                                <td>$450</td>
+                                @* <td><span class="ontime">On Time</span></td> *@
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-primary">ORD-001</td>
+                                <td>Excavator CAT 320</td>
+                                <td>Pipeline Installation</td>
+                                <td>2025-01-20</td>
+                                <td>
+                                    <span class="text-dark fw-medium">5 days</span>
+
+                                </td>
+                                <td>$450</td>
+                                @* <td><span class="ontime">On Time</span></td> *@
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-primary">ORD-001</td>
+                                <td>Excavator CAT 320</td>
+                                <td>Pipeline Installation</td>
+                                <td>2025-01-20</td>
+                                <td>
+                                    <span class="text-dark fw-medium">5 days</span>
+
+                                </td>
+                                <td>$450</td>
+                                @* <td><span class="ontime">On Time</span></td> *@
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-primary">ORD-001</td>
+                                <td>Excavator CAT 320</td>
+                                <td>Pipeline Installation</td>
+                                <td>2025-01-20</td>
+                                <td>
+                                    <span class="text-dark fw-medium">5 days</span>
+
+                                </td>
+                                <td>$450</td>
+                                @* <td><span class="duesoon">Due Soon</span></td> *@
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-primary">ORD-001</td>
+                                <td>Excavator CAT 320</td>
+                                <td>Pipeline Installation</td>
+                                <td>2025-01-20</td>
+                                <td>
+                                    <span class="text-dark fw-medium">5 days</span>
+
+                                </td>
+                                <td>$450</td>
+                                @* <td><span class="overdue">Overdue</span></td> *@
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade " id="pills-alert" role="tabpanel">
+            <div class="AlertFlags">
+
+                <!-- Budget Alert: 85% -->
+                <div class="alert alert-warning border border-warning-subtle rounded-3">
+                    <div class="fw-bold alertTitle">
+                        <i class="fa fa-warning me-2"></i>
+                        Budget Alert
+                    </div>
+                    <div class="alertInfo">Pipeline Installation project is at 85% of budget</div>
+                    <div class="text-muted small AltName">Project: Pipeline Installation Phase 1</div>
+                </div>
+
+                <!-- Overdue Return -->
+                <div class="alert alert-danger border border-danger-subtle rounded-3">
+                    <div class="fw-bold alertTitle">
+                        <i class="fa fa-warning me-2"></i>
+                        Overdue Return
+                    </div>
+                    <div class="alertInfo">Generator 50KW is 1 day overdue for return</div>
+                    <div class="text-muted small AltName">Project: Remote Site</div>
+                </div>
+
+                <!-- Budget Alert: 80% -->
+                <div class="alert alert-warning border border-warning-subtle rounded-3">
+                    <div class="fw-bold alertTitle">
+                        <i class="fa fa-warning me-2"></i>
+                        Budget Alert
+                    </div>
+                    <div class="alertInfo">Construction Site A approaching 80% budget threshold</div>
+                    <div class="text-muted small AltName">Project: Construction Site A</div>
+                </div>
+
+                <!-- Due Soon -->
+                <div class="alert alert-primary border border-primary-subtle rounded-3">
+                    <div class="fw-bold alertTitle">
+                        <i class="fa fa-warning me-2"></i>
+                        Due Soon
+                    </div>
+                    <div class="alertInfo">Forklift 5000lb due for return tomorrow</div>
+                    <div class="text-muted small AltName">Project: Warehouse Setup</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
