@@ -11,6 +11,7 @@ namespace Web.Controllers
     {
         public CategoryController(ICategoryService<CategoryModifyViewModel, CategoryModifyViewModel, CategoryDetailViewModel> service, ILogger<CategoryController> logger, IMapper mapper) : base(service, logger, mapper, "Category", "Category", false)
         {
+
         }
 
         public override List<DataTableViewModel> GetColumns()

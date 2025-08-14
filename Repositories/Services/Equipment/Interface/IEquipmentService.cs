@@ -1,8 +1,13 @@
 ﻿using Centangle.Common.ResponseHelpers.Models;
+
 using Models.Common.Interfaces;
+
 using Pagination;
+
 using Repositories.Interfaces;
+
 using ViewModels;
+using ViewModels.ProjectManager;
 using ViewModels.Shared;
 
 namespace Repositories.Common
@@ -22,6 +27,6 @@ namespace Repositories.Common
         Task<List<EquipmentCostViewModel>> GetEquipmentAverageCost(List<long> ids);
         Task<List<EquipmentTransactionHistoryViewModel>> GetEquipmentIssueHistory(int inventoryId, string poNumber, int locationId);
         Task<bool> IsItemNoUnique(long id, string itemNo);
-
+      
     }
 }
