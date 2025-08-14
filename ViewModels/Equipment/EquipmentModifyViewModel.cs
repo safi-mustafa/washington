@@ -12,20 +12,21 @@ namespace ViewModels
     {
         [DisplayName("ID #")]
         public string? SystemGeneratedId { get; set; }
-        [Display(Name = "Model")]
-        public string? EquipmentModel { get; set; }
+
+        //[Display(Name = "Model")]
+        //public string? EquipmentModel { get; set; }
         public string? Description { get; set; }
 
         [Display(Name = "Hourly Rate")]
         [Required]
-        public double HourlyRate { get; set; }
+        public double HourlyRate { get; set; } = 1;
 
         [Display(Name = "Total Value")]
         public float TotalValue { get; set; }
 
         [Required]
-        [Display(Name = "Item #", Prompt = "Item #")]
-        [Remote(action: "IsItemNoUnique", controller: "Equipment", AdditionalFields = "Id,ItemNo", ErrorMessage = "Item # already in use.")]
+        [Display(Name = "Model", Prompt = "Model #")]
+        [Remote(action: "IsItemNoUnique", controller: "Equipment", AdditionalFields = "Id,ItemNo", ErrorMessage = "Model # already in use.")]
         public string ItemNo { get; set; }
 
 
@@ -57,6 +58,21 @@ namespace ViewModels
             return "Others";
         }
 
+        [Required]
+        [Display(Name = "Default Rental Rate One Time")]
+        public string? DefaultRentalRateOneTime { get; set; } = "100.00";
+
+        [Required]
+        [Display(Name = "Default Rental Rate Daily")]
+        public string? DefaultRentalRateDaily { get; set; }
+
+        [Required]
+        [Display(Name = "Default Rental Rate Weekly")]
+        public string? DefaultRentalRateWeekly { get; set; }
+
+        [Required]
+        [Display(Name = "Default Rental Rate Monthly")]
+        public string? DefaultRentalRateMonthly { get; set; }
     }
 }
 

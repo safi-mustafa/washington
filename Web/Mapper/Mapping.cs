@@ -451,6 +451,8 @@ namespace Models.Mapper
                 .ForMember(s => s.Manufacturer, d => d.Ignore())
                 .ForMember(s => s.UOM, d => d.MapFrom(x => x.UOM.Id))
                 .ForMember(s => s.UOM, d => d.Ignore())
+                 .ForMember(s => s.SubcategoryId, d => d.MapFrom(x => x.SubCategory.Id))
+                .ForMember(s => s.Subcategory, d => d.Ignore())
                 .ReverseMap();
             CreateMap<EquipmentDetailViewModel, Equipment>()
                 .ForMember(s => s.CategoryId, d => d.MapFrom(x => x.Category.Id))
