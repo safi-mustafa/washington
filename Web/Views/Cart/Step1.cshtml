@@ -1,4 +1,8 @@
-﻿<style>
+﻿@model ViewModels.OrderModifyViewModel
+@{
+    var orderItems = Model.OrderItems.ToList();
+}
+<style>
     .stepper {
         display: flex;
         align-items: center;
@@ -11,41 +15,42 @@
         align-items: center;
     }
 
-        .step.active {
-            color: #f54e00;
-        }
+    .step.active {
+        color: #f54e00;
+    }
 
-        .step .icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #e9ecef;
-            margin-right: 8px;
-        }
+    .step .icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e9ecef;
+        margin-right: 8px;
+    }
 
-        .step.active .icon {
-            background-color: #f54e00;
-            color: #fff;
-        }
+    .step.active .icon {
+        background-color: #f54e00;
+        color: #fff;
+    }
 
-        .step.completed .icon {
-            background-color: #198754;
-            color: #fff;
-        }
-        .step.completed .line {
-            background-color: #198754;
-            color: #fff;
-        }
+    .step.completed .icon {
+        background-color: #198754;
+        color: #fff;
+    }
+
+    .step.completed .line {
+        background-color: #198754;
+        color: #fff;
+    }
 
     .line {
         flex: 1;
         height: 3px;
-        margin:0 26px;
+        margin: 0 26px;
         background-color: #b2b2b2;
-        width:19vw;
+        width: 19vw;
     }
 </style>
 <h4 class="text-xl font-bold text-gray-900  mb-4">Checkout</h4>
@@ -76,7 +81,7 @@
 </div>
 
 <div class="Steps-Detail">
-    
+
     <div class="card">
         <div class="card-body">
             <div class="mb-3 bg-white d-flex justify-content-between align-items-center">
@@ -84,108 +89,237 @@
                 <a href="/Inventories" class="text-primary fw-bold">Continue Shopping</a>
             </div>
             <div class="row">
-            <div class="col-12">
-          
-                        <div class="d-flex p-3 border rounded mb-3">
-                            <img src="/images/drill_bits.jpg" alt="itemImg" class="me-3" style="width:100px; height:auto;">
-                            <div class="flex-grow-1">
-                                <h5>Crane Mobile 50T</h5>
-                                <small>equipment</small>
-                                <div class="row mt-2">
-                                    <div class="col-md-3">
-                                        <label>Start Date</label>
-                                        <input type="date" class="form-control" value="" />
+                @if (orderItems.Count > 0)
+                {
+                    for (int i = 0; i < orderItems.Count; i++)
+                    {
+                        var item = orderItems[i];
+                        var collectionName = $"OrderItems[{i}].";
+                        var quantityName = collectionName + "Quantity";
+                        @if (item.Inventory.Id > 0)
+                        {
+                            var orderIdName = collectionName + "Inventory.Id";
+                            <input type="hidden" name="@orderIdName" value="@item.Inventory.Id" />
+                            <input type="hidden" name="inventoryrateonetime" value="@item.Inventory.Id" />
+                            <input type="hidden" name="inventoryratedaily" value="@item.Inventory.Id" />
+                            <input type="hidden" name="inventoryrateweekly" value="@item.Inventory.Id" />
+                            <input type="hidden" name="inventoryratemonthly" value="@item.Inventory.Id" />
+
+                            <div class="col-12">
+                                <div class="d-flex p-3 border rounded mb-3">
+                                    <img src="@(string.IsNullOrWhiteSpace(item.Inventory?.ImageUrl) ? "/img/no-img.jpg" : item.Inventory.ImageUrl)" alt="itemImg" class="me-3" style="width:100px; height:auto;" />
+                                    <div class="flex-grow-1">
+                                        <h5>@item.Inventory.ItemNo</h5>
+                                        <small>Inventory</small>
+                                        <div class="row mt-2">
+                                            <div class="col-md-3">
+                                                <label>Start Date</label>
+                                                <input type="date" class="form-control start-date"
+                                                       name="OrderItems[@i].StartDate"
+                                                       value="@item.Inventory.StartDate?.ToString("yyyy-MM-dd")" />
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>End Date</label>
+                                                <input type="date" class="form-control end-date"
+                                                       name="OrderItems[@i].EndDate"
+                                                       value="@item.Inventory.EndDate?.ToString("yyyy-MM-dd")" />
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>Frequency</label>
+                                                <select class="form-select">
+                                                    <option selected>One-Time</option>
+                                                    <option>Daily</option>
+                                                    <option>Weekly</option>
+                                                    <option>Monthly</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label>Quantity</label>
+                                                <input name="@quantityName" class="form-control" type="number" value="@item.Quantity" min="1" max="@item.OHQuantity" />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label>End Date</label>
-                                        <input type="date" class="form-control" value="" />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label>Frequency</label>
-                                        <select class="form-select">
-                                            <option selected>Daily</option>
-                                            <option>Weekly</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label>Quantity</label>
-                                        <input type="number" class="form-control" value="5" />
+                                    <div class="text-center">
+                                        <h5 class="text-primary">$0</h5>
+                                        <small>per unit</small>
+                                        <div class="text-center">
+                                            <a class="text-danger" href="javascript:void(0)" onclick="deleteInventoryFromCart(@item.Inventory.Id, this)">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-center">
-                                <h5 class="text-primary">$850</h5>
-                                <small>per unit</small>
-                                <div class="text-center">
-                                    <a class="text-danger">
-                                        <i class="fa fa-trash"></i>
-                                    </a>
+                        }
+                        else
+                        {
+                            var orderIdName = collectionName + "Equipment.Id";
+                            <input type="hidden" name="@orderIdName" value="@item.Equipment.Id" />
+                            <input type="hidden" name="equipmentrateonetime" value="@item.Equipment.Id" />
+                            <input type="hidden" name="equipmentratedaily" value="@item.Equipment.Id" />
+                            <input type="hidden" name="equipmentrateweekly" value="@item.Equipment.Id" />
+                            <input type="hidden" name="equipmentratemonthly" value="@item.Equipment.Id" />
+                            <div class="col-12">
+                                <div class="d-flex p-3 border rounded mb-3">
+                                    <img src="@(string.IsNullOrWhiteSpace(item.Equipment?.ImageUrl) ? "/img/no-img.jpg" : item.Equipment.ImageUrl)" alt="itemImg" class="me-3" style="width:100px; height:auto;" />
+                                    <div class="flex-grow-1">
+                                        <h5>@item.Equipment.ItemNo</h5>
+                                        <small>Equipment</small>
+                                        <div class="row mt-2">
+                                            <div class="col-md-3">
+                                                <label>Start Date</label>
+                                                <input type="date" class="form-control start-date"
+                                                       name="OrderItems[@i].StartDate"
+                                                       value="@item.Equipment.StartDate?.ToString("yyyy-MM-dd")" />
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>End Date</label>
+                                                <input type="date" class="form-control end-date"
+                                                       name="OrderItems[@i].EndDate"
+                                                       value="@item.Equipment.EndDate?.ToString("yyyy-MM-dd")" />
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>Frequency</label>
+                                                <select class="form-select">
+                                                    <option selected>One-Time</option>
+                                                    <option>Daily</option>
+                                                    <option>Weekly</option>
+                                                    <option>Monthly</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label>Quantity</label>
+                                                <input name="@quantityName" class="form-control" type="number" value="@item.Quantity" min="1" max="@item.OHQuantity" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <h5 class="text-primary">$0</h5>
+                                        <small>per unit</small>
+                                        <div class="text-center">
+                                            <a class="text-danger" href="javascript:void(0)" onclick="deleteEquipmentFromCart(@item.Equipment.Id, this)">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            
-                        </div>
-                   
-                
+                        }
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6">No Inventory Selected.</td></tr>
+                }
+
             </div>
-            <div class="col-12">
-            
-                        <div class="d-flex p-3 border rounded mb-3">
-                            <img src="/images/drill_bits.jpg" alt="itemImg" class="me-3" style="width:100px; height:auto;">
-                            <div class="flex-grow-1">
-                                <h5>Crane Mobile 50T</h5>
-                                <small>equipment</small>
-                                <div class="row mt-2">
-                                    <div class="col-md-3">
-                                        <label>Start Date</label>
-                                        <input type="date" class="form-control" value="" />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label>End Date</label>
-                                        <input type="date" class="form-control" value="" />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label>Frequency</label>
-                                        <select class="form-select">
-                                            <option selected>Daily</option>
-                                            <option>Weekly</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label>Quantity</label>
-                                        <input type="number" class="form-control" value="5" />
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="text-center">
-                            <h5 class="text-primary">$850</h5>
-                            <small>per unit</small>
-                            <div class="text-center">
-                                <a class="text-danger">
-                                    <i class="fa fa-trash"></i>
-                                </a>
-                            </div>
-                        </div>
-                        </div>
-                   
-                
-            </div>
-        </div>
             <div class="bg-light p-3 rounded ">
                 <div class="d-flex justify-content-between">
                     <h5>Total Estimated Cost:</h5>
-                    <h4 class="fw-bold text-primary">$5201</h4>
+                    <h4 class="fw-bold text-primary">$</h4>
                 </div>
                 <small>Final pricing will be confirmed after review</small>
             </div>
 
             <div class="mt-3 d-flex justify-content-between">
-                <a href="/Inventories" class="btn btn-outline-secondary" >
+                <a href="/Inventories" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Continue Shopping
                 </a>
-                <a asp-controller="Cart" asp-action="Step2" class="btn btn-primary" >
+                <a asp-controller="Cart" asp-action="Step2" class="btn btn-primary">
                     Proceed to Details
                 </a>
             </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).on("change", ".start-date, .end-date", function () {
+        debugger;
+        let row = $(this).closest(".row");
+        let startDate = row.find(".start-date").val();
+        let endDate = row.find(".end-date").val();
+
+        let inventoryrateonetime  = row.find('[name="inventoryrateonetime"]').val()  || 0;
+        let inventoryratedaily    = row.find('[name="inventoryratedaily"]').val()    || 0;
+        let inventoryrateweekly   = row.find('[name="inventoryrateweekly"]').val()   || 0;
+        let inventoryratemonthly  = row.find('[name="inventoryratemonthly"]').val()  || 0;
+
+        let equipmentrateonetime  = row.find('[name="equipmentrateonetime"]').val()  || 0;
+        let equipmentratedaily    = row.find('[name="equipmentratedaily"]').val()    || 0;
+        let equipmentrateweekly   = row.find('[name="equipmentrateweekly"]').val()   || 0;
+        let equipmentratemonthly  = row.find('[name="equipmentratemonthly"]').val()  || 0;
+
+        if (startDate && endDate) {
+            $.ajax({
+                url: '/Cart/CalculateRent',
+                type: 'POST',
+                data: {
+                    startDate: startDate,
+                    endDate: endDate,
+                    dailyRate: 50,
+                    weeklyRate: 100,
+                    monthlyRate: 200
+                },
+                success: function (res) {
+                    row.find("select").val(res.frequency);
+                    row.closest(".d-flex").find(".text-primary").text(`$${res.totalRent}`);
+                    let cartTotal = 0;
+                $(".text-primary").each(function () {
+                    let priceText = $(this).text();
+                    let price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 0;
+                    cartTotal += price;
+                });
+                 // $(".bg-light .fw-bold.text-primary").text(`$${totalCost}`);
+                 $(".bg-light .fw-bold.text-primary").text(`$${cartTotal.toFixed(2)}`);
+                }
+            });
+        }
+    });
+
+    function deleteEquipmentFromCart(itemId, el) {
+        if (confirm("Are you sure you want to remove this item?")) {
+            $.ajax({
+                url: '/Cart/DeleteEquipmentFromCart',
+                type: 'POST',
+                data: { id: itemId },
+                success: function (res) {
+                    if (res.success) {
+                        if (res.redirectUrl) {
+                            // Cart empty — go to Step1
+                            window.location.href = res.redirectUrl;
+                        } else {
+                            // Just remove this row from the DOM
+                            $(el).closest(".row").remove();
+                        }
+                    } else {
+                        alert("Failed to remove item.");
+                    }
+                }
+            });
+        }
+    } // ✅ Closing brace added here
+
+        function deleteInventoryFromCart(itemId, el) {
+        if (confirm("Are you sure you want to remove this item?")) {
+            $.ajax({
+                url: '/Cart/DeleteInventoryFromCart',
+                type: 'POST',
+                data: { id: itemId },
+                success: function (res) {
+                    if (res.success) {
+                        if (res.redirectUrl) {
+                            // Cart empty — go to Step1
+                            window.location.href = res.redirectUrl;
+                        } else {
+                            // Just remove this row from the DOM
+                            $(el).closest(".row").remove();
+                        }
+                    } else {
+                        alert("Failed to remove item.");
+                    }
+                }
+            });
+        }
+    }
+</script>
+

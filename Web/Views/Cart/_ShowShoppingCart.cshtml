@@ -9,7 +9,7 @@
 </a>
 <script>
     function fnRedirectToCart() {
-        var url = '@Url.Action("Step1", "Cart", new { area = "" })'
+        var url = '@Url.Action("Index", "Cart", new { area = "" })'
         if ($('#aCartLink').find('span.count').length > 0) {
             window.location = url;
         }
