@@ -4,6 +4,7 @@ using DataLibrary;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLibrary.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250814062216_addsubcategorytable")]
+    partial class addsubcategorytable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1129,22 +1132,6 @@ namespace DataLibrary.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DefaultRentalRateDaily")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DefaultRentalRateMonthly")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DefaultRentalRateOneTime")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DefaultRentalRateWeekly")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -1165,9 +1152,6 @@ namespace DataLibrary.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("ManufacturerId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SubcategoryId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("SystemGeneratedId")
@@ -1191,8 +1175,6 @@ namespace DataLibrary.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("ManufacturerId");
-
-                    b.HasIndex("SubcategoryId");
 
                     b.HasIndex("UOMId");
 
@@ -1362,9 +1344,6 @@ namespace DataLibrary.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("LocationId")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("MUTCDId")
                         .HasColumnType("bigint");
 
@@ -1374,24 +1353,12 @@ namespace DataLibrary.Migrations
                     b.Property<double>("MinimumQuantity")
                         .HasColumnType("float");
 
-                    b.Property<string>("PartNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReOrderLevel")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("SubCategoryId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("SystemGeneratedId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("UOMId")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("UnitCost")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("UpdatedBy")
                         .HasColumnType("bigint");
@@ -1403,13 +1370,9 @@ namespace DataLibrary.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("LocationId");
-
                     b.HasIndex("MUTCDId");
 
                     b.HasIndex("ManufacturerId");
-
-                    b.HasIndex("SubCategoryId");
 
                     b.HasIndex("UOMId");
 
@@ -3743,10 +3706,6 @@ namespace DataLibrary.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.Subcategory", "Subcategory")
-                        .WithMany()
-                        .HasForeignKey("SubcategoryId");
-
                     b.HasOne("Models.UOM", "UOM")
                         .WithMany()
                         .HasForeignKey("UOMId")
@@ -3756,8 +3715,6 @@ namespace DataLibrary.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Manufacturer");
-
-                    b.Navigation("Subcategory");
 
                     b.Navigation("UOM");
                 });
@@ -3820,10 +3777,6 @@ namespace DataLibrary.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId");
-
                     b.HasOne("Models.MUTCD", "MUTCD")
                         .WithMany()
                         .HasForeignKey("MUTCDId");
@@ -3834,10 +3787,6 @@ namespace DataLibrary.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.Subcategory", "SubCategory")
-                        .WithMany()
-                        .HasForeignKey("SubCategoryId");
-
                     b.HasOne("Models.UOM", "UOM")
                         .WithMany()
                         .HasForeignKey("UOMId")
@@ -3846,13 +3795,9 @@ namespace DataLibrary.Migrations
 
                     b.Navigation("Category");
 
-                    b.Navigation("Location");
-
                     b.Navigation("MUTCD");
 
                     b.Navigation("Manufacturer");
-
-                    b.Navigation("SubCategory");
 
                     b.Navigation("UOM");
                 });
