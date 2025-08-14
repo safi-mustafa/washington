@@ -1,0 +1,131 @@
+﻿<style>
+    .leftInfo p{
+        font-weight:400;
+        color:#1a1a1a;
+        font-size:16px;
+    }
+
+    .rightInfo p {
+        font-weight:500;
+        color:#000000;
+        font-size:16px;
+    }
+
+    
+    .stepper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .ProgressTitle {
+        display: flex;
+        align-items: center;
+    }
+
+    .step.active {
+        color: #f54e00;
+    }
+
+    .step .icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e9ecef;
+        margin-right: 8px;
+    }
+
+    .step.active .icon {
+        background-color: #f54e00;
+        color: #fff;
+    }
+
+    .step.completed .icon {
+        background-color: #198754;
+        color: #fff;
+    }
+
+    .step.completed .line {
+        background-color: #198754;
+        color: #fff;
+    }
+
+    .line {
+        flex: 1;
+        height: 3px;
+        margin: 0 26px;
+        background-color: #b2b2b2;
+        width: 19vw;
+    }
+
+
+</style>
+@* <h2>Review & Submit Order</h2>
+
+<div class="mb-4">
+    <p>test</p>
+    <div class="card p-3 mb-3">
+        <h5 class="fw-bold">Order Summary</h5>
+        <div class="d-flex justify-content-between">
+            <div>
+                <p>Project:</p>
+                <p>Project Code: CSA-001</p>
+                <p>Items: 1 items</p>
+                <p>Estimated Total: <strong>$5,950</strong></p>
+                <p>Special Instructions: <strong>test</strong></p>
+            </div>
+        </div>
+    </div>
+
+   <div class="card p-3">
+        <h5 class="fw-bold">Items to Order</h5>
+        <div class="d-flex justify-content-between">
+            <div>
+                <strong>Crane Mobile 50T</strong><br />
+                <span>2025-08-13 to 2025-08-20 • Daily • Qty: 1</span>
+            </div>
+            <div><strong>$850</strong></div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between">
+    <a asp-controller="Cart" asp-action="Step2" class="btn btn-outline-secondary">Back to Details</a>
+    <form method="post">
+        <button type="submit" class="btn btn-success">Submit Order</button>
+    </form>
+</div> *@
+
+
+<h4 class="text-xl font-bold text-gray-900  mb-4">Checkout</h4>
+
+<div class="container mt-5">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center p-5">
+
+            <!-- Green Check Icon -->
+            <div class="mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="green" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" stroke="green" stroke-width="2" fill="none" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 13l3 3 7-7" stroke="green" stroke-width="2" />
+                </svg>
+            </div>
+
+            <!-- Main Heading -->
+            <h4 class="fw-semibold mb-2">Order Submitted Successfully!</h4>
+
+            <!-- Subtext -->
+            <p class="text-muted mb-1" style="font-size: 15px;font-weight: 400;">
+                Your order has been submitted for review. You will receive a confirmation email shortly.
+            </p>
+            <p class="text-muted small">
+                Redirecting to your orders in a few seconds...
+            </p>
+        </div>
+    </div>
+</div>
+
