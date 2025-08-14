@@ -1,17 +1,10 @@
-﻿using AutoMapper;
-using Centangle.Common.ResponseHelpers.Models;
-using DataLibrary;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Logging;
-using Models;
+﻿using Models;
 using Models.Common.Interfaces;
+
+using Pagination;
+
 using Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModels;
 using ViewModels.Shared;
 
 namespace Repositories.Services.SubCategory.Interface
@@ -26,5 +19,7 @@ namespace Repositories.Services.SubCategory.Interface
         Task<Subcategory> GetSubCategoryInfoById(long id);
       
 
+        Task<PaginatedResultModel<T>> GetSubCategoryById<T>(SubCategorySearchViewModel searchVM);
     }
 }
+

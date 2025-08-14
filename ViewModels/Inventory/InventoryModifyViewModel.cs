@@ -2,6 +2,7 @@
 using Helpers.File;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Models;
 using Models.Common.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -24,14 +25,29 @@ namespace ViewModels
         [Remote(action: "IsItemNoUnique", controller: "Inventory", AdditionalFields = "Id,ItemNo", ErrorMessage = "Item # already in use.")]
         public string ItemNo { get; set; }
         public double Quantity { get; set; }
+        [Required]
         [Display(Name = "Minimum Quantity", Prompt = "Minimum Quantity")]
+        [Range(0, double.MaxValue, ErrorMessage = "Minimum Quantity must be a positive number.")]
         public double? MinimumQuantity { get; set; }
+        [Required]
+        [Display(Name = "Part Number", Prompt = "Part Number")]
+        public string? PartNumber { get; set; }
+        [Required]
+        [Display(Name = "Unit Cost", Prompt = "Unit Cost")]
+        [Range(0, double.MaxValue, ErrorMessage = "Unit Cost must be a positive number.")]
+        public decimal? UnitCost { get; set; }
+        [Required]
+        [Display(Name = "Reorder Level", Prompt = "Reorder Level")]
+        [Range(0, double.MaxValue, ErrorMessage = "Reorder Level must be a positive number.")]
+        public double? ReOrderLevel { get; set; }
         public string? ImageUrl { get; set; }
         public IFormFile? File { get; set; }
         public CategoryBriefViewModel Category { get; set; } = new();
+        public SubCategoryBriefViewModel SubCategory { get; set; } = new();
         public ManufacturerBriefViewModel Manufacturer { get; set; } = new();
         public UOMBriefViewModel UOM { get; set; } = new();
         public MUTCDBriefViewModel MUTCD { get; set; } = new();
+        public LocationBriefViewModel Location { get; set; } = new();
 
         public string? Type { get; set; }
         public string GetBaseFolder()

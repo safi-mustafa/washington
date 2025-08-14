@@ -21,6 +21,11 @@
             </div>
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
+                    <partial name="~/Views/Shared/Select2/_SubCategory.cshtml" for="SubCategory" />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
                     <partial name="~/Views/Shared/Select2/_Manufacturer.cshtml" for="Manufacturer" />
                 </div>
             </div>
@@ -49,7 +54,35 @@
                     <span asp-validation-for="MinimumQuantity" class="validation-invalid-label"></span>
                 </div>
             </div>
-           @*  <div class="col-md-6">
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="PartNumber" class="form-label fw-600"></label>
+                    <input asp-for="PartNumber" type="text" class="form-control" />
+                    <span asp-validation-for="PartNumber" class="validation-invalid-label"></span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="UnitCost" class="form-label fw-600"></label>
+                    <input asp-for="UnitCost" type="text" class="form-control input-currency" />
+                    <span asp-validation-for="UnitCost" class="validation-invalid-label"></span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="ReOrderLevel" class="form-label fw-600"></label>
+                    <input asp-for="ReOrderLevel" type="text" class="form-control" />
+                    <span asp-validation-for="ReOrderLevel" class="validation-invalid-label"></span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <partial name="~/Views/Shared/Select2/_Location.cshtml" 
+                             for="Location" 
+                             view-data='new ViewDataDictionary(ViewData) { {"Id", "location-search-id"} }' />
+                </div>
+            </div>
+            <div class="col-md-6">
                 <div class="form-group">
                     <label class="col-sm-12 form-label fw-600">Upload Image</label>
                     <div class="col-sm-12">
@@ -63,10 +96,29 @@
                     <img class="img-responsive image-thumbnail" src="@Model.ImageUrl" id="image-thumbnail" alt="" style="max-width:120px;">
                     <input type="hidden" asp-for="ImageUrl" value="@Model.ImageUrl" id="hidden-image-url" />
                 </div>
-            </div> *@
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    function ShowImage(input) {
+        debugger
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#image-thumbnail').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function RemoveImage() {
+        document.getElementById("Image").value = "";
+        $("#image-thumbnail").removeAttr('src');
+        $("#hidden-image-url").val(null);
+        //  $("#hidden-image-url").val("/Storage/Default/default.png");
+    }</script>
 
 <input type="hidden" asp-for="Id" />
 <input type="hidden" asp-for="SystemGeneratedId" />

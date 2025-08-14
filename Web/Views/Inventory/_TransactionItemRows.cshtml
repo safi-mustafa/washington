@@ -9,12 +9,13 @@
     <table id="shipment-table-container" class="table table-striped table-bordered">
         <thead>@* class="thead-primary" *@
             <tr>
-                <th>Purchase Order</th>
+                <th>Purchase Order ID</th>
+                <th>Purchase Date</th>
+                <th>Purchase Price</th>
                 <th>Source</th>
                 <th>Supplier</th>
                 <th>Location</th>
                 <th>OH Quantity</th>
-                <th>Price</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -25,11 +26,12 @@
                 {
                     <tr>
                         <td>@item.LotNO</td>
+                        <td>@item.PurchaseDate</td>
+                        <td>@item.FormattedItemPrice</td>
                         <td>@item.Source.Name  </td>
                         <td>@item.Supplier.Name </td>
                         <td>@item.Location.Name </td>
                         <td>@item.Quantity</td>
-                        <td>@item.FormattedItemPrice</td>
                         <td>
                             <a href='#' style="color:black;" class='table-link delete-btn' onClick='ShowInventoryShipmentHistory("@inventoryId","@item.LotNO","@item.Location.Id","@item.Source.Id")'>
                                 <svg width="19" height="17" viewBox="0 0 19 17" fill="none" xmlns="http://www.w3.org/2000/svg">

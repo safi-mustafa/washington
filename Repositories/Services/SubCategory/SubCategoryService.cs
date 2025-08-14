@@ -1,14 +1,21 @@
 ﻿using AutoMapper;
 using Centangle.Common.ResponseHelpers;
 using Centangle.Common.ResponseHelpers.Models;
+
 using DataLibrary;
+
+using Enums;
+
 using Helpers.Extensions;
+
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
 using Models;
 using Models.Common.Interfaces;
+
 using Pagination;
 using Repositories.Common;
 using Repositories.Services.SubCategory.Interface;
@@ -28,14 +35,15 @@ namespace Repositories.Services.SubCategory
     public class SubCategoryService<CreateViewModel, UpdateViewModel, DetailViewModel>
        : BaseService<Subcategory, CreateViewModel, UpdateViewModel, DetailViewModel>,
          ISubCategoryService<CreateViewModel, UpdateViewModel, DetailViewModel>
-       where DetailViewModel : class, IBaseCrudViewModel, new()
-       where CreateViewModel : class, IBaseCrudViewModel, new()
-       where UpdateViewModel : class, IBaseCrudViewModel, IIdentitifier, new()
+        where DetailViewModel : class, IBaseCrudViewModel, new()
+        where CreateViewModel : class, IBaseCrudViewModel, new()
+        where UpdateViewModel : class, IBaseCrudViewModel, IIdentitifier, new()
     {
         private readonly ModelStateDictionary _modelState;
         private readonly ApplicationDbContext _db;
         private readonly ILogger<SubCategoryService<CreateViewModel, UpdateViewModel, DetailViewModel>> _logger;
         private readonly IRepositoryResponse _response;
+        private readonly IMapper _mapper;
         public SubCategoryService(
            ApplicationDbContext db,
            ILogger<SubCategoryService<CreateViewModel, UpdateViewModel, DetailViewModel>> logger,
@@ -48,17 +56,21 @@ namespace Repositories.Services.SubCategory
             _db = db;
             _logger = logger;
             _response = response;
+            _mapper = mapper;
         }
+
         public override async Task<Expression<Func<Subcategory, bool>>> SetQueryFilter(IBaseSearchModel filters)
         {
             var searchFilters = filters as SubCategorySearchViewModel;
 
             return x =>
-                (
-                    string.IsNullOrEmpty(searchFilters.Search.value)
+                        (
+                            (
+                                string.IsNullOrEmpty(searchFilters.Search.value)
                     || x.Name.ToLower().Contains(searchFilters.Search.value.ToLower())
-                )
-                &&
+                            )
+                        )
+                        &&
                 (string.IsNullOrEmpty(searchFilters.Name)
                     || x.Name.ToLower().Contains(searchFilters.Name.ToLower()))
                 &&
@@ -76,18 +88,64 @@ namespace Repositories.Services.SubCategory
                 return subCategoryInfo;
             }
             catch (Exception ex)
-            {
+                {
                 _logger.LogError(ex, $"GetSubCategoryInfoById() for {typeof(Models.Subcategory).FullName} threw an exception");
                 return (Subcategory)Response.BadRequestResponse(_response);
             }
-        }
+                }
 
-
-
-        public async override Task<IRepositoryResponse> GetAll<M>(IBaseSearchModel search)
+        public async Task<PaginatedResultModel<T>> GetSubCategoryById<T>(SubCategorySearchViewModel searchVM)
         {
             try
             {
+                var subcategoriesList = new List<Subcategory>();
+                int? categoryId = null;
+                if (int.TryParse(searchVM.SearchView, out var parsedValue))
+                {
+                    categoryId = parsedValue;
+                }
+
+                if (categoryId != null)
+                {
+                    subcategoriesList = await _db.Subcategories
+                        .Where(p => !p.IsDeleted
+                            && p.ActiveStatus == ActiveStatus.Active
+                            && p.CategoryId == categoryId)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+                else
+                {
+                    subcategoriesList = await _db.Subcategories
+                        .Where(p => !p.IsDeleted
+                            && p.ActiveStatus == ActiveStatus.Active)
+                        .AsNoTracking()
+                        .ToListAsync();
+                }
+                var paginated = await subcategoriesList
+                    .OrderBy(x => x.Name)
+                    .ToList()
+                    .PaginateList(searchVM);
+
+                var mappedItems = _mapper.Map<List<T>>(paginated.Items);
+
+                return new PaginatedResultModel<T>
+                {
+                    Items = mappedItems,
+                    _links = paginated._links,
+                    _meta = paginated._meta
+                };
+            }
+            catch
+            {
+                return new PaginatedResultModel<T>();
+            }
+        }
+
+        public async override Task<IRepositoryResponse> GetAll<M>(IBaseSearchModel search)
+                {
+            try
+                {
                 var filters = await SetQueryFilter(search);
 
                 var assetsQueryable =
@@ -96,13 +154,13 @@ namespace Repositories.Services.SubCategory
                                 on sub.CategoryId equals cat.Id
 
                             select new SubCategoryDetailViewModel
-                            {
+                {
                                 ActiveStatus = sub.ActiveStatus,
                                 CategoryId = cat.Id,
                                 CategoryName = cat.Name,
                                 Name = sub.Name,
                                 Id = sub.Id,
-                            };
+                };
 
 
                 var result = await assetsQueryable.Paginate(search);
@@ -127,3 +185,4 @@ namespace Repositories.Services.SubCategory
 
     }
 }
+

@@ -26,5 +26,14 @@ namespace Models
         public long? MUTCDId { get; set; }
         public MUTCD? MUTCD { get; set; }
         public string? ImageUrl { get; set; }
+        [ForeignKey("SubCategoryId")]
+        public long? SubCategoryId { get; set; }
+        public Subcategory? SubCategory { get; set; }
+        public string? PartNumber { get; set; }
+        public decimal? UnitCost { get; set; }
+        public string? ReOrderLevel { get; set; }
+        [ForeignKey("LocationId")]
+        public long? LocationId { get; set; }
+        public Location? Location { get; set; }
     }
 }

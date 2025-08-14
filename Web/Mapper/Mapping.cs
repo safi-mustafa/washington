@@ -214,12 +214,16 @@ namespace Models.Mapper
             CreateMap<InventoryModifyViewModel, Inventory>()
                 .ForMember(s => s.CategoryId, d => d.MapFrom(x => x.Category.Id))
                 .ForMember(s => s.Category, d => d.Ignore())
+                .ForMember(s => s.SubCategoryId, d => d.MapFrom(x => x.SubCategory.Id))
+                .ForMember(s => s.SubCategory, d => d.Ignore())
                 .ForMember(s => s.ManufacturerId, d => d.MapFrom(x => x.Manufacturer.Id))
                 .ForMember(s => s.Manufacturer, d => d.Ignore())
                 .ForMember(s => s.UOMId, d => d.MapFrom(x => x.UOM.Id))
                 .ForMember(s => s.UOM, d => d.Ignore())
                 .ForMember(s => s.MUTCDId, d => d.MapFrom(x => x.MUTCD.Id))
                 .ForMember(s => s.MUTCD, d => d.Ignore())
+                .ForMember(s => s.LocationId, d => d.MapFrom(x => x.Location.Id))
+                .ForMember(s => s.Location, d => d.Ignore())
                 .ReverseMap();
             CreateMap<InventoryDetailViewModel, Inventory>().ReverseMap();
             CreateMap<InventoryBriefViewModel, Inventory>().ReverseMap();
