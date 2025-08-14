@@ -179,7 +179,8 @@ namespace Repositories.Common
                         DefaultRentalRateOneTime = g.Max(x => x.DefaultRentalRateOneTime ?? "0"),
                         DefaultRentalRateDaily = g.Max(x => x.DefaultRentalRateDaily ?? "0"),
                         DefaultRentalRateWeekly = g.Max(x => x.DefaultRentalRateWeekly ?? "0"),
-                        DefaultRentalRateMonthly = g.Max(x => x.DefaultRentalRateMonthly ?? "0")
+                        DefaultRentalRateMonthly = g.Max(x => x.DefaultRentalRateMonthly ?? "0"),
+                        UsefulLifeMonths = g.Max(x => x.UsefulLifeMonths ?? "0"),
                     })
                     //.Where(x => x.Quantity > 0)
                     .AsQueryable();
@@ -377,7 +378,8 @@ namespace Repositories.Common
                         DefaultRentalRateWeekly = e.DefaultRentalRateWeekly,
                         DefaultRentalRateMonthly = e.DefaultRentalRateMonthly,
                         SubCategoryId = sc != null ? sc.Id : 0,
-                        SubCategoryName = sc != null ? sc.Name : "-"
+                        SubCategoryName = sc != null ? sc.Name : "-",
+                        UsefulLifeMonths = e.UsefulLifeMonths,
                     });
         }
 

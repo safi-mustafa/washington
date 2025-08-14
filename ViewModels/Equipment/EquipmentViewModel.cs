@@ -27,6 +27,7 @@ namespace ViewModels
         public string DefaultRentalRateDaily { get; set; }
         public string DefaultRentalRateWeekly { get; set; }
         public string DefaultRentalRateMonthly { get; set; }
+        public string UsefulLifeMonths { get; set; }
         public long SubCategoryId { get; set; }
         public string? SubCategoryName { get; set; }
     }

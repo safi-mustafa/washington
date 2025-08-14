@@ -39,6 +39,7 @@ namespace ViewModels
         public string DefaultRentalRateDaily { get; set; }
         public string DefaultRentalRateWeekly { get; set; }
         public string DefaultRentalRateMonthly { get; set; }
+        public string UsefulLifeMonths { get; set; }
         public string FormattedImageUrl
         {
             get

@@ -52,6 +52,7 @@ namespace Web.Controllers
                 new DataTableViewModel{title = "Default Rental Rate Daily",data = "DefaultRentalRateDaily", className = "dt-currency", orderable = true},
                 new DataTableViewModel{title = "Default Rental Rate Weekly",data = "DefaultRentalRateWeekly", className = "dt-currency", orderable = true},
                 new DataTableViewModel{title = "Default Rental Rate Monthly",data = "DefaultRentalRateMonthly",className = "dt-currency", orderable = true},
+                new DataTableViewModel{title = "Useful Life Months",data = "UsefulLifeMonths", orderable = true},
                 //new DataTableViewModel{title = "Total Value",data = "TotalValue", className = "dt-currency" ,orderable = true},
                
                 new DataTableViewModel{title = "Action",data = null,className="action text-right exclude-form-export"}
