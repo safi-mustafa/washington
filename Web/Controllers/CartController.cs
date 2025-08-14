@@ -91,6 +91,10 @@ namespace Web.Controllers
         {
             return View("Step3");
         }
+        public async Task<ActionResult> Step4()
+        {
+            return View("Step4");
+        }
 
         [HttpPost]
         public async Task<JsonResult> DeleteInventoryFromCart(int id)
