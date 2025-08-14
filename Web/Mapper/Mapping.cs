@@ -716,6 +716,7 @@ namespace Models.Mapper
                 .ForMember(p => p.Name, a => a.MapFrom(d => d.ContactPersonName))
                 .ReverseMap();
 
+            CreateMap<Subcategory, SubCategoryBriefViewModel>().ReverseMap();
 
 
             //IgnoreGlobalProperties();

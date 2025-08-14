@@ -1,18 +1,30 @@
 ﻿using AutoMapper;
+
+using Centangle.Common.ResponseHelpers;
 using Centangle.Common.ResponseHelpers.Models;
+
 using DataLibrary;
+
+using Enums;
+
+using Helpers.Extensions;
+using Helpers.File;
+
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Logging;
-using Models.Common.Interfaces;
-using Models;
-using Pagination;
-using System.Linq.Expressions;
-using ViewModels.Shared;
-using ViewModels;
 using Microsoft.EntityFrameworkCore;
-using Centangle.Common.ResponseHelpers;
-using Helpers.File;
+using Microsoft.Extensions.Logging;
+
+using Models;
+using Models.Common.Interfaces;
+
+using Pagination;
+
+using System.Linq.Expressions;
+
+using ViewModels;
+using ViewModels.ProjectManager;
+using ViewModels.Shared;
 
 namespace Repositories.Common
 {
@@ -372,5 +384,7 @@ namespace Repositories.Common
         {
             return (await _db.Equipments.Where(x => x.ItemNo == itemNo && x.Id != id && x.IsDeleted == false).CountAsync()) < 1;
         }
+
+        
     }
 }

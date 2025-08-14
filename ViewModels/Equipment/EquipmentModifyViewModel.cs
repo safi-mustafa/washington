@@ -32,6 +32,7 @@ namespace ViewModels
         public string? ImageUrl { get; set; }
         public IFormFile? File { get; set; }
         public CategoryBriefViewModel Category { get; set; } = new();
+        public SubCategoryBriefViewModel SubCategory { get; set; } = new();
         public ManufacturerBriefViewModel Manufacturer { get; set; } = new();
         public UOMBriefViewModel UOM { get; set; } = new();
 
