@@ -30,7 +30,7 @@ namespace Models
         public long? SubCategoryId { get; set; }
         public Subcategory? SubCategory { get; set; }
         public string? PartNumber { get; set; }
-        public string? UnitCost { get; set; }
+        public decimal? UnitCost { get; set; }
         public string? ReOrderLevel { get; set; }
         [ForeignKey("LocationId")]
         public long? LocationId { get; set; }

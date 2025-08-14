@@ -1,4 +1,5 @@
-﻿using ViewModels.Shared;
+﻿using Helpers.Datetime;
+using ViewModels.Shared;
 
 namespace ViewModels
 {
@@ -25,6 +26,13 @@ namespace ViewModels
         public long? EntityDetailId { get; set; }
         public string EntityDetailName { get; set; }
         public DateTime CreatedOn { get; set; }
+        public string PurchaseDate
+        {
+            get
+            {
+                return DatetimeHelper.FormatDatetimeInPST(CreatedOn);
+            }
+        }
 
     }
 }

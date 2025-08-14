@@ -27,5 +27,12 @@ namespace ViewModels
         public string? MUTCCode { get; set; }
         public string? MUTCImageUrl { get; set; }
         public string? MUTCDescription { get; set; }
+        public long SubCategoryId { get; set; }
+        public string? SubCategoryName { get; set; }
+        public long LocationId { get; set; }
+        public string? LocationName { get; set; }
+        public string? PartNumber { get; set; }
+        public decimal UnitCost { get; set; }
+        public string ReOrderLevel { get; set; }
     }
 }

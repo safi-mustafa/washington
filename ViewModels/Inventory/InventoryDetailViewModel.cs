@@ -42,6 +42,12 @@ namespace ViewModels
         public ManufacturerBriefViewModel Manufacturer { get; set; } = new();
         public UOMBriefViewModel UOM { get; set; } = new();
         public MUTCDBriefViewModel MUTCD { get; set; } = new();
+        public SubCategoryBriefViewModel SubCategory { get; set; } = new();
+        public LocationBriefViewModel Location { get; set; } = new();
+        public string PartNumber { get; set; }
+        public decimal UnitCost { get; set; }
+        public string ReOrderLevel { get; set; }
+
 
         public string DataTableRowClass
         {
