@@ -39,6 +39,12 @@ namespace Models
 
         public long EntityId { get; set; }
         public long EntityDetailId { get; set; }
+
+        public string AssetTag { get; set; }
+
+        [ForeignKey("CurrentStatusId")]
+        public long? CurrentStatusId { get; set; }
+        public CurrentStatus CurrentStatus { get; set; }
     }
 }
 
