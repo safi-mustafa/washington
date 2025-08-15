@@ -187,18 +187,20 @@ class DataTableManager {
         $(document).on('click', '.dt-control.expand', (e) => {
             let tr = $(e.target).closest('tr');
             let row = this.dataTable.row(tr);
-
+            let currentstatusId = $("#currentstatus-search-id").val();
+            let conditionId = $("#condition-search-id").val();
             if (row.child.isShown()) {
                 row.child.hide();
                 tr.removeClass('dt-hasChild shown');
             } else {
                 showLoader(`#${this.tableId}`);
                 let rowData = row.data();
-                let url = `/${this.controllerName}/GetExpandedData/${rowData.Id}`;
+                let url = `/${this.controllerName}/GetExpandedData`;
 
                 $.ajax({
                     url: url,
                     method: 'GET',
+                    data: { 'id': rowData.Id, 'currentstatusId': currentstatusId, 'conditionId': conditionId },
                     success: (response) => {
                         row.child(response).show();
                         tr.addClass("dt-hasChild shown");

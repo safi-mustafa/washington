@@ -57,6 +57,8 @@ namespace Repositories.Common
                                 x.UOM.Name.ToLower().Contains(searchFilters.Search.value.ToLower())
                                 ||
                                 x.MUTCD.Code.ToLower().Contains(searchFilters.Search.value.ToLower())
+                                ||
+                                x.Description.ToLower().Contains(searchFilters.Search.value.ToLower())
                             )
                         )
                         &&
@@ -67,6 +69,8 @@ namespace Repositories.Common
                         (searchFilters.Manufacturer.Id == null || x.Manufacturer.Id == searchFilters.Manufacturer.Id)
                         &&
                         (searchFilters.MUTCD.Id == null || x.MUTCD.Id == searchFilters.MUTCD.Id)
+                            &&
+                        (searchFilters.SubCategory.Id == null || x.SubCategory.Id == searchFilters.SubCategory.Id)
                         ;
         }
 

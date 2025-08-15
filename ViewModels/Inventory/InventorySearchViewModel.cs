@@ -11,6 +11,7 @@ namespace ViewModels
         public ManufacturerBriefViewModel Manufacturer { get; set; } = new(false, "");
         public UOMBriefViewModel UOM { get; set; } = new(false, "");
         public MUTCDBriefViewModel MUTCD { get; set; } = new(false, "");
+        public SubCategoryBriefViewModel SubCategory { get; set; } = new(false, "");
         public UserSearchSettingBriefViewModel UserSearchSetting { get; set; } = new();
         public SearchFilterTypeCatalog? Type { get; set; } = SearchFilterTypeCatalog.MaterialCostReport;
         public string SearchView { get; set; }
