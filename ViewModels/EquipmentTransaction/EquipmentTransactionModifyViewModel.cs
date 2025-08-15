@@ -31,8 +31,12 @@ namespace ViewModels
         public SupplierBriefViewModel Supplier { get; set; } = new();
         public LocationBriefViewModel Location { get; set; } = new();
         public ConditionBriefViewModel Condition { get; set; } = new(false, "");
+        public CurrentStatusBriefViewModel CurrentStatus { get; set; } = new(false, "");
         public long EquipmentId { get; set; }
-    }
 
+        [Display(Name = "Asset Tag", Prompt = "AssetTag")]
+        [Required]
+        public string AssetTag { get; set; }
+    }
 }
 

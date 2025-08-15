@@ -10,9 +10,24 @@
     <partial name="~/Views/Shared/Select2/_Category.cshtml" for="Category" view-data='new ViewDataDictionary(ViewData) { {"HideLabel",true}, {"Id", "uom-search-id"} }' />
 </div>
 
-<div class="control_field" data-filter-id="manufacturerId">
+<div class="control_field" data-filter-id="subcategoryId">
+    <partial name="~/Views/Shared/Select2/_SubCategory.cshtml" for="SubCategory" view-data='new ViewDataDictionary(ViewData) { { "HideLabel", true }, { "Id", "subcategory-search-id" }, { "CategoryId", "uom-search-id" } }' />
+</div>
+
+<div class="control_field" data-filter-id="currentStatusId">
+    <partial name="~/Views/Shared/Select2/_CurrentStatus.cshtml" for="CurrentStatus" view-data='new ViewDataDictionary(ViewData) { { "HideLabel", true }, { "Id", "currentstatus-search-id" }}' />
+</div>
+
+
+<div class="control_field" data-filter-id="conditionId">
+    <partial name="~/Views/Shared/Select2/_Condition.cshtml" for="Condition" view-data='new ViewDataDictionary(ViewData) { { "HideLabel", true }, { "Id", "condition-search-id" } }' />
+</div>
+
+
+@* <div class="control_field" data-filter-id="manufacturerId">
     <partial name="~/Views/Shared/Select2/_Manufacturer.cshtml" for="Manufacturer" view-data='new ViewDataDictionary(ViewData) { {"HideLabel",true}, {"Id", "manufacturer-search-id"} }' />
 </div>
 <div class="control_field" data-filter-id="uomId">
     <partial name="~/Views/Shared/Select2/_UOM.cshtml" for="UOM" view-data='new ViewDataDictionary(ViewData) { {"HideLabel",true}, {"Id", "condition-search-id"} }' />
 </div>
+ *@

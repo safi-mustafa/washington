@@ -69,6 +69,10 @@ namespace Repositories.Common
                                 x.UOM.Name.ToLower().Contains(searchFilters.Search.value.ToLower())
                                  ||
                                 x.ItemNo.ToLower().Contains(searchFilters.Search.value.ToLower())
+                                ||
+                                x.Subcategory.Name.ToLower().Contains(searchFilters.Search.value.ToLower())
+                                ||
+                                x.Description.ToLower().Contains(searchFilters.Search.value.ToLower())
                             )
                         )
                         &&
@@ -77,6 +81,8 @@ namespace Repositories.Common
                         (searchFilters.Category.Id == null || x.Category.Id == searchFilters.Category.Id)
                         &&
                         (searchFilters.Manufacturer.Id == null || x.Manufacturer.Id == searchFilters.Manufacturer.Id)
+                        &&
+                        (searchFilters.SubCategory.Id == null || x.Subcategory.Id == searchFilters.SubCategory.Id)
                         ;
         }
 
@@ -398,11 +404,11 @@ namespace Repositories.Common
             {
                 string cleaned = Regex.Replace(viewModel.SubCategory.Name, "[^a-zA-Z0-9]", "");
                 cleaned = new string(cleaned.Take(4).ToArray());
-                viewModel.SystemGeneratedId = "M-" + cleaned.ToUpper() + "-" + (totalEquipmentCount + 1).ToString("D4");
+                viewModel.SystemGeneratedId = "M-" + cleaned.ToUpper() + "-" + (totalEquipmentCount + 1).ToString("D3");
             }
             else
             {
-                viewModel.SystemGeneratedId = "M-" + (totalEquipmentCount + 1).ToString("D4");
+                viewModel.SystemGeneratedId = "M-" + (totalEquipmentCount + 1).ToString("D3");
             }
             return await base.Create(model);
         }

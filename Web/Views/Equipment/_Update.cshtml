@@ -16,12 +16,12 @@
             </div> *@
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
-                    <partial name="~/Views/Shared/Select2/_Category.cshtml" for="Category" />
+                    <partial name="~/Views/Shared/Select2/_Category.cshtml" for="Category" view-data='new ViewDataDictionary(ViewData) { { "Id", "Category-id" } }' />
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
-                    <partial name="~/Views/Shared/Select2/_SubCategory.cshtml" for="SubCategory" />
+                    <partial name="~/Views/Shared/Select2/_SubCategory.cshtml" for="SubCategory" view-data='new ViewDataDictionary(ViewData) { { "CategoryId", "Category-id" } }' />
                 </div>
             </div>
             <div class="col-lg-6">
@@ -48,7 +48,7 @@
 
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
-                    <partial name="~/Views/Shared/Select2/_UOM.cshtml" for="UOM"/>
+                    <partial name="~/Views/Shared/Select2/_UOM.cshtml" for="UOM" />
                 </div>
             </div>
 
@@ -70,13 +70,13 @@
             </div> *@
 
 
-            <div class="col-lg-6">
+            @*   <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="DefaultRentalRateOneTime" class="form-label fw-600"></label>
                     <input asp-for="DefaultRentalRateOneTime" type="text" class="form-control input-currency" value="$100.00" disabled/>
                     <span asp-validation-for="DefaultRentalRateOneTime" class="validation-invalid-label"></span>
                 </div>
-            </div>
+            </div> *@
 
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
@@ -102,13 +102,13 @@
                 </div>
             </div>
 
-            <div class="col-lg-6">
+            @*     <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="UsefulLifeMonths" class="form-label fw-600"></label>
                     <input asp-for="UsefulLifeMonths" type="text" class="form-control" />
                     <span asp-validation-for="UsefulLifeMonths" class="validation-invalid-label"></span>
                 </div>
-            </div>
+            </div> *@
 
 
             @*          <div class="col-lg-6">

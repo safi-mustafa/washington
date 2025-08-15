@@ -33,6 +33,7 @@ namespace ViewModels
         public LocationBriefViewModel Location { get; set; } = new();
         public EquipmentDetailViewModel Equipment { get; set; } = new();
         public ConditionBriefViewModel Condition { get; set; } = new();
+        public CurrentStatusBriefViewModel CurrentStatus { get; set; } = new();
         public EquipmentTransactionTypeCatalog TransactionType { get; set; }
         public DateTime CreatedOn { get; set; }
 
@@ -40,6 +41,7 @@ namespace ViewModels
         public string EntityName { get; set; }
         public long? EntityDetailId { get; set; }
         public string EntityDetailName { get; set; }
+        public string? AssetTag { get; set; }
 
     }
 }
