@@ -753,6 +753,12 @@ namespace Models.Mapper
             CreateMap<CurrentStatusDetailViewModel, CurrentStatus>().ReverseMap();
             CreateMap<CurrentStatusBriefViewModel, CurrentStatus>().ReverseMap();
             CreateMap<CurrentStatusModifyViewModel, CurrentStatusDetailViewModel>().ReverseMap();
+
+            CreateMap<EquipmentTransactionNotesViewModel, EquipmentTransactionsNotes>().ForMember(dest => dest.EquipmentTransactionId,
+               opt => opt.MapFrom(src => src.TransactionId))
+    .ReverseMap();
+
+
             //IgnoreGlobalProperties();
         }
         //private void IgnoreGlobalProperties()

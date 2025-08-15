@@ -107,7 +107,8 @@ namespace Repositories.Common
                                      t.PurchaseDate,
                                      t.AssetTag,
                                      t.ConditionId,
-                                     t.CurrentStatusId
+                                     t.CurrentStatusId,
+                                     t.Id
                                  };
 
                 // ✅ Apply currentstatusId filter only if > 0
@@ -169,7 +170,8 @@ namespace Repositories.Common
                             Quantity = x.Sum(y => y.Quantity),
                             CreatedOn = x.Max(y => y.CreatedOn),
                             PurchaseDate = x.Max(y => y.CreatedOn),
-                            AssetTag = x.Max(y => y.AssetTag)
+                            AssetTag = x.Max(y => y.AssetTag),
+                            Id = x.Max(y => y.Id)
                         })
                         .OrderByDescending(x => x.CreatedOn).ToListAsync();
 

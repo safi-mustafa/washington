@@ -27,6 +27,9 @@ namespace Repositories.Common
         Task<List<EquipmentCostViewModel>> GetEquipmentAverageCost(List<long> ids);
         Task<List<EquipmentTransactionHistoryViewModel>> GetEquipmentIssueHistory(int inventoryId, string poNumber, int locationId);
         Task<bool> IsItemNoUnique(long id, string itemNo);
-      
+
+        Task<List<EquipmentTransactionNotesViewModel>> GetNotesByTransactionId(int id);
+
+        Task<bool> SaveShipmentTransactionNotes(EquipmentTransactionNotesViewModel model);
     }
 }

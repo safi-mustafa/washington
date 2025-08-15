@@ -214,6 +214,28 @@ namespace Web.Controllers
         {
             return await _service.IsItemNoUnique(id, itemNo);
         }
+
+        public async Task<ActionResult> SaveShipmentTransactionNotes(EquipmentTransactionNotesViewModel model)
+        {
+            var notes = await _service.SaveShipmentTransactionNotes(model);
+            return Json(notes);
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult> GetShipmentTransactionNotes(int Id)
+        {
+
+            try
+            {
+                var notes = await _service.GetNotesByTransactionId(Id);
+                List<INotesViewModel> notesViewModels = notes.Cast<INotesViewModel>().ToList();
+                ViewBag.EQTransaction = Id;
+                return View("_ShipmetTransactionNotes", notesViewModels);
+            }
+            catch (Exception ex) { _logger.LogError($"Equipment Transaction Notes method threw an exception, Message: {ex.Message}"); return RedirectToAction("Index"); }
+
+        }
     }
 }
 

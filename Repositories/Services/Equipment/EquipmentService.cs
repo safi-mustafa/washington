@@ -362,6 +362,8 @@ namespace Repositories.Common
                     join sc in _db.Subcategories on e.SubcategoryId equals sc.Id into scl
                     from sc in scl.DefaultIfEmpty() // LEFT JOIN
 
+
+
                     select new EquipmentViewModel
                     {
                         Id = e.Id,
@@ -385,7 +387,7 @@ namespace Repositories.Common
                         DefaultRentalRateMonthly = e.DefaultRentalRateMonthly,
                         SubCategoryId = sc != null ? sc.Id : 0,
                         SubCategoryName = sc != null ? sc.Name : "-",
-                        UsefulLifeMonths = e.UsefulLifeMonths,
+                        UsefulLifeMonths = e.UsefulLifeMonths
                     });
         }
 
@@ -464,6 +466,43 @@ namespace Repositories.Common
             return (await _db.Equipments.Where(x => x.ItemNo == itemNo && x.Id != id && x.IsDeleted == false).CountAsync()) < 1;
         }
 
+        public async Task<List<EquipmentTransactionNotesViewModel>> GetNotesByTransactionId(int id)
+        {
+            try
+            {
+                var notes = await (from n in _db.EquipmentTransactionsNotes.Include(x => x.EquipmentTransaction)
+                                   join u in _db.Users on n.CreatedBy equals u.Id
+                                   where (n.EquipmentTransactionId == id)
+                                   select new EquipmentTransactionNotesViewModel
+                                   {
+                                       Description = n.Description,
+                                       FileUrl = n.FileUrl,
+                                       CreatedOn = n.CreatedOn,
+                                       CreatedBy = u.FirstName + " " + u.LastName,
+                                       //FileExtension = !string.IsNullOrWhiteSpace(n.FileUrl) ? Path.GetExtension(n.FileUrl) : ""
+                                   }).ToListAsync();
+                return notes;
+            }
+            catch (Exception ex)
+            {
+                return new();
+            }
+        }
 
+        public async Task<bool> SaveShipmentTransactionNotes(EquipmentTransactionNotesViewModel model)
+        {
+            try
+            {
+                model.FileUrl = _fileHelper.Save(model);
+                var mappedNotes = _mapper.Map<EquipmentTransactionsNotes>(model);
+                await _db.AddAsync(mappedNotes);
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }
