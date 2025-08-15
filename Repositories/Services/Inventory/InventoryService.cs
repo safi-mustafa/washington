@@ -418,5 +418,43 @@ namespace Repositories.Common
         {
             return (await _db.Inventories.Where(x => x.ItemNo == itemNo && x.Id != id && x.IsDeleted == false).CountAsync()) < 1;
         }
+
+        public async Task<List<TransactionNotesViewModel>> GetNotesByTransactionId(int id)
+        {
+            try
+            {
+                var notes = await (from n in _db.TransactionsNotes.Include(x => x.Transaction)
+                                   join u in _db.Users on n.CreatedBy equals u.Id
+                                   where (n.TransactionId == id)
+                                   select new TransactionNotesViewModel
+                                   {
+                                       Description = n.Description,
+                                       FileUrl = n.FileUrl,
+                                       CreatedOn = n.CreatedOn,
+                                       CreatedBy = u.FirstName + " " + u.LastName,
+                                   }).ToListAsync();
+                return notes;
+            }
+            catch (Exception ex)
+            {
+                return new();
+            }
+        }
+
+        public async Task<bool> SaveShipmentTransactionNotes(TransactionNotesViewModel model)
+        {
+            try
+            {
+                model.FileUrl = _fileHelper.Save(model);
+                var mappedNotes = _mapper.Map<TransactionsNotes>(model);
+                await _db.AddAsync(mappedNotes);
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

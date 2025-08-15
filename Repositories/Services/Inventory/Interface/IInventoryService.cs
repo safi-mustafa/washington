@@ -22,6 +22,7 @@ namespace Repositories.Common
         Task<List<InventoryCostViewModel>> GetInventoryAverageCost(List<long> ids);
         Task<List<TransactionHistoryViewModel>> GetInventoryIssueHistory(int inventoryId, string lotNo, int locationId, int sourceId);
         Task<bool> IsItemNoUnique(long id, string itemNo);
-
+        Task<List<TransactionNotesViewModel>> GetNotesByTransactionId(int id);
+        Task<bool> SaveShipmentTransactionNotes(TransactionNotesViewModel model);
     }
 }

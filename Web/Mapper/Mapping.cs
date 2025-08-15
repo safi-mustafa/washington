@@ -734,6 +734,7 @@ namespace Models.Mapper
             CreateMap<SubCategoryDetailViewModel, Subcategory>().ReverseMap();
             CreateMap<SubCategoryBriefViewModel, Subcategory>().ReverseMap();
             CreateMap<SubCategoryModifyViewModel, SubCategoryDetailViewModel>().ReverseMap();
+            CreateMap<TransactionNotesViewModel, TransactionsNotes>().ReverseMap();
 
             //IgnoreGlobalProperties();
         }

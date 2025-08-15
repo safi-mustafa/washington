@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
-using Repositories.Common;
-using ViewModels.DataTable;
-using ViewModels;
-using Web.Controllers.Shared;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Mvc;
-using ViewModels.CRUD;
-using ViewModels.Shared.Notes;
 using Pagination;
+using Repositories.Common;
+using ViewModels;
+using ViewModels.CRUD;
+using ViewModels.DataTable;
+using ViewModels.Shared.Notes;
+using Web.Controllers.Shared;
 
 namespace Web.Controllers
 {
@@ -211,6 +212,27 @@ namespace Web.Controllers
         public async Task<bool> IsItemNoUnique(long id, string itemNo)
         {
             return await _service.IsItemNoUnique(id, itemNo);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetShipmentTransactionNotes(int Id)
+        {
+
+            try
+            {
+                var notes = await _service.GetNotesByTransactionId(Id);
+                List<INotesViewModel> notesViewModels = notes.Cast<INotesViewModel>().ToList();
+                ViewBag.Transaction = Id;
+                return View("_ShipmetTransactionNotes", notesViewModels);
+            }
+            catch (Exception ex) { _logger.LogError($"Inventory Notes method threw an exception, Message: {ex.Message}"); return RedirectToAction("Index"); }
+
+        }
+
+        public async Task<ActionResult> SaveShipmentTransactionNotes(TransactionNotesViewModel model)
+        {
+            var notes = await _service.SaveShipmentTransactionNotes(model);
+            return Json(notes);
         }
     }
 }
