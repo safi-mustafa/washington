@@ -118,7 +118,7 @@ namespace Repositories.Common
                                           HourlyRate = x.Max(x => x.HourlyRate),//x.Average(x => x.ItemPrice)
                                           Quantity = x.Sum(x => x.Quantity),
                                           CreatedOn = x.Max(x => x.CreatedOn),
-                                          PurchaseDate = x.Key.PurchaseDate
+                                          PurchaseDate = x.Max(x => x.CreatedOn)
                                       })
                                       //.Where(x => x.Quantity > 0)
                                       .OrderByDescending(x => x.CreatedOn).AsQueryable();
@@ -240,7 +240,7 @@ namespace Repositories.Common
                                           HourlyRate = e.HourlyRate,//x.Average(x => x.ItemPrice)
                                           Quantity = t.Quantity,
                                           CreatedOn = t.CreatedOn,
-                                          PurchaseDate = t.PurchaseDate
+                                          PurchaseDate = t.CreatedOn
                                       }).OrderByDescending(x => x.CreatedOn).AsQueryable();
                 var items = await itemsQueryable.ToListAsync();
                 return items;

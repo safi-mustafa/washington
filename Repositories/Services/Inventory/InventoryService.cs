@@ -79,6 +79,8 @@ namespace Repositories.Common
                                         .Include(x => x.UOM)
                                         .Include(x => x.Manufacturer)
                                         .Include(x => x.MUTCD)
+                                        .Include(x => x.SubCategory)
+                                        .Include(x => x.Location)
                                         .Where(x => x.Id == id)
                                         .FirstOrDefaultAsync();
                 if (dbModel != null)
@@ -145,7 +147,7 @@ namespace Repositories.Common
                         MinimumQuantity = g.Max(x => x.MinimumQuantity),
                         ItemPrice = g.Max(x => x.ItemPrice),
                         Quantity = g.Sum(x => x.Quantity),
-
+                        ReOrderLevel = g.Max(x=>x.ReOrderLevel),
                         TotalValue = (float)g.Sum(x => x.TotalPrice),
                         Category = new CategoryBriefViewModel
                         {
@@ -168,7 +170,19 @@ namespace Repositories.Common
                             Code = g.Max(x => x.MUTCCode),
                             Description = g.Max(x => x.MUTCDescription),
                             ImageUrl = g.Max(x => x.MUTCImageUrl)
-                        }
+                        },
+                        SubCategory = new SubCategoryBriefViewModel
+                        {
+                            Id = g.Max(x => x.SubCategoryId),
+                            Name = g.Max(x => x.SubCategoryName)
+                        },
+                        Location = new LocationBriefViewModel
+                        {
+                            Id = g.Max(x => x.LocationId),
+                            Name = g.Max(x => x.LocationName)
+                        },
+                        PartNumber = g.Max(x => x.PartNumber),
+                        UnitCost = g.Max(x => x.UnitCost)
                     })
                         //.Where(x => (searchModel.ShowZeroQuantityItems || x.Quantity > 0))
                         .AsQueryable();
@@ -302,10 +316,14 @@ namespace Repositories.Common
                     join t in _db.Transactions on i.Id equals t.InventoryId into tl
                     from t in tl.DefaultIfEmpty()
                     join c in _db.Categories on i.CategoryId equals c.Id
+                    join sc in _db.Subcategories on i.SubCategoryId equals sc.Id into scl
+                    from sc in scl.DefaultIfEmpty()
                     join m in _db.Manufacturers on i.ManufacturerId equals m.Id
                     join uom in _db.UOMs on i.UOMId equals uom.Id
                     join mutc in _db.MUTCDs on i.MUTCDId equals mutc.Id into mutcl
                     from mutc in mutcl.DefaultIfEmpty()
+                    join loc in _db.Locations on i.LocationId equals loc.Id into locl
+                    from loc in locl.DefaultIfEmpty()
                     select new InventoryViewModel
                     {
                         Id = i.Id,
@@ -327,6 +345,13 @@ namespace Repositories.Common
                         MUTCCode = (mutc == null ? "" : mutc.Code),
                         MUTCImageUrl = (mutc == null ? "" : mutc.ImageUrl),
                         MUTCDescription = (mutc == null ? "" : mutc.Description),
+                        SubCategoryId = (sc == null ? 0 : sc.Id),
+                        SubCategoryName = (sc == null ? "" : sc.Name),
+                        LocationId = (loc == null ? 0 : loc.Id),
+                        LocationName = (loc == null ? "" : loc.Name),
+                        PartNumber = i.PartNumber,
+                        UnitCost = (decimal)(t == null ? 0 : t.ItemPrice),
+                        ReOrderLevel = i.ReOrderLevel
                     });
         }
 
@@ -375,7 +400,7 @@ namespace Repositories.Common
                 viewModel.ImageUrl = _fileHelper.Save(viewModel);
             }
             var totalInventoryCount = await _db.Inventories.IgnoreQueryFilters().CountAsync();
-            viewModel.SystemGeneratedId = "INV-" + (totalInventoryCount + 1).ToString("D4");
+            viewModel.SystemGeneratedId = "MAT-" + (totalInventoryCount + 1).ToString("D4");
             return await base.Create(model);
         }
 

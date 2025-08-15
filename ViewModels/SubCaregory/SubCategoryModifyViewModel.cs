@@ -1,0 +1,19 @@
+﻿using System.ComponentModel.DataAnnotations;
+using Models.Common.Interfaces;
+using ViewModels.Shared;
+using Enums;
+using ViewModels;
+
+namespace ViewModels
+{
+    public class SubCategoryModifyViewModel : BaseUpdateVM, IBaseCrudViewModel, IIdentitifier
+    {
+        [Display(Name = "Name", Prompt = "Name")]
+        public string Name { get; set; }
+
+        [Display(Name = "Category", Prompt = "Category")]
+        public long CategoryId { get; set; }
+
+        public CategoryBriefViewModel Category { get; set; } = new();
+    }
+}

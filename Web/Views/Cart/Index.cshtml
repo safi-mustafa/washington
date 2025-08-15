@@ -5,7 +5,7 @@
 }
 <link href="~/css/bundles/datatable.min.css" rel="stylesheet" />
 <style>
-    /* .text-site-primary {
+    .text-site-primary {
             color: #4f8896 !important;
         }
 
@@ -40,64 +40,20 @@
             font-size: 1rem;
             background-color: #4f8896 !important;
             color: white;
-        } */
-
-    .stepper {
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        margin-bottom: 20px;
-    }
-
-    .step {
-        display: flex;
-        align-items: center;
-    }
-
-        .step .icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #e9ecef;
-            margin-right: 8px;
         }
 
-        .step.active .icon {
-            background-color: #0d6efd;
-            color: #fff;
-        }
-
-        .step.completed .icon {
-            background-color: #198754;
-            color: #fff;
-        }
-
-    .line {
-        flex: 1;
-        height: 3px;
-        background-color: #198754;
-    }
-
+    
 </style>
 
-<div class="container my-4">
-    
-    
-    
-</div>
 
-
-
-@* <div class="col-lg-12 cart-container container-fluid">
+<div class="col-lg-12 cart-container container-fluid">
 
 
     <form class="cart-create-form">
         @Html.AntiForgeryToken()
 
-        
+        @*@await Html.PartialAsync("_FormFirstStep")
+        @await Html.PartialAsync("_FormSecondStep")*@
 
 
         <div class="step-title d-flex justify-content-between align-items-start gap-3 mb-3">
@@ -113,7 +69,7 @@
         <div id="grd_Cart_Wrapper" class="order-report-table table-responsive" role="grid">
             <table id="grd_Cart" class="table table-bordered dataTable dataTable table-sm w-100">
                 <thead>
-                  
+                    @* class="thead-primary" *@
                     <tr>
                         <th>Item # </th>
                         <th>Description</th>
@@ -192,7 +148,7 @@
 
         </div>
     </form>
-</div> *@
+</div>
 
 <partial name="_ValidationScriptsPartial" />
 <script src="~/js/custom/form-wizard.js"></script>

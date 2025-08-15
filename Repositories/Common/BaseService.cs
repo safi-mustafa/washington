@@ -83,6 +83,7 @@ namespace Repositories.Common
                 return response;
             }
             catch (Exception ex)
+
             {
                 _logger.LogError(ex, $"Exception thrown in Create method of {typeof(TEntity).FullName}");
                 return Response.BadRequestResponse(_response);

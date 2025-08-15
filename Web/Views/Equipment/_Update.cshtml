@@ -6,14 +6,14 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="row">
-            
-            <div class="col-lg-6">
+
+            @* <div class="col-lg-6">
                 <div class="mb-3 form-group">
-                    <label asp-for="ItemNo" class="form-label fw-600"></label>
+                    <label asp-for="ItemNo" class="form-label fw-600">Model ID</label>
                     <input asp-for="ItemNo" type="text" class="form-control" />
                     <span asp-validation-for="ItemNo" class="validation-invalid-label"></span>
                 </div>
-            </div>
+            </div> *@
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <partial name="~/Views/Shared/Select2/_Category.cshtml" for="Category" />
@@ -21,9 +21,23 @@
             </div>
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
+                    <partial name="~/Views/Shared/Select2/_SubCategory.cshtml" for="SubCategory" />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
                     <partial name="~/Views/Shared/Select2/_Manufacturer.cshtml" for="Manufacturer" />
                 </div>
             </div>
+
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="ItemNo" class="form-label fw-600"></label>
+                    <input asp-for="ItemNo" type="text" class="form-control" />
+                    <span asp-validation-for="ItemNo" class="validation-invalid-label"></span>
+                </div>
+            </div>
+
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="Description" class="form-label fw-600"></label>
@@ -31,27 +45,80 @@
                     <span asp-validation-for="Description" class="validation-invalid-label"></span>
                 </div>
             </div>
+
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
-                    <partial name="~/Views/Shared/Select2/_UOM.cshtml" for="UOM" />
+                    <partial name="~/Views/Shared/Select2/_UOM.cshtml" for="UOM"/>
                 </div>
             </div>
+
+            @*
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="HourlyRate" class="form-label fw-600"></label>
                     <input asp-for="HourlyRate" type="text" class="form-control input-currency" />
                     <span asp-validation-for="HourlyRate" class="validation-invalid-label"></span>
                 </div>
+            </div> *@
+
+            @* <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="EquipmentModel" class="form-label fw-600">Model #</label>
+                    <input asp-for="EquipmentModel" type="text" class="form-control" />
+                    <span asp-validation-for="EquipmentModel" class="validation-invalid-label"></span>
+                </div>
+            </div> *@
+
+
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="DefaultRentalRateOneTime" class="form-label fw-600"></label>
+                    <input asp-for="DefaultRentalRateOneTime" type="text" class="form-control input-currency" value="$100.00" disabled/>
+                    <span asp-validation-for="DefaultRentalRateOneTime" class="validation-invalid-label"></span>
+                </div>
             </div>
-           
-   @*          <div class="col-lg-6">
+
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="DefaultRentalRateDaily" class="form-label fw-600"></label>
+                    <input asp-for="DefaultRentalRateDaily" type="text" class="form-control input-currency" />
+                    <span asp-validation-for="DefaultRentalRateDaily" class="validation-invalid-label"></span>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="DefaultRentalRateWeekly" class="form-label fw-600"></label>
+                    <input asp-for="DefaultRentalRateWeekly" type="text" class="form-control input-currency" />
+                    <span asp-validation-for="DefaultRentalRateWeekly" class="validation-invalid-label"></span>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="DefaultRentalRateMonthly" class="form-label fw-600"></label>
+                    <input asp-for="DefaultRentalRateMonthly" type="text" class="form-control input-currency" />
+                    <span asp-validation-for="DefaultRentalRateMonthly" class="validation-invalid-label"></span>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="mb-3 form-group">
+                    <label asp-for="UsefulLifeMonths" class="form-label fw-600"></label>
+                    <input asp-for="UsefulLifeMonths" type="text" class="form-control" />
+                    <span asp-validation-for="UsefulLifeMonths" class="validation-invalid-label"></span>
+                </div>
+            </div>
+
+
+            @*          <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="EquipmentModel" class="form-label fw-600"></label>
                     <input asp-for="EquipmentModel" type="text" class="form-control" />
                     <span asp-validation-for="EquipmentModel" class="validation-invalid-label"></span>
                 </div>
             </div> *@
-         @*    <div class="col-md-6">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label class="col-sm-12 form-label fw-600">Upload Image</label>
                     <div class="col-sm-12">
@@ -65,10 +132,28 @@
                     <img class="img-responsive image-thumbnail" src="@Model.ImageUrl" id="image-thumbnail" alt="" style="max-width:120px;">
                     <input type="hidden" asp-for="ImageUrl" value="@Model.ImageUrl" id="hidden-image-url" />
                 </div>
-            </div> *@
+            </div>
         </div>
     </div>
 </div>
 
 <input type="hidden" asp-for="Id" />
 <input type="hidden" asp-for="SystemGeneratedId" />
+
+<script>
+    function ShowImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#image-thumbnail').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function RemoveImage() {
+        document.getElementById("Image").value = "";
+        $("#image-thumbnail").removeAttr('src');
+        $("#hidden-image-url").val(null);
+        //  $("#hidden-image-url").val("/Storage/Default/default.png");
+    }</script>

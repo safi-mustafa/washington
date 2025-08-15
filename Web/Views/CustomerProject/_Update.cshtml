@@ -13,6 +13,7 @@
                     <partial name="~/Views/Shared/Select2/CustomerProject/_CustomerProject.cshtml" for="CustomerProject" />
                 </div>
             </div>
+
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="JobName" class="form-label fw-600">Job Name</label>
@@ -74,7 +75,8 @@
             </div>
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
-                    <label asp-for="Notes" class="form-label fw-600">Notes</label>
+                    <label asp-for="Notes" class="form-label fw-600">Notes <span class="required">*</span></label>
+                    <span asp-validation-for="Notes" class="validation-invalid-label"></span>
                     <input asp-for="Notes" type="text" multiple="true" class="form-control" />
                 </div>
             </div>

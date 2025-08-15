@@ -1,18 +1,31 @@
 ﻿using AutoMapper;
+
+using Centangle.Common.ResponseHelpers;
 using Centangle.Common.ResponseHelpers.Models;
+
 using DataLibrary;
+
+using Enums;
+
+using Helpers.Extensions;
+using Helpers.File;
+
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Logging;
-using Models.Common.Interfaces;
-using Models;
-using Pagination;
-using System.Linq.Expressions;
-using ViewModels.Shared;
-using ViewModels;
 using Microsoft.EntityFrameworkCore;
-using Centangle.Common.ResponseHelpers;
-using Helpers.File;
+using Microsoft.Extensions.Logging;
+
+using Models;
+using Models.Common.Interfaces;
+
+using Pagination;
+
+using System.Linq.Expressions;
+using System.Text.RegularExpressions;
+
+using ViewModels;
+using ViewModels.ProjectManager;
+using ViewModels.Shared;
 
 namespace Repositories.Common
 {
@@ -73,6 +86,7 @@ namespace Repositories.Common
             {
                 var dbModel = await _db.Equipments
                                         .Include(x => x.Category)
+                                        .Include(x => x.Subcategory)
                                         .Include(x => x.UOM)
                                         .Include(x => x.Manufacturer)
                                         .Where(x => x.Id == id)
@@ -156,7 +170,17 @@ namespace Repositories.Common
                         {
                             Id = g.Max(x => x.UOMId),
                             Name = g.Max(x => x.UOMName)
-                        }
+                        },
+                        SubCategory = new SubCategoryBriefViewModel
+                        {
+                            Id = g.Max(x => x.SubCategoryId),
+                            Name = g.Max(x => x.SubCategoryName)
+                        },
+                        DefaultRentalRateOneTime = g.Max(x => x.DefaultRentalRateOneTime ?? "0"),
+                        DefaultRentalRateDaily = g.Max(x => x.DefaultRentalRateDaily ?? "0"),
+                        DefaultRentalRateWeekly = g.Max(x => x.DefaultRentalRateWeekly ?? "0"),
+                        DefaultRentalRateMonthly = g.Max(x => x.DefaultRentalRateMonthly ?? "0"),
+                        UsefulLifeMonths = g.Max(x => x.UsefulLifeMonths ?? "0"),
                     })
                     //.Where(x => x.Quantity > 0)
                     .AsQueryable();
@@ -281,15 +305,57 @@ namespace Repositories.Common
             }
         }
 
+        //private async Task<IQueryable<EquipmentViewModel>> GetAllQuerable(IBaseSearchModel search)
+        //{
+        //    var filters = await SetQueryFilter(search);
+        //    return (from e in _db.Equipments.Where(filters)
+        //            join et in _db.EquipmentTransactions on e.Id equals et.EquipmentId into etl
+        //            from et in etl.DefaultIfEmpty()
+        //            join c in _db.Categories on e.CategoryId equals c.Id
+        //            join m in _db.Manufacturers on e.ManufacturerId equals m.Id
+        //            join uom in _db.UOMs on e.UOMId equals uom.Id
+        //            join sc in _db.Subcategories on e.SubcategoryId equals sc.Id
+        //            select new EquipmentViewModel
+        //            {
+        //                Id = e.Id,
+        //                ImageUrl = e.ImageUrl,
+        //                ItemNo = e.ItemNo,
+        //                SystemGeneratedId = e.SystemGeneratedId,
+        //                Description = e.Description,
+        //                CategoryId = c.Id,
+        //                CategoryName = c.Name,
+        //                ManufacturerId = m.Id,
+        //                ManufacturerName = m.Name,
+        //                UOMId = uom.Id,
+        //                UOMName = uom.Name,
+        //                HourlyRate = e.HourlyRate,
+        //                Quantity = et == null ? 0 : et.Quantity,
+        //                ItemPrice = et == null ? 0 : et.ItemPrice,
+        //                TotalPrice = et == null ? 0 : (et.Quantity * et.ItemPrice),
+        //                DefaultRentalRateOneTime = e.DefaultRentalRateOneTime,
+        //                DefaultRentalRateDaily = e.DefaultRentalRateDaily,
+        //                DefaultRentalRateWeekly = e.DefaultRentalRateWeekly,
+        //                DefaultRentalRateMonthly = e.DefaultRentalRateMonthly,
+        //                SubCategoryId = sc.Id,
+        //                SubCategoryName = sc.Name
+        //            });
+        //}
+
         private async Task<IQueryable<EquipmentViewModel>> GetAllQuerable(IBaseSearchModel search)
         {
             var filters = await SetQueryFilter(search);
+
             return (from e in _db.Equipments.Where(filters)
                     join et in _db.EquipmentTransactions on e.Id equals et.EquipmentId into etl
                     from et in etl.DefaultIfEmpty()
+
                     join c in _db.Categories on e.CategoryId equals c.Id
                     join m in _db.Manufacturers on e.ManufacturerId equals m.Id
                     join uom in _db.UOMs on e.UOMId equals uom.Id
+
+                    join sc in _db.Subcategories on e.SubcategoryId equals sc.Id into scl
+                    from sc in scl.DefaultIfEmpty() // LEFT JOIN
+
                     select new EquipmentViewModel
                     {
                         Id = e.Id,
@@ -307,8 +373,16 @@ namespace Repositories.Common
                         Quantity = et == null ? 0 : et.Quantity,
                         ItemPrice = et == null ? 0 : et.ItemPrice,
                         TotalPrice = et == null ? 0 : (et.Quantity * et.ItemPrice),
+                        DefaultRentalRateOneTime = e.DefaultRentalRateOneTime,
+                        DefaultRentalRateDaily = e.DefaultRentalRateDaily,
+                        DefaultRentalRateWeekly = e.DefaultRentalRateWeekly,
+                        DefaultRentalRateMonthly = e.DefaultRentalRateMonthly,
+                        SubCategoryId = sc != null ? sc.Id : 0,
+                        SubCategoryName = sc != null ? sc.Name : "-",
+                        UsefulLifeMonths = e.UsefulLifeMonths,
                     });
         }
+
 
         public async override Task<IRepositoryResponse> Create(CreateViewModel model)
         {
@@ -318,7 +392,18 @@ namespace Repositories.Common
                 viewModel.ImageUrl = _fileHelper.Save(viewModel);
             }
             var totalEquipmentCount = await _db.Equipments.IgnoreQueryFilters().CountAsync();
-            viewModel.SystemGeneratedId = "EQP-" + (totalEquipmentCount + 1).ToString("D4");
+            //viewModel.SystemGeneratedId = "EQP-" + (totalEquipmentCount + 1).ToString("D4");
+
+            if (!string.IsNullOrEmpty(viewModel.SubCategory.Name))
+            {
+                string cleaned = Regex.Replace(viewModel.SubCategory.Name, "[^a-zA-Z0-9]", "");
+                cleaned = new string(cleaned.Take(4).ToArray());
+                viewModel.SystemGeneratedId = "M-" + cleaned.ToUpper() + "-" + (totalEquipmentCount + 1).ToString("D4");
+            }
+            else
+            {
+                viewModel.SystemGeneratedId = "M-" + (totalEquipmentCount + 1).ToString("D4");
+            }
             return await base.Create(model);
         }
 
@@ -372,5 +457,7 @@ namespace Repositories.Common
         {
             return (await _db.Equipments.Where(x => x.ItemNo == itemNo && x.Id != id && x.IsDeleted == false).CountAsync()) < 1;
         }
+
+
     }
 }

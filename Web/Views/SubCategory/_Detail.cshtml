@@ -1,0 +1,19 @@
+﻿@using ViewModels
+@model SubCategoryDetailViewModel
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="mb-3 form-group">
+            <label class="form-label fw-600">Category</label>
+            <div>@(string.IsNullOrEmpty(Model.CategoryName) ? "-" : Model.CategoryName)</div>
+        </div>
+        <div class="mb-3 form-group">
+            <label asp-for="Name" class="form-label fw-600"></label>
+            <div>@(string.IsNullOrEmpty(Model.Name) ? "-" : Model.Name)</div>
+
+        </div>
+    </div>
+</div>
