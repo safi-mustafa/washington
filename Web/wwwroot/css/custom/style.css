@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap");
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
 @font-face {
     font-family: "Inter";
@@ -81,7 +82,7 @@ body {
 }
 
 body {
-    font-family: "Bricolage Grotesque", sans-serif;
+    font-family: "Lato", sans-serif !important;
     font-size: 16px;
     font-weight: 400;
     line-height: 26px;
@@ -1565,7 +1566,7 @@ Media Query
         gap: 14px;
         background: var(--primary-color);
         border-radius: 10px;
-        /* font-family: "Inter", sans-serif; */
+        /* font-family: "Lato", sans-serif; */
         font-weight: 400;
         line-height: 1.2;
         font-size: 13px;
@@ -1848,7 +1849,7 @@ Media Query
     background-color: transparent;
     color: var(--text-gray);
     height: 30px;
-    /* font-family: "Inter", sans-serif; */
+    /* font-family: "Lato", sans-serif; */
     font-size: 13px;
     font-weight: 400;
     text-align: center;
@@ -1938,7 +1939,7 @@ span.select2-selection__arrow:after {
 .select2-container .select2-dropdown {
     background: #313955;
     background: #e5e7eb;
-    /* font-family: "Inter", sans-serif; */
+    /* font-family: "Lato", sans-serif; */
     font-size: 14px;
     font-weight: 400;
     color: #FFFFFF;
@@ -2179,7 +2180,7 @@ span.select2-selection__arrow:after {
     }
 
     .total_counting .amount {
-        /* font-family: "Inter", sans-serif; */
+        /* font-family: "Lato", sans-serif; */
         font-size: 40px;
         font-weight: 700;
         line-height: 1;
@@ -2188,7 +2189,7 @@ span.select2-selection__arrow:after {
     }
 
     .total_counting .text {
-        /* font-family: "Inter", sans-serif; */
+        /* font-family: "Lato", sans-serif; */
         font-size: 16px;
         font-weight: 300;
         line-height: 1;
@@ -2238,7 +2239,7 @@ span.select2-selection__arrow:after {
         gap: 14px;
         background: #FFFFFF;
         border-radius: 10px;
-        /* font-family: "Inter", sans-serif; */
+        /* font-family: "Lato", sans-serif; */
         font-weight: 400;
         line-height: 1.2;
         font-size: 14px;
@@ -2345,7 +2346,7 @@ span.select2-selection__arrow:after {
     padding: 0;
     margin: 0;
     list-style: none;
-    /* font-family: "Inter", sans-serif; */
+    /* font-family: "Lato", sans-serif; */
     font-size: 16px;
     font-weight: 400;
     color: #252432;
@@ -2396,7 +2397,7 @@ span.select2-selection__arrow:after {
             border-radius: 10px;
             padding-left: 20px;
             padding-right: 44px;
-            /* font-family: "Inter", sans-serif; */
+            /* font-family: "Lato", sans-serif; */
             font-size: 14px;
             font-weight: 400;
             color: #252432;
@@ -2444,7 +2445,7 @@ span.select2-selection__arrow:after {
     gap: 14px;
     background: var(--primary-color);
     border-radius: 10px;
-    /* font-family: "Inter", sans-serif; */
+    /* font-family: "Lato", sans-serif; */
     font-weight: 400;
     line-height: 1.2;
     font-size: 14px;
@@ -2494,7 +2495,7 @@ span.select2-selection__arrow:after {
 
     .desk_wrap .block_title {
         padding-left: 16px;
-        /* font-family: "Inter", sans-serif; */
+        /* font-family: "Lato", sans-serif; */
         font-size: 14px;
         font-weight: 600;
         line-height: 44px;
@@ -2570,7 +2571,7 @@ span.select2-selection__arrow:after {
 
         .desk_wrap .list_cards .card_header .card_title {
             /* width: 60%; */
-            /* font-family: "Inter", sans-serif; */
+            /* font-family: "Lato", sans-serif; */
             color: var(--primary-color);
             font-size: 13px;
             font-weight: 400;
@@ -2583,7 +2584,7 @@ span.select2-selection__arrow:after {
         gap: 4px;
         border-top: 1px solid #F2F2F2;
         padding-top: 11px;
-        /* font-family: "Inter", sans-serif; */
+        /* font-family: "Lato", sans-serif; */
         font-weight: 400;
         font-size: 13px;
         line-height: 1.6;
@@ -2627,7 +2628,7 @@ span.select2-selection__arrow:after {
 
             .desk_wrap .list_cards .card_footer .label span {
                 display: inline-block;
-                /* font-family: "Inter", sans-serif; */
+                /* font-family: "Lato", sans-serif; */
                 font-size: 13px;
                 font-weight: 400;
                 /* color: #FFFFFF; */
@@ -2656,7 +2657,7 @@ span.select2-selection__arrow:after {
     }
 
 .inventory_header .total {
-    /* font-family: "Inter", sans-serif; */
+    /* font-family: "Lato", sans-serif; */
     font-size: 14px;
     font-weight: 600;
     line-height: 1.4;
@@ -2697,7 +2698,7 @@ span.select2-selection__arrow:after {
     }
 
         .paggination_wrap .left_block .total {
-            /* font-family: "Inter", sans-serif; */
+            /* font-family: "Lato", sans-serif; */
             font-size: 14px;
             font-weight: 700;
         }
@@ -2722,7 +2723,7 @@ span.select2-selection__arrow:after {
                 display: flex;
                 align-items: center;
                 height: 100%;
-                /* font-family: "Inter", sans-serif; */
+                /* font-family: "Lato", sans-serif; */
                 font-size: 14px;
                 font-weight: 400;
                 color: #000000;
@@ -2769,7 +2770,7 @@ span.select2-selection__arrow:after {
                     border-radius: 50%;
                     border: 1px solid #E5E5E9;
                     background: #FFFFFF;
-                    /* font-family: "Inter", sans-serif; */
+                    /* font-family: "Lato", sans-serif; */
                     font-size: 14px;
                     font-weight: 400;
                     color: #252432;
@@ -2797,7 +2798,7 @@ span.select2-selection__arrow:after {
                     justify-content: center;
                     width: 30px;
                     height: 30px;
-                    /* font-family: "Inter", sans-serif; */
+                    /* font-family: "Lato", sans-serif; */
                     font-size: 14px;
                     font-weight: 400;
                     color: #252432;
@@ -2934,7 +2935,7 @@ h3 {
 }
 
 h4 {
-    /* font-family: "Inter", sans-serif; */
+    /* font-family: "Lato", sans-serif; */
     font-size: 28px;
     font-weight: 600;
     line-height: 34px;
@@ -2942,7 +2943,7 @@ h4 {
 }
 
 h5 {
-    /* font-family: "Inter", sans-serif; */
+    /* font-family: "Lato", sans-serif; */
     font-size: 23px;
     font-weight: 600;
     line-height: 30px;
@@ -2950,7 +2951,7 @@ h5 {
 }
 
 h6 {
-    /* font-family: "Inter", sans-serif; */
+    /* font-family: "Lato", sans-serif; */
     font-size: 21px;
     font-weight: 600;
     line-height: 1;
@@ -2958,7 +2959,7 @@ h6 {
 }
 
 p {
-    /* font-family: "Inter", sans-serif; */
+    /* font-family: "Lato", sans-serif; */
     font-size: 18px;
     font-weight: 600;
     line-height: 22px;
@@ -3936,4 +3937,30 @@ div#tab-content-loader {
 
 .sidebar .cartIcon a {
     padding: 0;
+}
+#crud-list-table_wrapper .image-thumbnail .data-table-images {
+    overflow: hidden;
+}
+    #crud-list-table_wrapper .image-thumbnail .data-table-images img.photo {
+        transition: transform 0.4s ease;
+        width:auto !important;
+        height:60px !important;
+        border-radius:10px !important
+    }
+    #crud-list-table_wrapper .image-thumbnail .data-table-images:hover img.photo {
+        transform: scale(1.8);
+    }
+#crud-list-table_wrapper .dataTable tr td {
+    text-align: left !important;
+}
+#crud-list-table_wrapper .dataTable tr th {
+    text-align: left !important;
+    padding:5px 10px !important;
+}
+#crud-list-table_wrapper .dataTable tr th div {
+    justify-content:start !important;
+}
+#crud-list-table_wrapper .table.dataTable tbody td {
+   
+    border-bottom: 1px solid #eeeeee !important;
 }

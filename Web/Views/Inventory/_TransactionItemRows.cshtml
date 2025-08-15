@@ -4,9 +4,24 @@
     Layout = null;
     var inventoryId = ViewBag.InventoryId;
 }
+<style>
+    #shipment-table-container thead tr th {
+        background-color: #fbefea;
+    }
 
+    #shipment-table-container tr td {
+        text-align: left !important;
+    }
+    #shipment-table-container tr t {
+        text-align: left !important;
+    }
+
+    #shipment-table-container tr td {
+        background-color: #0000000d !important;
+    }
+</style>
 <div class="container-fluid">
-    <table id="shipment-table-container" class="table table-striped table-bordered">
+    <table id="shipment-table-container" class="table  table-bordered">
         <thead>@* class="thead-primary" *@
             <tr>
                 <th>Supplier</th>
