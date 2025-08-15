@@ -313,7 +313,7 @@ namespace Web.Controllers
         //}
 
         [HttpPost]
-        public IActionResult CalculateRent(DateTime startDate, DateTime endDate, decimal dailyRate, decimal weeklyRate, decimal monthlyRate)
+        public IActionResult CalculateRent(DateTime startDate, DateTime endDate,decimal onetime, decimal dailyRate, decimal weeklyRate, decimal monthlyRate,int quantity)
         {
             // Ensure end date is not before start date
             if (endDate < startDate)
@@ -329,19 +329,19 @@ namespace Web.Controllers
             if (totalDays <= 5)
             {
                 frequency = "Daily";
-               // totalRent = (decimal)totalDays * dailyRate;
+                totalRent = (decimal)totalDays * dailyRate;
             }
             else if (totalDays >= 6 && totalDays < 30)
             {
                 frequency = "Weekly";
                 var totalWeeks = Math.Ceiling(totalDays / 7); // round up partial weeks
-               // totalRent = totalWeeks * weeklyRate;
+                totalRent = (decimal)totalWeeks * weeklyRate;
             }
             else
             {
                 frequency = "Monthly";
                 var totalMonths = Math.Ceiling(totalDays / 30); // round up partial months
-               // totalRent = totalMonths * monthlyRate;
+                totalRent = (decimal)totalMonths * monthlyRate;
             }
 
             return Json(new { totalRent, frequency });

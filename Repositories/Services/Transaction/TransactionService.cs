@@ -177,7 +177,8 @@ namespace Repositories.Common
                                               {
                                                   Id = x.Max(y => y.InventoryUOMId),
                                                   Name = x.Max(y => y.InventoryUOMName)
-                                              }
+                                              },
+                                              ItemPrice = x.Max(y=> y.ItemPrice)
                                           },
                                           Source = new SourceBriefViewModel()
                                           {

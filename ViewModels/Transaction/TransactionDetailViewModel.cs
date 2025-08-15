@@ -33,6 +33,8 @@ namespace ViewModels
                 return DatetimeHelper.FormatDateInPST(CreatedOn);
             }
         }
-
+        public decimal DefaultRentalRateDaily { get; set; }
+        public decimal DefaultRentalRateMonthly { get; set; }
+        public string? DefaultRentalRateWeekly { get; set; }
     }
 }

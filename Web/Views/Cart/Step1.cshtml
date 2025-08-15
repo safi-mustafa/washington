@@ -100,37 +100,32 @@
                         {
                             var orderIdName = collectionName + "Inventory.Id";
                             <input type="hidden" name="@orderIdName" value="@item.Inventory.Id" />
-                            <input type="hidden" name="inventoryrateonetime" value="@item.Inventory.Id" />
-                            <input type="hidden" name="inventoryratedaily" value="@item.Inventory.Id" />
-                            <input type="hidden" name="inventoryrateweekly" value="@item.Inventory.Id" />
-                            <input type="hidden" name="inventoryratemonthly" value="@item.Inventory.Id" />
 
+                            <p>@item.Inventory.ItemPrice</p>
                             <div class="col-12">
                                 <div class="d-flex p-3 border rounded mb-3">
+                                    <input type="hidden" name="inventoryrateonetime" value="@item.Inventory.ItemPrice" />
                                     <img src="@(string.IsNullOrWhiteSpace(item.Inventory?.ImageUrl) ? "/img/no-img.jpg" : item.Inventory.ImageUrl)" alt="itemImg" class="me-3" style="width:100px; height:auto;" />
                                     <div class="flex-grow-1">
                                         <h5>@item.Inventory.ItemNo</h5>
                                         <small>Inventory</small>
                                         <div class="row mt-2">
                                             <div class="col-md-3">
-                                                <label>Start Date</label>
+                                                <label>Delivary Date</label>
                                                 <input type="date" class="form-control start-date"
                                                        name="OrderItems[@i].StartDate"
                                                        value="@item.Inventory.StartDate?.ToString("yyyy-MM-dd")" />
                                             </div>
-                                            <div class="col-md-3">
+                                            @* <div class="col-md-3">
                                                 <label>End Date</label>
                                                 <input type="date" class="form-control end-date"
                                                        name="OrderItems[@i].EndDate"
                                                        value="@item.Inventory.EndDate?.ToString("yyyy-MM-dd")" />
-                                            </div>
+                                            </div> *@
                                             <div class="col-md-3">
                                                 <label>Frequency</label>
                                                 <select class="form-select">
                                                     <option selected>One-Time</option>
-                                                    <option>Daily</option>
-                                                    <option>Weekly</option>
-                                                    <option>Monthly</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-2">
@@ -155,12 +150,12 @@
                         {
                             var orderIdName = collectionName + "Equipment.Id";
                             <input type="hidden" name="@orderIdName" value="@item.Equipment.Id" />
-                            <input type="hidden" name="equipmentrateonetime" value="@item.Equipment.Id" />
-                            <input type="hidden" name="equipmentratedaily" value="@item.Equipment.Id" />
-                            <input type="hidden" name="equipmentrateweekly" value="@item.Equipment.Id" />
-                            <input type="hidden" name="equipmentratemonthly" value="@item.Equipment.Id" />
+
                             <div class="col-12">
                                 <div class="d-flex p-3 border rounded mb-3">
+                                    <input type="hidden" name="equipmentratedaily" value="@item.Equipment.DefaultRentalRateDaily" />
+                                    <input type="hidden" name="equipmentrateweekly" value="@item.Equipment.DefaultRentalRateWeekly" />
+                                    <input type="hidden" name="equipmentratemonthly" value="@item.Equipment.DefaultRentalRateMonthly" />
                                     <img src="@(string.IsNullOrWhiteSpace(item.Equipment?.ImageUrl) ? "/img/no-img.jpg" : item.Equipment.ImageUrl)" alt="itemImg" class="me-3" style="width:100px; height:auto;" />
                                     <div class="flex-grow-1">
                                         <h5>@item.Equipment.ItemNo</h5>
@@ -181,8 +176,7 @@
                                             <div class="col-md-3">
                                                 <label>Frequency</label>
                                                 <select class="form-select">
-                                                    <option selected>One-Time</option>
-                                                    <option>Daily</option>
+                                                    <option selected>Daily</option>
                                                     <option>Weekly</option>
                                                     <option>Monthly</option>
                                                 </select>
@@ -236,29 +230,37 @@
     $(document).on("change", ".start-date, .end-date", function () {
         debugger;
         let row = $(this).closest(".row");
+        let container = $(this).closest(".d-flex");
         let startDate = row.find(".start-date").val();
         let endDate = row.find(".end-date").val();
 
         let inventoryrateonetime  = row.find('[name="inventoryrateonetime"]').val()  || 0;
-        let inventoryratedaily    = row.find('[name="inventoryratedaily"]').val()    || 0;
-        let inventoryrateweekly   = row.find('[name="inventoryrateweekly"]').val()   || 0;
-        let inventoryratemonthly  = row.find('[name="inventoryratemonthly"]').val()  || 0;
+        let inventoryratedaily    = 0;
+        let inventoryrateweekly   = 0;
+        let inventoryratemonthly  = 0;
 
-        let equipmentrateonetime  = row.find('[name="equipmentrateonetime"]').val()  || 0;
+        let equipmentrateonetime  = 0;
         let equipmentratedaily    = row.find('[name="equipmentratedaily"]').val()    || 0;
         let equipmentrateweekly   = row.find('[name="equipmentrateweekly"]').val()   || 0;
         let equipmentratemonthly  = row.find('[name="equipmentratemonthly"]').val()  || 0;
 
-        if (startDate && endDate) {
+        let quantity = row.find('[name="quantityName"]').val() || 0;
+
+        if (startDate) {
+            if (!endDate) {
+                endDate = startDate;
+            }
             $.ajax({
                 url: '/Cart/CalculateRent',
                 type: 'POST',
                 data: {
                     startDate: startDate,
                     endDate: endDate,
-                    dailyRate: 50,
-                    weeklyRate: 100,
-                    monthlyRate: 200
+                    onetime :inventoryrateonetime,
+                    dailyRate: equipmentratedaily,
+                    weeklyRate: equipmentrateweekly,
+                    monthlyRate: equipmentratemonthly,
+                    quantity: quantity
                 },
                 success: function (res) {
                     row.find("select").val(res.frequency);
