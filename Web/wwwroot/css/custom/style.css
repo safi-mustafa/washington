@@ -3945,6 +3945,7 @@ div#tab-content-loader {
         transition: transform 0.4s ease;
         width:auto !important;
         height:60px !important;
+        border-radius:10px !important
     }
     #crud-list-table_wrapper .image-thumbnail .data-table-images:hover img.photo {
         transform: scale(1.8);
@@ -3954,4 +3955,12 @@ div#tab-content-loader {
 }
 #crud-list-table_wrapper .dataTable tr th {
     text-align: left !important;
+    padding:5px 10px !important;
+}
+#crud-list-table_wrapper .dataTable tr th div {
+    justify-content:start !important;
+}
+#crud-list-table_wrapper .table.dataTable tbody td {
+   
+    border-bottom: 1px solid #eeeeee !important;
 }
