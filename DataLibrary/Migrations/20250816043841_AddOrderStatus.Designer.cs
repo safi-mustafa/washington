@@ -4,6 +4,7 @@ using DataLibrary;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLibrary.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250816043841_AddOrderStatus")]
+    partial class AddOrderStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2043,9 +2046,6 @@ namespace DataLibrary.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<long?>("EquipmentId")
                         .HasColumnType("bigint");
 
@@ -2063,9 +2063,6 @@ namespace DataLibrary.Migrations
 
                     b.Property<long>("Quantity")
                         .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<long>("UpdatedBy")
                         .HasColumnType("bigint");
