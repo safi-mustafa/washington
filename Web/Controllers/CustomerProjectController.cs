@@ -19,6 +19,7 @@ using ViewModels;
 using ViewModels.CustomerProject;
 using ViewModels.DataTable;
 using ViewModels.ProjectManager;
+using ViewModels.Shared.Notes;
 using ViewModels.Timesheet;
 
 using Web.Controllers.Shared;
@@ -47,11 +48,30 @@ namespace Web.Controllers
                 new DataTableViewModel{title = "Customer",data = "CustomerName", orderable = true, sortingColumn = "Customer"},
                 new DataTableViewModel{title = "Project Manager",data = "ProjectManagerName", orderable = true, sortingColumn = "ProjectManagerName"},
                 new DataTableViewModel{title = "Job Name",data = "JobName", orderable = true},
-                new DataTableViewModel{title = "Job Code",data = "JobCode", orderable = true},
+                new DataTableViewModel{title = "Purchase Order Number",data = "PurchaseOrderNumber", orderable = true},
                 new DataTableViewModel{title = "Project Start Date",data = "ProjectStartDate", orderable = true},
                 new DataTableViewModel{title = "Project Start Date",data = "ProjectEndDate", orderable = true},
                 new DataTableViewModel{title = "Action",data = null,className="action text-right exclude-form-export"}
             };
+        }
+
+        protected override void SetDatatableActions<T>(DatatablePaginatedResultModel<T> result)
+        {
+            result.ActionsList = new List<DataTableActionViewModel>()
+            {
+                    new DataTableActionViewModel() {Action="Update",Title="Update",Href=$"/CustomerProject/Update/{{Id}}"},
+                    new DataTableActionViewModel() {Action="Delete",Title="Delete",Href=$"/CustomerProject/Delete/{{Id}}",DatatableHrefType=DatatableHrefType.Link},
+                      new DataTableActionViewModel() { Action = "GetNotesByCustomerProjectId", Title = "Notes", Href = $"/CustomerProject/GetNotesByCustomerProjectId/{{Id}}" },
+            };
+
+            //result.ActionsList = new();
+            //result.ActionsList.AddRange(new List<DataTableActionViewModel>()
+            //{
+            //        new DataTableActionViewModel() { Action = "GetEquipmentIssueHistory", Title = "History", Href = $"/Equipment/GetEquipmentIssueHistory/{{Id}}" },
+            //        new DataTableActionViewModel() {Action="GetNotes",Title="Notes",Class="@HasNotesClass",Href=$"/Equipment/GetNotes/{{Id}}"},
+            //        new DataTableActionViewModel() {Action="Update",Title="Update",Href=$"/Equipment/Update/{{Id}}"},
+            //        //new DataTableActionViewModel() {Action="Delete",Title="Delete",Href=$"/Equipment/Delete/{{Id}}",DatatableHrefType=DatatableHrefType.Link},
+            //});
         }
 
         public override async Task<ActionResult> Create(CustomerProjectModifyViewModel model)
@@ -176,6 +196,29 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 return RedirectToAction("Index");
+            }
+        }
+
+        public async Task<ActionResult> SaveCustomerProjectNotes(CustomerProjectNotesViewModel model)
+        {
+            var notes = await _service.SaveCustomerProjectNotes(model);
+            return Json(notes);
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult> GetNotesByCustomerProjectId(int Id)
+        {
+            try
+            {
+                var notes = await _service.GetNotesByCustomerProjectId(Id);
+                List<INotesViewModel> notesViewModels = notes.Cast<INotesViewModel>().ToList();
+                ViewBag.CPId = Id;
+                return View("_CustomerProjectNotes", notesViewModels);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Customer Project Notes Notes method threw an exception, Message: {ex.Message}"); return RedirectToAction("Index");
             }
         }
     }

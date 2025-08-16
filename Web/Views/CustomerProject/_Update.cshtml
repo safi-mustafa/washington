@@ -21,13 +21,13 @@
                     <span asp-validation-for="JobName" class="validation-invalid-label"></span>
                 </div>
             </div>
-            <div class="col-lg-6">
+            @* <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="JobCode" class="form-label fw-600">Job Code</label>
                     <input asp-for="JobCode" type="text" class="form-control" />
                     <span asp-validation-for="JobCode" class="validation-invalid-label"></span>
                 </div>
-            </div>
+            </div> *@
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="PurchaseOrderNumber" class="form-label fw-600">Purchase Order Number</label>
@@ -35,13 +35,13 @@
                     <span asp-validation-for="PurchaseOrderNumber" class="validation-invalid-label"></span>
                 </div>
             </div>
-            <div class="col-lg-6">
+           @*  <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="WorkOrderNumber" class="form-label fw-600">Work Order Number</label>
                     <input asp-for="WorkOrderNumber" type="text" class="form-control" />
                     <span asp-validation-for="WorkOrderNumber" class="validation-invalid-label"></span>
                 </div>
-            </div>
+            </div> *@
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <div class="mb-3 form-group">
@@ -60,26 +60,26 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
+            @* <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="ProjectLocation" class="form-label fw-600">Project Location</label>
                     <input asp-for="ProjectLocation" type="text" class="form-control" />
                     <span asp-validation-for="ProjectLocation" class="validation-invalid-label"></span>
                 </div>
-            </div>
+            </div> *@
             <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <span asp-validation-for="ProjectManagerId" class="validation-invalid-label"></span>
                     <partial name="~/Views/Shared/Select2/ProjectManager/_ProjectManager.cshtml" for="ProjectManager" />
                 </div>
             </div>
-            <div class="col-lg-6">
+            @* <div class="col-lg-6">
                 <div class="mb-3 form-group">
                     <label asp-for="Notes" class="form-label fw-600">Notes <span class="required">*</span></label>
                     <span asp-validation-for="Notes" class="validation-invalid-label"></span>
                     <input asp-for="Notes" type="text" multiple="true" class="form-control" />
                 </div>
-            </div>
+            </div> *@
         </div>
     </div>
 </div>
