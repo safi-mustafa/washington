@@ -23,5 +23,7 @@ namespace Repositories.Common
         Task<PaginatedResultModel<T>> GetProjectDropdown<T>(ProjectManagerSearchViewModel searchVM);
         Task<CompanyInformation> GetCompanyInfoById(long id);
         Task<CompanyContact> GetCompanyContactInfoById(long id);
+        Task<List<CustomerProjectNotesViewModel>> GetNotesByCustomerProjectId(int id);
+        Task<bool> SaveCustomerProjectNotes(CustomerProjectNotesViewModel model);
     }
 }

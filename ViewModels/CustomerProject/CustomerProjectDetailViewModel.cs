@@ -24,5 +24,15 @@ namespace ViewModels.CustomerProject
         public string Notes { get; set; } = default!;
         public CustomerProjectBriefViewModel Customer { get; set; } = new();
         public ProjectManagerBriefViewModel ProjectManager { get; set; } = new();
+
+        public bool HasNotes { get; set; }
+
+        public string HasNotesClass
+        {
+            get
+            {
+                return HasNotes ? "has-note" : "";
+            }
+        }
     }
 }
