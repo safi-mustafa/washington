@@ -165,6 +165,8 @@ namespace Repositories.Common
                                           LocationName = l.Name ?? "-",
                                           t.ItemPrice,
                                           t.Quantity,
+                                          i.ImageUrl,
+                                          i.UnitCost
 
                                       }).GroupBy(x => new { x.InventoryId })
                                       .Select(x => new TransactionDetailViewModel()
@@ -179,7 +181,10 @@ namespace Repositories.Common
                                               {
                                                   Id = x.Max(y => y.InventoryUOMId),
                                                   Name = x.Max(y => y.InventoryUOMName)
-                                              }
+                                              },
+                                              ItemPrice = x.Max(y=> y.ItemPrice),
+                                              ImageUrl = x.Max(y => y.ImageUrl),
+                                              UnitCost = x.Max(y => y.UnitCost),
                                           },
                                           Source = new SourceBriefViewModel()
                                           {

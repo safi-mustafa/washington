@@ -58,7 +58,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AssignedPermission\" />
-    <Folder Include="Cart\" />
     <Folder Include="Asset\Asset\" />
     <Folder Include="WorkOrderEquipment\" />
     <Folder Include="WorkOrder\Interface\" />

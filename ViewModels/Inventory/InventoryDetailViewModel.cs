@@ -45,7 +45,7 @@ namespace ViewModels
         public SubCategoryBriefViewModel SubCategory { get; set; } = new();
         public LocationBriefViewModel Location { get; set; } = new();
         public string PartNumber { get; set; }
-        public decimal UnitCost { get; set; }
+        public string UnitCost { get; set; }
         public string ReOrderLevel { get; set; }
 
 

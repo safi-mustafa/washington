@@ -241,96 +241,74 @@ namespace Repositories.Common
         {
             try
             {
-                var itemsQueryable =
-    (from t in _db.EquipmentTransactions.Where(x => EquipmentId.Contains(x.EquipmentId))
-     join i in _db.Equipments on t.EquipmentId equals i.Id
-     join sp in _db.Suppliers on t.SupplierId equals sp.Id
+                var itemsQueryable = (from t in _db.EquipmentTransactions.Where(x => EquipmentId.Contains(x.EquipmentId))
+                                      join i in _db.Equipments.Include(x => x.UOM).Include(x => x.Manufacturer) on t.EquipmentId equals i.Id
+                                      join l in _db.Locations on t.LocationId equals l.Id
+                                      join sp in _db.Suppliers on t.SupplierId equals sp.Id
+                                      //where EquipmentId.Contains(t.EquipmentId)
+                                      //group t by new { t.EquipmentId, t.LotNO, s, t.SupplierId, t.LocationId } into g
+                                      select new
+                                      {
+                                          t.EquipmentId,
+                                          t.PoNo,
+                                          EquipmentName = i.Description ?? "-",
+                                          EquipmentUOMId = i.UOM.Id,
+                                          EquipmentUOMName = i.UOM.Name,
+                                          EquipmentItemNo = i.ItemNo,
+                                          t.SupplierId,
+                                          SupplierName = sp.Name ?? "-",
+                                          t.LocationId,
+                                          LocationName = l.Name ?? "-",
+                                          t.ItemPrice,
+                                          t.Quantity,
+                                          t.HourlyRate,
+                                          ManufacturerId = i.Manufacturer.Id,
+                                          ManufacturerName = i.Manufacturer.Name,
+                                          i.DefaultRentalRateDaily,
+                                          i.DefaultRentalRateMonthly,
+                                          i.DefaultRentalRateWeekly,
+                                          i.ImageUrl
 
-     // Left join for Location
-     join l in _db.Locations on t.LocationId equals l.Id into locGroup
-     from l in locGroup.DefaultIfEmpty()
+                                      }).GroupBy(x => new { x.EquipmentId })
+                                      .Select(x => new EquipmentTransactionDetailViewModel()
+                                      {
+                                          Equipment = new EquipmentDetailViewModel()
+                                          {
+                                              Id = x.Key.EquipmentId,
+                                              Description = x.Max(y => y.EquipmentName),
+                                              ItemNo = x.Max(y => y.EquipmentItemNo),
+                                              UOM = new UOMBriefViewModel
+                                              {
+                                                  Id = x.Max(y => y.EquipmentUOMId),
+                                                  Name = x.Max(y => y.EquipmentUOMName)
+                                              },
+                                              Manufacturer = new ManufacturerBriefViewModel
+                                              {
+                                                  Id = x.Max(y => y.ManufacturerId),
+                                                  Name = x.Max(y => y.ManufacturerName)
+                                              },
+                                              DefaultRentalRateDaily = x.Max(y => y.DefaultRentalRateDaily),
+                                              DefaultRentalRateMonthly = x.Max(y => y.DefaultRentalRateMonthly),
+                                              DefaultRentalRateWeekly = x.Max(y => y.DefaultRentalRateWeekly),
+                                              ImageUrl = x.Max(y => y.ImageUrl)
+                                          },
 
-         // Left join for Condition
-     join cnd in _db.Conditions on t.ConditionId equals cnd.Id into cndGroup
-     from cnd in cndGroup.DefaultIfEmpty()
-
-         // Left join for CurrentStatus
-     join cs in _db.CurrentStatus on t.CurrentStatusId equals cs.Id into csGroup
-     from cs in csGroup.DefaultIfEmpty()
-
-     select new
-     {
-         t.PoNo,
-         t.EquipmentId,
-         EquipmentName = i.Description,
-         t.SupplierId,
-         SupplierName = sp.Name,
-         t.LocationId,
-         LocationName = l.Name,
-         ConditionId = t.ConditionId,
-         ConditionName = cnd.Name,
-         CurrentStatusId = t.CurrentStatusId,
-         CurrentStatusName = cs.Name,
-         t.ItemPrice,
-         t.Quantity,
-         i.HourlyRate,
-         t.CreatedOn,
-         t.PurchaseDate,
-         t.AssetTag
-     })
-    .GroupBy(x => new
-    {
-        x.PoNo,
-        x.EquipmentId,
-        x.SupplierId,
-        x.LocationId,
-        x.ItemPrice,
-        x.PurchaseDate,
-        x.ConditionId,
-        x.CurrentStatusId
-    })
-    .Select(x => new EquipmentTransactionDetailViewModel()
-    {
-        Equipment = new EquipmentDetailViewModel()
-        {
-            Id = x.Key.EquipmentId,
-            HourlyRate = x.Max(m => m.HourlyRate),
-            Description = x.Max(y => y.EquipmentName ?? "-")
-        },
-        Supplier = new SupplierBriefViewModel()
-        {
-            Id = x.Key.SupplierId,
-            Name = x.Max(y => y.SupplierName ?? "-")
-        },
-        Location = new LocationBriefViewModel()
-        {
-            Id = x.Key.LocationId,
-            Name = x.Max(y => y.LocationName ?? "-")
-        },
-        CurrentStatus = new CurrentStatusBriefViewModel()
-        {
-            Id = x.Key.CurrentStatusId,
-            Name = x.Max(y => y.CurrentStatusName ?? "-")
-        },
-        Condition = new ConditionBriefViewModel()
-        {
-            Id = x.Key.ConditionId,
-            Name = x.Max(y => y.ConditionName ?? "-")
-        },
-        ItemPrice = x.Key.ItemPrice,
-        PONo = x.Key.PoNo,
-        HourlyRate = x.Max(y => y.HourlyRate),
-        Quantity = x.Sum(y => y.Quantity),
-        CreatedOn = x.Max(y => y.CreatedOn),
-        PurchaseDate = x.Max(y => y.PurchaseDate),
-        AssetTag = x.Max(y => y.AssetTag ?? "-")
-    })
-    .OrderByDescending(x => x.CreatedOn)
-    .AsQueryable();
-
+                                          Supplier = new SupplierBriefViewModel()
+                                          {
+                                              Id = x.Max(y => y.SupplierId),
+                                              Name = x.Max(y => y.SupplierName)
+                                          },
+                                          Location = new LocationBriefViewModel()
+                                          {
+                                              Id = x.Max(y => y.LocationId),
+                                              Name = x.Max(y => y.LocationName)
+                                          },
+                                          ItemPrice = x.Average(x => x.ItemPrice),
+                                          HourlyRate = x.Average(x => x.HourlyRate),
+                                          Quantity = x.Sum(x => x.Quantity)
+                                      }).Where(x => x.Quantity > 0).AsQueryable();
                 var items = await itemsQueryable.ToListAsync();
                 return items;
-
             }
             catch (Exception ex)
             {

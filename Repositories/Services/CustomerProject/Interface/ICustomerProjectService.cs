@@ -23,5 +23,10 @@ namespace Repositories.Common
         Task<PaginatedResultModel<T>> GetProjectDropdown<T>(ProjectManagerSearchViewModel searchVM);
         Task<CompanyInformation> GetCompanyInfoById(long id);
         Task<CompanyContact> GetCompanyContactInfoById(long id);
+        Task<List<CustomerProject>> GetProjects();
+        Task<CustomerProject> GetProjectByid(long id);
+        Task<List<CompanyInformation>> GetCompanies();
+        Task<List<WorkOrder>> GetWorkOrders();
+        Task<IRepositoryResponse> CreateOrder(OrderModifyViewModel model, long customerProjectId, long workOrderId, string imageUrl);
     }
 }
