@@ -160,7 +160,8 @@ namespace Repositories.Common
                                           ManufacturerName = i.Manufacturer.Name,
                                           i.DefaultRentalRateDaily,
                                           i.DefaultRentalRateMonthly,
-                                          i.DefaultRentalRateWeekly
+                                          i.DefaultRentalRateWeekly,
+                                          i.ImageUrl
 
                                       }).GroupBy(x => new { x.EquipmentId })
                                       .Select(x => new EquipmentTransactionDetailViewModel()
@@ -183,6 +184,7 @@ namespace Repositories.Common
                                               DefaultRentalRateDaily=x.Max(y => y.DefaultRentalRateDaily),
                                               DefaultRentalRateMonthly=x.Max(y=>y.DefaultRentalRateMonthly),
                                               DefaultRentalRateWeekly = x.Max(y => y.DefaultRentalRateWeekly),
+                                              ImageUrl = x.Max(y=>y.ImageUrl)
                                           },
 
                                           Supplier = new SupplierBriefViewModel()

@@ -100,11 +100,10 @@
                         {
                             var orderIdName = collectionName + "Inventory.Id";
                             <input type="hidden" name="@orderIdName" value="@item.Inventory.Id" />
-
-                            <p>@item.Inventory.ItemPrice</p>
+                            <input type="hidden" name="OrderItems[@i].ItemName" value="@item.Inventory.ItemNo" />
                             <div class="col-12">
                                 <div class="d-flex p-3 border rounded mb-3">
-                                    <input type="hidden" name="inventoryrateonetime" value="@item.Inventory.ItemPrice" />
+                                    <input type="hidden" name="inventoryrateonetime_@i" value="@item.Inventory.ItemPrice" />
                                     <img src="@(string.IsNullOrWhiteSpace(item.Inventory?.ImageUrl) ? "/img/no-img.jpg" : item.Inventory.ImageUrl)" alt="itemImg" class="me-3" style="width:100px; height:auto;" />
                                     <div class="flex-grow-1">
                                         <h5>@item.Inventory.ItemNo</h5>
@@ -124,18 +123,18 @@
                                             </div> *@
                                             <div class="col-md-3">
                                                 <label>Frequency</label>
-                                                <select class="form-select">
+                                                <select class="form-select" name="OrderItems[@i].Frequency" disabled>
                                                     <option selected>One-Time</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-2">
                                                 <label>Quantity</label>
-                                                <input name="@quantityName" class="form-control" type="number" value="@item.Quantity" min="1" max="@item.OHQuantity" />
+                                                <input name="@quantityName" class="form-control quantity" type="number" value="@item.Quantity" min="1" max="@item.OHQuantity" />
                                             </div>
                                         </div>
                                     </div>
                                     <div class="text-center">
-                                        <h5 class="text-primary">$0</h5>
+                                        <h5 class="text-primary cart-total">$0</h5>
                                         <small>per unit</small>
                                         <div class="text-center">
                                             <a class="text-danger" href="javascript:void(0)" onclick="deleteInventoryFromCart(@item.Inventory.Id, this)">
@@ -150,12 +149,13 @@
                         {
                             var orderIdName = collectionName + "Equipment.Id";
                             <input type="hidden" name="@orderIdName" value="@item.Equipment.Id" />
+                            <input type="hidden" name="OrderItems[@i].ItemName" value="@item.Equipment.ItemNo" />
 
                             <div class="col-12">
                                 <div class="d-flex p-3 border rounded mb-3">
-                                    <input type="hidden" name="equipmentratedaily" value="@item.Equipment.DefaultRentalRateDaily" />
-                                    <input type="hidden" name="equipmentrateweekly" value="@item.Equipment.DefaultRentalRateWeekly" />
-                                    <input type="hidden" name="equipmentratemonthly" value="@item.Equipment.DefaultRentalRateMonthly" />
+                                    <input type="hidden" name="equipmentratedaily_@i" value="@item.Equipment.DefaultRentalRateDaily" />
+                                    <input type="hidden" name="equipmentrateweekly_@i" value="@item.Equipment.DefaultRentalRateWeekly" />
+                                    <input type="hidden" name="equipmentratemonthly_@i" value="@item.Equipment.DefaultRentalRateMonthly" />
                                     <img src="@(string.IsNullOrWhiteSpace(item.Equipment?.ImageUrl) ? "/img/no-img.jpg" : item.Equipment.ImageUrl)" alt="itemImg" class="me-3" style="width:100px; height:auto;" />
                                     <div class="flex-grow-1">
                                         <h5>@item.Equipment.ItemNo</h5>
@@ -175,7 +175,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <label>Frequency</label>
-                                                <select class="form-select">
+                                                <select class="form-select" name="OrderItems[@i].Frequency" disabled>
                                                     <option selected>Daily</option>
                                                     <option>Weekly</option>
                                                     <option>Monthly</option>
@@ -188,7 +188,7 @@
                                         </div>
                                     </div>
                                     <div class="text-center">
-                                        <h5 class="text-primary">$0</h5>
+                                        <h5 class="text-primary cart-total">$0</h5>
                                         <small>per unit</small>
                                         <div class="text-center">
                                             <a class="text-danger" href="javascript:void(0)" onclick="deleteEquipmentFromCart(@item.Equipment.Id, this)">
@@ -210,7 +210,7 @@
             <div class="bg-light p-3 rounded ">
                 <div class="d-flex justify-content-between">
                     <h5>Total Estimated Cost:</h5>
-                    <h4 class="fw-bold text-primary">$</h4>
+                    <h4 class="fw-bold text-primary">$0</h4>
                 </div>
                 <small>Final pricing will be confirmed after review</small>
             </div>
@@ -219,35 +219,98 @@
                 <a href="/Inventories" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Continue Shopping
                 </a>
-                <a asp-controller="Cart" asp-action="Step2" class="btn btn-primary">
+                <button type="button" class="btn btn-primary" onclick="proceedToStep2()">
                     Proceed to Details
-                </a>
+                </button>
             </div>
         </div>
     </div>
 </div>
 <script>
-    $(document).on("change", ".start-date, .end-date", function () {
-        debugger;
+    $(document).ready(function() {
+        restoreStep1Data();
+    });
+    
+    function restoreStep1Data() {
+        $.ajax({
+            url: '/Cart/GetStep1Data',
+            type: 'GET',
+            success: function(response) {
+                if (response.success && response.data) {
+                    console.log('Restoring data:', response.data);
+                    response.data.Items.forEach(function(item) {
+                        console.log('Processing item:', item);
+                        if (item.Type === 'display' && item.Name.startsWith('cartTotal_')) {
+                            let index = item.Name.split('_')[1];
+                            $(".cart-total").eq(index).text(item.Value);
+                        } else {
+                            let input = $("input[name='" + item.Name + "'], select[name='" + item.Name + "']");
+                            console.log('Found input:', input.length, 'for name:', item.Name);
+                            if (input.length > 0) {
+                                input.val(item.Value);
+                                console.log('Set value:', item.Value, 'to field:', item.Name);
+                            } else {
+                                console.log('Field not found:', item.Name);
+                            }
+                        }
+                    });
+                    
+                    if (response.data.TotalCost) {
+                        $(".bg-light .fw-bold.text-primary").text(response.data.TotalCost);
+                    }
+                }
+            }
+        });
+    }
+    
+    $(document).on("change", ".start-date, .end-date, input[type='number']", function () {
         let row = $(this).closest(".row");
         let container = $(this).closest(".d-flex");
         let startDate = row.find(".start-date").val();
         let endDate = row.find(".end-date").val();
+        
+        // Extract row index from the input name
+        let inputName = $(this).attr('name');
+        let rowIndex = inputName.match(/\[(\d+)\]/)[1];
+        
+        let inventoryRateOneTime = container.find(`[name="inventoryrateonetime_${rowIndex}"]`).val() || 0;
+        let equipmentratedaily = container.find(`[name="equipmentratedaily_${rowIndex}"]`).val() || 0;
+        let equipmentrateweekly = container.find(`[name="equipmentrateweekly_${rowIndex}"]`).val() || 0;
+        let equipmentratemonthly = container.find(`[name="equipmentratemonthly_${rowIndex}"]`).val() || 0;
+        let quantity = row.find('input[type="number"]').val() || 0;
+        
+        // Determine page type based on which hidden inputs exist
+        let page = inventoryRateOneTime > 0 ? "Inventory" : "Equipment";
+        
+        // Check if this is a quantity change or date change
+        let isQuantityChange = $(this).attr('type') === 'number';
+        let isDateChange = $(this).hasClass('start-date') || $(this).hasClass('end-date');
+        let inventoryDateCalculated = page === "Inventory" && container.data('calculated');
+        
+        // For quantity changes, calculate difference and update total directly
+        if (isQuantityChange && container.data('unitPrice')) {
+            let currentTotal = parseFloat($(".bg-light .fw-bold.text-primary").text().replace(/[^0-9.]/g, '')) || 0;
+            let previousQty = container.data('previousQty') || 1;
+            let unitPrice = container.data('unitPrice');
+            let qtyDiff = quantity - previousQty;
+            let newTotal = currentTotal + (qtyDiff * unitPrice);
+            
+            container.data('previousQty', quantity);
+            row.closest(".d-flex").find(".text-primary").text(`$${(unitPrice * quantity)}`);
+            $(".bg-light .fw-bold.text-primary").text(`$${newTotal}`);
+            return;
+        }
+        
 
-        let inventoryrateonetime  = row.find('[name="inventoryrateonetime"]').val()  || 0;
-        let inventoryratedaily    = 0;
-        let inventoryrateweekly   = 0;
-        let inventoryratemonthly  = 0;
-
-        let equipmentrateonetime  = 0;
-        let equipmentratedaily    = row.find('[name="equipmentratedaily"]').val()    || 0;
-        let equipmentrateweekly   = row.find('[name="equipmentrateweekly"]').val()   || 0;
-        let equipmentratemonthly  = row.find('[name="equipmentratemonthly"]').val()  || 0;
-
-        let quantity = row.find('[name="quantityName"]').val() || 0;
+        
+        // Skip AJAX for inventory date changes after first calculation
+        if (inventoryDateCalculated && !isQuantityChange) return;
+        
+        // For Equipment, require both start and end dates
+        if (page === "Equipment" && (!startDate || !endDate)) return;
 
         if (startDate) {
-            if (!endDate) {
+            if (!endDate && page === "Inventory") {
                 endDate = startDate;
             }
             $.ajax({
@@ -256,23 +319,45 @@
                 data: {
                     startDate: startDate,
                     endDate: endDate,
-                    onetime :inventoryrateonetime,
+                    onetime: inventoryRateOneTime,
                     dailyRate: equipmentratedaily,
                     weeklyRate: equipmentrateweekly,
                     monthlyRate: equipmentratemonthly,
-                    quantity: quantity
+                    quantity: quantity,
+                    page: page
                 },
                 success: function (res) {
                     row.find("select").val(res.frequency);
-                    row.closest(".d-flex").find(".text-primary").text(`$${res.totalRent}`);
-                    let cartTotal = 0;
-                $(".text-primary").each(function () {
-                    let priceText = $(this).text();
-                    let price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 0;
-                    cartTotal += price;
-                });
-                 // $(".bg-light .fw-bold.text-primary").text(`$${totalCost}`);
-                 $(".bg-light .fw-bold.text-primary").text(`$${cartTotal.toFixed(2)}`);
+                    
+                    // Calculate cart total difference for date changes
+                    if (isDateChange && container.data('previousTotal')) {
+                        let currentCartTotal = parseFloat($(".bg-light .fw-bold.text-primary").text().replace(/[^0-9.]/g, '')) || 0;
+                        let previousItemTotal = container.data('previousTotal');
+                        let newCartTotal = currentCartTotal - previousItemTotal + res.totalRent;
+                        
+                        row.closest(".d-flex").find(".text-primary").text(`$${res.totalRent}`);
+                        $(".bg-light .fw-bold.text-primary").text(`$${newCartTotal}`);
+                    } else {
+                        row.closest(".d-flex").find(".text-primary").text(`$${res.totalRent}`);
+                        
+                        let cartTotal = 0;
+                        $(".cart-total").each(function () {
+                            let priceText = $(this).text();
+                            let price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 0;
+                            cartTotal += price;
+                        });
+                        $(".bg-light .fw-bold.text-primary").text(`$${cartTotal}`);
+                    }
+                    
+                    // Store data for future calculations
+                    container.data('unitPrice', res.totalRent / quantity);
+                    container.data('previousQty', quantity);
+                    container.data('previousTotal', res.totalRent);
+                    
+                    // Mark inventory as calculated
+                    if (page === "Inventory") {
+                        container.data('calculated', true);
+                    }
                 }
             });
         }
@@ -322,6 +407,59 @@
                 }
             });
         }
+    }
+
+    function proceedToStep2() {
+        let formData = {
+            items: [],
+            totalCost: $(".bg-light .fw-bold.text-primary").text()
+        };
+        
+        $(".card input, .card select").each(function() {
+            let input = $(this);
+            let name = input.attr('name');
+            let value = input.val();
+            
+            if (name && value) {
+                formData.items.push({
+                    name: name,
+                    value: value,
+                    type: input.attr('type') || 'text'
+                });
+            }
+        });
+        
+        $(".cart-total").each(function(index) {
+            formData.items.push({
+                name: `cartTotal_${index}`,
+                value: $(this).text(),
+                type: 'display'
+            });
+        });
+        
+        console.log('Form Data:', formData);
+        
+        if (formData.items.length === 0) {
+            alert('No data to save');
+            return;
+        }
+        
+        $.ajax({
+            url: '/Cart/SaveStep1DataSimple',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = '/Cart/Step2';
+                } else {
+                    alert('Error saving data: ' + (response.message || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error saving data. Please try again.');
+            }
+        });
     }
 </script>
 

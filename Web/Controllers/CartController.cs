@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Models;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Crypto;
 using Repositories.Common;
 using ViewModels;
+using ViewModels.CustomerProject;
 
 namespace Web.Controllers
 {
@@ -11,6 +14,7 @@ namespace Web.Controllers
         private readonly ILogger<CartController> _logger;
         private readonly IInventoryService<InventoryModifyViewModel, InventoryModifyViewModel, InventoryDetailViewModel> _inventoryService;
         private readonly ITransactionService<TransactionModifyViewModel, TransactionModifyViewModel, TransactionDetailViewModel> _transactionService;
+        private readonly ICustomerProjectService<CustomerProjectModifyViewModel, CustomerProjectModifyViewModel, CustomerProjectDetailViewModel> _customerProjectService;
         private readonly IEquipmentTransactionService<EquipmentTransactionModifyViewModel, EquipmentTransactionModifyViewModel, EquipmentTransactionDetailViewModel> _equipmentTransactionService;
 
         //private readonly IDashboardService _service;
@@ -19,12 +23,14 @@ namespace Web.Controllers
             ILogger<CartController> logger
             , IInventoryService<InventoryModifyViewModel, InventoryModifyViewModel, InventoryDetailViewModel> inventoryService
             , ITransactionService<TransactionModifyViewModel, TransactionModifyViewModel, TransactionDetailViewModel> transactionService
+            , ICustomerProjectService<CustomerProjectModifyViewModel, CustomerProjectModifyViewModel, CustomerProjectDetailViewModel> customerProjectService
             , IEquipmentTransactionService<EquipmentTransactionModifyViewModel, EquipmentTransactionModifyViewModel, EquipmentTransactionDetailViewModel> equipmentTransactionService
             )
         {
             _logger = logger;
             _inventoryService = inventoryService;
             _transactionService = transactionService;
+            _customerProjectService = customerProjectService;
             _equipmentTransactionService = equipmentTransactionService;
         }
 
@@ -130,16 +136,157 @@ namespace Web.Controllers
 
         public async Task<ActionResult> Step2()
         {
-            return View("Step2");
+            var projects = await _customerProjectService.GetProjects();
+            
+            var sessionData = HttpContext.Session.GetString("Step2Data");
+            if (!string.IsNullOrEmpty(sessionData))
+            {
+                var step2Data = JsonConvert.DeserializeObject<Step2Data>(sessionData);
+                ViewBag.Step2Data = step2Data;
+            }
+            
+            return View("Step2", projects);
         }
 
         public async Task<ActionResult> Step3()
         {
-            return View("Step3");
+            Step3ViewData step3ViewData = new Step3ViewData();
+            var step1SessionData = HttpContext.Session.GetString("Step1FormData");
+            if (!string.IsNullOrEmpty(step1SessionData))
+            {
+                var formData = JsonConvert.DeserializeObject<Step1FormData>(step1SessionData);
+                var orderItemIndexes = formData.Items
+                .Select(item =>
+                {
+                    // Match pattern OrderItems[n]
+                    var match = System.Text.RegularExpressions.Regex.Match(item.Name, @"OrderItems\[(\d+)\]");
+                    return match.Success ? int.Parse(match.Groups[1].Value) : (int?)null;
+                })
+                .Where(index => index.HasValue)
+                .Select(index => index.Value)
+                .Distinct()
+                .Count();
+                step3ViewData.Items = orderItemIndexes;
+                step3ViewData.EstimatedTotal = formData.TotalCost;
+
+                step3ViewData.OrderData = new List<OrderData>();
+                for (int i = 0; i < orderItemIndexes; i++)
+                {
+                    OrderData order = new OrderData();
+                    order.ItemName = formData.Items.FirstOrDefault(x => x.Name == $"OrderItems[{i}].ItemName")?.Value;
+                    order.Qty = int.Parse(formData.Items.FirstOrDefault(x => x.Name == $"OrderItems[{i}].Quantity")?.Value ?? "0");
+                    order.ItemPrice = decimal.Parse(formData.Items.FirstOrDefault(x => x.Name == $"cartTotal_{i}")?.Value?.Replace("$", "") ?? "0");
+                    order.Frequency = formData.Items.FirstOrDefault(x => x.Name == $"OrderItems[{i}].Frequency")?.Value;
+                    if (DateTime.TryParse(formData.Items.FirstOrDefault(x => x.Name == $"OrderItems[{i}].StartDate")?.Value, out DateTime startDate))
+                        order.StartDate = startDate;
+                    if (DateTime.TryParse(formData.Items.FirstOrDefault(x => x.Name == $"OrderItems[{i}].EndDate")?.Value, out DateTime endDate))
+                        order.EndDate = endDate;
+                    order.EndDate = order.EndDate == null ? order.StartDate : order.EndDate;
+                    step3ViewData.OrderData.Add(order);
+                }
+
+            }
+            var step2sessionData = HttpContext.Session.GetString("Step2Data");
+            if (!string.IsNullOrEmpty(step2sessionData))
+            {
+                var step2Data = JsonConvert.DeserializeObject<Step2Data>(step2sessionData);
+                step3ViewData.JobName = step2Data.Project.JobName;
+                step3ViewData.JobCode = step2Data.Project.JobCode;
+            }
+            return View("Step3",step3ViewData);
         }
         public async Task<ActionResult> Step4()
         {
             return View("Step4");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SubmitOrder()
+        {
+            try
+            {
+                // Get session data
+                var step1SessionData = HttpContext.Session.GetString("Step1FormData");
+                var step2SessionData = HttpContext.Session.GetString("Step2Data");
+                
+                if (string.IsNullOrEmpty(step1SessionData) || string.IsNullOrEmpty(step2SessionData))
+                {
+                    TempData["Error"] = "Session data is missing. Please start over.";
+                    return RedirectToAction("Step1");
+                }
+                
+                var step1Data = JsonConvert.DeserializeObject<Step1FormData>(step1SessionData);
+                var step2Data = JsonConvert.DeserializeObject<Step2Data>(step2SessionData);
+                
+                // Create order model
+                var orderModel = new OrderModifyViewModel
+                {
+                    Notes = step2Data.SpecialInstructions,
+                    OrderItems = new List<OrderItemModifyViewModel>()
+                };
+                
+                // Parse order items from step1 data
+                var orderItemIndexes = step1Data.Items
+                    .Select(item =>
+                    {
+                        var match = System.Text.RegularExpressions.Regex.Match(item.Name, @"OrderItems\[(\d+)\]");
+                        return match.Success ? int.Parse(match.Groups[1].Value) : (int?)null;
+                    })
+                    .Where(index => index.HasValue)
+                    .Select(index => index.Value)
+                    .Distinct();
+                
+                foreach (var index in orderItemIndexes)
+                {
+                    var inventoryIdStr = step1Data.Items.FirstOrDefault(x => x.Name == $"OrderItems[{index}].Inventory.Id")?.Value;
+                    var equipmentIdStr = step1Data.Items.FirstOrDefault(x => x.Name == $"OrderItems[{index}].Equipment.Id")?.Value;
+                    var quantityStr = step1Data.Items.FirstOrDefault(x => x.Name == $"OrderItems[{index}].Quantity")?.Value;
+                    
+                    if (long.TryParse(quantityStr, out long quantity) && quantity > 0)
+                    {
+                        var orderItem = new OrderItemModifyViewModel
+                        {
+                            Quantity = quantity
+                        };
+                        
+                        if (long.TryParse(inventoryIdStr, out long inventoryId) && inventoryId > 0)
+                        {
+                            orderItem.Inventory = new InventoryDetailViewModel { Id = inventoryId };
+                        }
+                        else if (long.TryParse(equipmentIdStr, out long equipmentId) && equipmentId > 0)
+                        {
+                            orderItem.Equipment = new EquipmentDetailViewModel { Id = equipmentId };
+                        }
+                        
+                        orderModel.OrderItems.Add(orderItem);
+                    }
+                }
+                
+                // Create order
+                var result = await _customerProjectService.CreateOrder(orderModel, step2Data.CustomerProjectId);
+                
+                if (result != null)
+                {
+                    // Clear session data
+                    HttpContext.Session.Remove("Step1FormData");
+                    HttpContext.Session.Remove("Step2Data");
+                    HttpContext.Session.Remove("Cart");
+                    
+                    TempData["Success"] = "Order submitted successfully!";
+                    return RedirectToAction("Step4");
+                }
+                else
+                {
+                    TempData["Error"] = "Failed to submit order. Please try again.";
+                    return RedirectToAction("Step3");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error submitting order");
+                TempData["Error"] = "An error occurred while submitting the order.";
+                return RedirectToAction("Step3");
+            }
         }
 
         [HttpPost]
@@ -313,40 +460,248 @@ namespace Web.Controllers
         //}
 
         [HttpPost]
-        public IActionResult CalculateRent(DateTime startDate, DateTime endDate,decimal onetime, decimal dailyRate, decimal weeklyRate, decimal monthlyRate,int quantity)
+        public IActionResult CalculateRent(DateTime startDate, DateTime endDate,
+    decimal onetime, decimal dailyRate, decimal weeklyRate, decimal monthlyRate,
+    int quantity, string page)
         {
-            // Ensure end date is not before start date
-            if (endDate < startDate)
-            {
-                return Json(new { totalRent = 0, frequency = "Invalid" });
-            }
-
-            var totalDays = (endDate - startDate).TotalDays + 1; // +1 to include start date
-
-            string frequency;
             decimal totalRent = 0;
+            string frequency;
 
-            if (totalDays <= 5)
+            if (page == "Inventory")
             {
-                frequency = "Daily";
-                totalRent = (decimal)totalDays * dailyRate;
-            }
-            else if (totalDays >= 6 && totalDays < 30)
-            {
-                frequency = "Weekly";
-                var totalWeeks = Math.Ceiling(totalDays / 7); // round up partial weeks
-                totalRent = (decimal)totalWeeks * weeklyRate;
+                totalRent = quantity * onetime;
+                frequency = "One-Time";
             }
             else
             {
-                frequency = "Monthly";
-                var totalMonths = Math.Ceiling(totalDays / 30); // round up partial months
-                totalRent = (decimal)totalMonths * monthlyRate;
+                if (endDate < startDate)
+                {
+                    return Json(new { totalRent = 0, frequency = "Invalid" });
+                }
+
+                int totalDays = (int)((endDate - startDate).TotalDays) + 1; // inclusive
+
+                if (totalDays <= 5)
+                {
+                    frequency = "Daily";
+                    totalRent = totalDays * dailyRate;
+                }
+                else if (totalDays >= 6 && totalDays < 30)
+                {
+                    int fullWeeks = totalDays / 7;
+                    int remainingDays = totalDays % 7;
+
+                    frequency = "Weekly";
+                    totalRent = (fullWeeks * weeklyRate) + (remainingDays * dailyRate);
+                }
+                else
+                {
+                    int fullMonths = totalDays / 30;
+                    int remainingDays = totalDays % 30;
+
+                    if (remainingDays == 0)
+                    {
+                        totalRent = fullMonths * monthlyRate;
+                    }
+                    else if (remainingDays >= 7)
+                    {
+                        int fullWeeks = remainingDays / 7;
+                        int leftoverDays = remainingDays % 7;
+
+                        totalRent = (fullMonths * monthlyRate)
+                                  + (fullWeeks * weeklyRate)
+                                  + (leftoverDays * dailyRate);
+                    }
+                    else
+                    {
+                        totalRent = (fullMonths * monthlyRate)
+                                  + (remainingDays * dailyRate);
+                    }
+                    frequency = "Monthly";
+                }
             }
 
             return Json(new { totalRent, frequency });
         }
 
+        [HttpPost]
+        public IActionResult SaveStep1Data([FromBody] List<Step1ItemData> items)
+        {
+            try
+            {
+                _logger.LogInformation($"Received {items?.Count ?? 0} items");
+                if (items != null)
+                {
+                    foreach (var item in items)
+                    {
+                        _logger.LogInformation($"Item: InvId={item.InventoryId}, EqId={item.EquipmentId}, Qty={item.Quantity}");
+                    }
+                }
+                
+                var cart = GetCartFromSession();
+                
+                foreach (var item in items)
+                {
+                    CartItem cartItem = null;
+                    
+                    if (item.InventoryId > 0)
+                    {
+                        cartItem = cart.InventoryItems.FirstOrDefault(x => x.InventoryId == item.InventoryId);
+                    }
+                    else if (item.EquipmentId > 0)
+                    {
+                        cartItem = cart.EquipmentItems.FirstOrDefault(x => x.EquipmentId == item.EquipmentId);
+                    }
+                    
+                    if (cartItem != null)
+                    {
+                        cartItem.Quantity = item.Quantity;
+                        cartItem.StartDate = item.StartDate;
+                        cartItem.EndDate = item.EndDate;
+                        cartItem.CalculatedTotal = item.CalculatedTotal;
+                        cartItem.RentalFrequency = item.RentalFrequency;
+                    }
+                }
+                
+                HttpContext.Session.SetString("Cart", JsonConvert.SerializeObject(cart));
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        
+        [HttpPost]
+        public IActionResult SaveStep1DataSimple([FromBody] Step1FormData formData)
+        {
+            try
+            {
+                _logger.LogInformation($"Received form data with {formData?.Items?.Count ?? 0} items");
+                _logger.LogInformation($"Total cost: {formData?.TotalCost}");
+                
+                if (formData?.Items != null)
+                {
+                    HttpContext.Session.SetString("Step1FormData", JsonConvert.SerializeObject(formData));
+                }
+                
+                return Json(new { success = true, itemCount = formData?.Items?.Count ?? 0 });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        
+        [HttpGet]
+        public IActionResult GetStep1Data()
+        {
+            try
+            {
+                var sessionData = HttpContext.Session.GetString("Step1FormData");
+                if (!string.IsNullOrEmpty(sessionData))
+                {
+                    var formData = JsonConvert.DeserializeObject<Step1FormData>(sessionData);
+                    return Json(new { success = true, data = formData });
+                }
+                return Json(new { success = false, message = "No session data found" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> SaveStep2Data([FromForm] Step2Data step2Data, IFormFileCollection attachments)
+        {
+            try
+            {
+                _logger.LogInformation($"Saving Step2 data - Project: {step2Data.CustomerProjectId}, Instructions: {step2Data.SpecialInstructions}");
+                step2Data.AttachmentCount = attachments?.Count ?? 0;
+                step2Data.Project = await _customerProjectService.GetProjectByid(step2Data.CustomerProjectId);
+                HttpContext.Session.SetString("Step2Data", JsonConvert.SerializeObject(step2Data));
+                
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        
+        [HttpGet]
+        public IActionResult GetStep2Data()
+        {
+            try
+            {
+                var sessionData = HttpContext.Session.GetString("Step2Data");
+                if (!string.IsNullOrEmpty(sessionData))
+                {
+                    var step2Data = JsonConvert.DeserializeObject<Step2Data>(sessionData);
+                    return Json(new { success = true, step2Data = new { customerProjectId = step2Data.CustomerProjectId, specialInstructions = step2Data.SpecialInstructions } });
+                }
+                return Json(new { success = false, message = "No Step2 data found" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+    }
+    
+    public class Step1ItemData
+    {
+        public long InventoryId { get; set; }
+        public long EquipmentId { get; set; }
+        public long Quantity { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public decimal CalculatedTotal { get; set; }
+        public string RentalFrequency { get; set; }
+    }
+    
+    public class Step1FormData
+    {
+        public List<FormItem> Items { get; set; } = new();
+        public string TotalCost { get; set; }
+    }
+    
+    public class FormItem
+    {
+        public string Name { get; set; }
+        public string Value { get; set; }
+        public string Type { get; set; }
+    }
+    
+    public class Step2Data
+    {
+        public long CustomerProjectId { get; set; }
+        public string SpecialInstructions { get; set; }
+        public int AttachmentCount { get; set; }
+        public CustomerProject Project { get; set; }
+    }
 
+    public class Step3ViewData
+    {
+        public string JobName { get; set; } 
+        public string JobCode { get; set; } 
+        public int Items { get; set; } 
+        public string EstimatedTotal { get; set; }
+        public List<OrderData> OrderData { get; set; }  
+    }
+    public class OrderData
+    {
+        public string ItemName { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string Frequency { get; set; }
+        public int Qty { get; set; }
+        public decimal ItemPrice { get; set; }
     }
 }

@@ -1,4 +1,8 @@
-﻿@* <h2>Order Details</h2>
+﻿@model List<Models.CustomerProject>
+        @{
+            var step2Data = ViewBag.Step2Data as Web.Controllers.Step2Data;
+        }
+@* <h2>Order Details</h2>
 
     
         <div class="mb-4">
@@ -106,35 +110,96 @@
 </div>
 
 
-<div class="card p-4">
+<form id="step2Form" enctype="multipart/form-data">
+    <div class="card p-4">
 
-    <h5 class="mb-3 fw-bold">Order Details</h5>
+        <h5 class="mb-3 fw-bold">Order Details</h5>
 
 
-    <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
-        <div class="mb-4">
-            <h6 class="fw-bold mb-3">Select Project</h6>
-            <select class="form-select">
-                <option selected>Select a project...</option>
-                <option>Project A</option>
-                <option>Project B</option>
-            </select>
-        </div>  
+        <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+            <div class="mb-4">
+                <h6 class="fw-bold mb-3">Select Project</h6>
+                <select class="form-select" id="customer-project-select">
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        var selected = step2Data != null && step2Data.CustomerProjectId == Model[i].Id ? "selected" : "";
+                        <option value="@Model[i].Id" selected="@selected">@Model[i].JobName</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+            <h6 class="fw-bold mb-3">Order Notes & Attachments</h6>
+            <label class="form-label mt-2">Special Instructions</label>
+            <textarea name="SpecialInstructions" class="form-control" rows="3" placeholder="Add any special instructions or notes for this order...">@(step2Data?.SpecialInstructions ?? "")</textarea>
+
+            <label class="form-label mt-3">Attachments</label>
+            <input name="attachments" type="file" class="form-control" multiple>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a asp-controller="Cart" asp-action="Step1" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Cart
+            </a>
+            <button type="button" id="nextBtn" class="btn btn-primary">Review Order</button>
+        </div>
     </div>
+</form>
 
-    <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
-        <h6 class="fw-bold mb-3">Order Notes & Attachments</h6>
-        <label class="form-label mt-2">Special Instructions</label>
-        <textarea class="form-control" rows="3" placeholder="Add any special instructions or notes for this order..."></textarea>
+<script>
+    $(document).ready(function() {
+        // Load session data on page load
+        loadStep2SessionData();
+        $('#nextBtn').click(function() {
+            var formData = new FormData();
 
-        <label class="form-label mt-3">Attachments</label>
-        <input type="file" class="form-control" multiple>
-    </div>
+            // Get selected project ID
+                var projectId = $("#customer-project-select").val() || 0;
+            formData.append('CustomerProjectId', projectId);
 
-    <div class="d-flex justify-content-between mt-4">
-        <a asp-controller="Cart" asp-action="Step1" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Back to Cart
-        </a>
-        <a asp-controller="Cart" asp-action="Step3" class="btn btn-primary" >Review Order</a>
-    </div>
-</div>
+            // Get special instructions
+            var instructions = $('textarea[name="SpecialInstructions"]').val() || '';
+            formData.append('SpecialInstructions', instructions);
+
+            // Get attachments
+            var fileInput = $('input[name="attachments"]')[0];
+            if (fileInput.files.length > 0) {
+                for (var i = 0; i < fileInput.files.length; i++) {
+                    formData.append('attachments', fileInput.files[i]);
+                }
+            }
+
+            $.ajax({
+                url: '@Url.Action("SaveStep2Data", "Cart")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = '@Url.Action("Step3", "Cart")';
+                    } else {
+                        alert('Error saving data: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('Error saving data. Please try again.');
+                }
+            });
+        });
+    });
+
+    function loadStep2SessionData() {
+        $.ajax({
+            url: '@Url.Action("GetStep2Data", "Cart")',
+            type: 'GET',
+            success: function(data) {
+                if (data.success && data.step2Data) {
+                    $('#customer-project-select').val(data.step2Data.customerProjectId || 0);
+                    $('textarea[name="SpecialInstructions"]').val(data.step2Data.specialInstructions || '');
+                }
+            }
+        });
+    }
+</script>
