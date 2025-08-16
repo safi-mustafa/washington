@@ -60,40 +60,62 @@ namespace Repositories.Services.Reports
         }
         public async Task<List<CustomerProjectsViewModel>> GetCustomerProjects()
         {
-            var customerProjects = await _db.CustomerProjects
-                .GroupJoin(
-                    _db.Orders,
-                    cp => cp.Id,
-                    o => o.CustomerProjectId,
-                    (cp, orders) => new { Project = cp, Orders = orders }
-                )
-                .SelectMany(
-                    x => x.Orders.DefaultIfEmpty(),
-                    (x, o) => new
-                    {
-                        Project = x.Project,
-                        Cost = o.Cost
-                    }
-                )
-                .GroupBy(x => x.Project)
-                .Select(g => new CustomerProjectsViewModel
-                {
-                    JobName = g.Key.JobName,
-                    TotalCost = (g.Sum(x => x.Cost) ?? 0).ToString(),
-                    ProjectStartDate = g.Key.ProjectStartDate,
-                    ProjectEndDate = g.Key.ProjectEndDate,
-                    // Calculate the percentage, then round up
-                    PercentageComplete = g.Key.ProjectStartDate.HasValue && g.Key.ProjectEndDate.HasValue &&
-                                         EF.Functions.DateDiffDay(g.Key.ProjectStartDate.Value, g.Key.ProjectEndDate.Value) > 0
-                        ? (decimal?)Math.Ceiling(
-                            (float)EF.Functions.DateDiffDay(g.Key.ProjectStartDate.Value, DateTime.Now) /
-                             EF.Functions.DateDiffDay(g.Key.ProjectStartDate.Value, g.Key.ProjectEndDate.Value) * 100
-                          )
-                        : (decimal?)null
-                })
-                .ToListAsync();
+            var rawProjectData = await (
+                        from cp in _db.CustomerProjects
+                        join o in _db.Orders on cp.Id equals o.CustomerProjectId into orderGroup
+                        from og in orderGroup.DefaultIfEmpty()
+                        group og by new
+                        {
+                            cp.Id,
+                            cp.JobName,
+                            cp.ProjectStartDate,
+                            cp.ProjectEndDate
+                        } into g
+                        select new
+                        {
+                            g.Key.JobName,
+                            g.Key.ProjectStartDate,
+                            g.Key.ProjectEndDate,
+                            TotalCost = g.Sum(x => x != null ? x.Cost : 0)
+                        }
+                    ).ToListAsync();
 
-            return customerProjects;
+            // Now compute PercentageComplete safely in-memory
+            var projectCosts = rawProjectData.Select(p =>
+            {
+                double? percentageComplete = null;
+
+                if (p.ProjectStartDate.HasValue && p.ProjectEndDate.HasValue)
+                {
+                    var totalDays = (p.ProjectEndDate.Value - p.ProjectStartDate.Value).TotalDays;
+                    var daysElapsed = (DateTime.Now - p.ProjectStartDate.Value).TotalDays;
+
+                    if (totalDays <= 0)
+                    {
+                        percentageComplete = 100;
+                    }
+                    else if (daysElapsed < 0)
+                    {
+                        percentageComplete = 0;
+                    }
+                    else
+                    {
+                        percentageComplete = Math.Min(100, (daysElapsed / totalDays) * 100);
+                    }
+                }
+
+                return new CustomerProjectsViewModel
+                {
+                    JobName = p.JobName,
+                    ProjectStartDate = p.ProjectStartDate,
+                    ProjectEndDate = p.ProjectEndDate,
+                    TotalCost = p.TotalCost,
+                    PercentageComplete = percentageComplete
+                };
+            }).ToList();
+
+
+            return projectCosts;
         }
     }
 }

@@ -67,9 +67,9 @@
     public class CustomerProjectsViewModel
     {
         public string JobName { get; set; }
-        public string TotalCost { get; set; }
+        public double? TotalCost { get; set; }
         public DateTime? ProjectStartDate { get; set; }
         public DateTime? ProjectEndDate { get; set; }
-        public decimal? PercentageComplete { get; set; }
+        public double? PercentageComplete { get; set; }
     }
 }
