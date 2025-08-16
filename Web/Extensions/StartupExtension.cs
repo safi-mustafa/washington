@@ -1,40 +1,26 @@
 ﻿using Authorization.Providers;
-
 using BoilerPlate.Authorization;
 using BoilerPlate.Authorization.Handlers;
-
 using Centangle.Common.ResponseHelpers.Models;
-
 using CorrelationId.DependencyInjection;
-
 using DataLibrary;
-
 using Helpers.File;
-
 using IdentityManager;
-
 using IdentityProvider.Seed;
-
 using IdentityStore;
-
 using Interfaces;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-
 using Models;
 using Models.Mapper;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-
 using NotificationWorkerService.Interface;
 using NotificationWorkerService.Repository;
-
 using Repositories;
 using Repositories.Common;
 using Repositories.Common.AdministratorService;
@@ -68,15 +54,15 @@ using Repositories.Services.Report;
 using Repositories.Services.Report.Common;
 using Repositories.Services.Report.Common.interfaces;
 using Repositories.Services.Report.Interface;
+using Repositories.Services.Reports;
+using Repositories.Services.Reports.Interface;
 using Repositories.Services.SubCategory;
 using Repositories.Services.SubCategory.Interface;
 using Repositories.Shared.NotificationServices;
 using Repositories.Shared.NotificationServices.Interface;
 using Repositories.Shared.UserInfoServices;
 using Repositories.Shared.UserInfoServices.Interface;
-
 using Repository;
-
 using ViewModels.Dashboard;
 using ViewModels.Dashboard.interfaces;
 using ViewModels.Report.Factory.interfaces;
@@ -198,6 +184,7 @@ namespace Web.Extensions
             services.AddScoped(typeof(IExecuteEquipmentService), typeof(ExecuteEquipmentService));
             services.AddScoped(typeof(IDashboardService), typeof(DashboardService));
             services.AddScoped(typeof(IReportService), typeof(ReportService));
+            services.AddScoped(typeof(IReportsService), typeof(ReportsService));
             services.AddScoped(typeof(IReportServiceQueries), typeof(ReportServiceQueries));
             services.AddScoped(typeof(IDashboardFactory), typeof(DashboardFactory));
             services.AddScoped(typeof(IDashboardTableService), typeof(DashboardTableService));

@@ -38,4 +38,38 @@
         public string Postfix { get; set; }
         public bool HideTopSearchBar { get; set; } = false;
     }
+
+    public class ReportsCountViewModel
+    {
+        public int TotalOrders { get; set; }
+        public decimal TotalCost { get; set; }
+        public int TotalActiveRentals { get; set; }
+        public int OverdueReturns { get; set; }
+    }
+
+    public class ActiveRentalsModel
+    {
+        public string Order { get; set; }
+        public string Item { get; set; }
+        public string Project { get; set; }
+        public DateTime? DueDate { get; set; }
+        public string DaysLeft { get; set; }
+        public string DailyCost { get; set; }
+    }
+    public class ReportMasterViewModel
+    {
+        public TabViewModel TabData { get; set; }
+        public ReportsCountViewModel ReportsCount { get; set; } // Type based on _reportsService.Orders()
+        public List<ActiveRentalsModel> ActiveRentals { get; set; }
+        public List<CustomerProjectsViewModel> CustomerProjects { get; set; }
+    }
+
+    public class CustomerProjectsViewModel
+    {
+        public string JobName { get; set; }
+        public string TotalCost { get; set; }
+        public DateTime? ProjectStartDate { get; set; }
+        public DateTime? ProjectEndDate { get; set; }
+        public decimal? PercentageComplete { get; set; }
+    }
 }
