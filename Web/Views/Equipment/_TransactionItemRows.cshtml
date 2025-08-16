@@ -5,18 +5,36 @@
     var equipmentId = ViewBag.EquipmentId;
 
 }
-
+<style>
+    #shipment-table-container thead tr th {
+        background-color: #fbefea;
+    }
+    #shipment-table-container tr td {
+        text-align:left !important;
+    }
+    #shipment-table-container tr th {
+        text-align:left !important;
+    }
+</style>
 <div class="container-fluid">
     <table id="shipment-table-container" class="table table-striped table-bordered">
         <thead>
             <tr>
-                <th>PO #</th>
+                @*  <th>PO #</th>
                 <th>Supplier</th>
                 <th>Location</th>
                 <th>Purchase Price</th>
                 <th>Purchase Date</th>
                 <th>Quantity</th>
-                <th>Actions</th>
+                <th>Actions</th> *@
+
+                <th>Asset Tag</th>
+                <th>Serial Number</th>
+                <th>Primary Location ID</th>
+                <th>Purchase Date</th>
+                <th>Purchase Price</th>
+                <th>Current Status</th>
+                <th>Condition</th>
             </tr>
         </thead>
         <tbody>
@@ -25,7 +43,27 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@item.PONo  </td>
+                        <td>@item.AssetTag </td>
+                        <td>@item.PONo</td>
+                        <td>@item.Location.Name </td>
+                        <td>@item.FormattedPurchaseDate</td>
+                        <td>@item.ItemPrice.ToString("C")</td>
+                        <td>@item.CurrentStatus.Name </td>
+                        <td>@item.Condition.Name </td>
+                        <td>
+                            <a href='#' style="color:black;" class='table-link delete-btn' onClick='ShowEquipmentShipmentHistory("@equipmentId","@item.PONo","@item.Location.Id")'><i title='Item History' class='fas fa-history'></i></a>
+
+                            <a href='#' style="color:black;" class='table-link delete-btn' onClick='ShowEQShipmentTransactionNotes("@item.Id")'>
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.60449 13.0928H9.60449V12.0928H3.60449V13.0928ZM3.60449 9.09277H12.6045V8.09277H3.60449V9.09277ZM3.60449 5.09277H12.6045V4.09277H3.60449V5.09277ZM1.71999 16.5928C1.25966 16.5928 0.875326 16.4386 0.566992 16.1303C0.258659 15.8219 0.104492 15.4376 0.104492 14.9773V2.20827C0.104492 1.74794 0.258659 1.36361 0.566992 1.05527C0.875326 0.74694 1.25966 0.592773 1.71999 0.592773H14.489C14.9493 0.592773 15.3337 0.74694 15.642 1.05527C15.9503 1.36361 16.1045 1.74794 16.1045 2.20827V14.9773C16.1045 15.4376 15.9503 15.8219 15.642 16.1303C15.3337 16.4386 14.9493 16.5928 14.489 16.5928H1.71999ZM1.71999 15.5928H14.489C14.643 15.5928 14.7841 15.5287 14.9122 15.4005C15.0404 15.2724 15.1045 15.1313 15.1045 14.9773V2.20827C15.1045 2.05427 15.0404 1.91319 14.9122 1.78502C14.7841 1.65686 14.643 1.59277 14.489 1.59277H1.71999C1.56599 1.59277 1.42491 1.65686 1.29674 1.78502C1.16858 1.91319 1.10449 2.05427 1.10449 2.20827V14.9773C1.10449 15.1313 1.16858 15.2724 1.29674 15.4005C1.42491 15.5287 1.56599 15.5928 1.71999 15.5928Z" fill="#252432"></path>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+
+
+                    @*  <tr>
+                        <td>@item.PONo</td>
                         <td>@item.Supplier.Name </td>
                         <td>@item.Location.Name </td>
                         <td>@item.ItemPrice.ToString("C")</td>
@@ -34,7 +72,7 @@
                         <td>
                             <a href='#' style="color:black;" class='table-link delete-btn' onClick='ShowEquipmentShipmentHistory("@equipmentId","@item.PONo","@item.Location.Id")'><i title='Item History' class='fas fa-history'></i></a>
                         </td>
-                    </tr>
+                    </tr> *@
                 }
             }
             else
@@ -50,30 +88,57 @@
 
 
 
-<script>function ShowEquipmentShipmentHistory(equipmentId, poNo, locationId) {
-        $.ajax({
-            url: "/Equipment/GetEquipmentIssueHistory",
-            type: "GET",
-            data: { "Id": equipmentId, "poNo": poNo, "locationId": locationId },
-            success: function (data) {
-                if (data) {
-                    $(".modal-title").html($("#transaction-history-modal-title").val());
-                    $("#equipment-shipment-modal-body").empty();
-                    $("#equipment-shipment-modal-body").html(data);
-                    $("#equipment-shipment-modal").modal("show");
+<script>
+    function ShowEquipmentShipmentHistory(equipmentId, poNo, locationId) {
+            $.ajax({
+                url: "/Equipment/GetEquipmentIssueHistory",
+                type: "GET",
+                data: { "Id": equipmentId, "poNo": poNo, "locationId": locationId },
+                success: function (data) {
+                    if (data) {
+                        $(".modal-title").html($("#transaction-history-modal-title").val());
+                        $("#equipment-shipment-modal-body").empty();
+                        $("#equipment-shipment-modal-body").html(data);
+                        $("#equipment-shipment-modal").modal("show");
+                    }
+                    else {
+                        SwalErrorAlert("Equipment Transaction History failed to load!");
+                    }
+                    // $('#ajax-loader').hide();
+                },
+                complete: function () {
+                    //refreshequipmentGrid();
+                    // $('#ajax-loader').hide();
+                },
+                error: function (r, s, t) {
+                    SwalErrorAlert('Equipment Transaction History failed to load!');
+                    // $('#ajax-loader').hide();
                 }
-                else {
-                    SwalErrorAlert("Equipment Transaction History failed to load!");
-                }
-                // $('#ajax-loader').hide();
-            },
-            complete: function () {
-                //refreshequipmentGrid();
-                // $('#ajax-loader').hide();
-            },
-            error: function (r, s, t) {
-                SwalErrorAlert('Equipment Transaction History failed to load!');
-                // $('#ajax-loader').hide();
-            }
-        });
-    }</script>
+            });
+        }
+
+    function ShowEQShipmentTransactionNotes(transactionId) {
+           $.ajax({
+               url: "/Equipment/GetShipmentTransactionNotes",
+               type: "GET",
+               data: { "Id": transactionId },
+               success: function (data) {
+                   debugger
+                   if (data) {
+                       //$(".modal-title").html($("#transaction-history-modal-title").val());
+                       $("#equipment-shipment-note-modal-body").empty();
+                       $("#equipment-shipment-note-modal-body").html(data);
+                       $("#equipment-shipment-note-modal").modal("show");
+                   }
+                   else {
+                       SwalErrorAlert("Equipment Shipment Note failed to load!");
+                   }
+               },
+               complete: function () {
+               },
+               error: function (r, s, t) {
+                   SwalErrorAlert('Equipment Shipment Note History failed to load!');
+               }
+           });
+       }
+</script>

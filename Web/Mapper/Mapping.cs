@@ -481,6 +481,8 @@ namespace Models.Mapper
                 .ForMember(s => s.Location, d => d.Ignore())
                 .ForMember(s => s.ConditionId, d => d.MapFrom(x => x.Condition.Id))
                 .ForMember(s => s.Condition, d => d.Ignore())
+                .ForMember(s => s.CurrentStatusId, d => d.MapFrom(x => x.CurrentStatus.Id))
+                .ForMember(s => s.CurrentStatus, d => d.Ignore())
                 .ForMember(s => s.Equipment, d => d.Ignore())
                 .ReverseMap();
 
@@ -491,6 +493,8 @@ namespace Models.Mapper
                 .ForMember(s => s.Location, d => d.Ignore())
                 .ForMember(s => s.ConditionId, d => d.MapFrom(x => x.Condition.Id))
                 .ForMember(s => s.Condition, d => d.Ignore())
+                .ForMember(s => s.CurrentStatusId, d => d.MapFrom(x => x.CurrentStatus.Id))
+                .ForMember(s => s.CurrentStatus, d => d.Ignore())
                 .ForMember(s => s.Equipment, d => d.Ignore())
             .ReverseMap();
 
@@ -501,6 +505,8 @@ namespace Models.Mapper
                 .ForMember(s => s.Location, d => d.Ignore())
                 .ForMember(s => s.ConditionId, d => d.MapFrom(x => x.Condition.Id))
                 .ForMember(s => s.Condition, d => d.Ignore())
+                .ForMember(s => s.CurrentStatusId, d => d.MapFrom(x => x.CurrentStatus.Id))
+                .ForMember(s => s.CurrentStatus, d => d.Ignore())
                 .ForMember(s => s.Equipment, d => d.Ignore())
                 .ReverseMap();
 
@@ -511,6 +517,8 @@ namespace Models.Mapper
                 .ForMember(s => s.Location, d => d.Ignore())
                 .ForMember(s => s.ConditionId, d => d.MapFrom(x => x.Condition.Id))
                 .ForMember(s => s.Condition, d => d.Ignore())
+                .ForMember(s => s.CurrentStatusId, d => d.MapFrom(x => x.CurrentStatus.Id))
+                .ForMember(s => s.CurrentStatus, d => d.Ignore())
                 .ForMember(s => s.Equipment, d => d.Ignore())
                 .ReverseMap();
 
@@ -529,6 +537,8 @@ namespace Models.Mapper
                 .ForMember(s => s.Location, d => d.Ignore())
                 .ForMember(s => s.ConditionId, d => d.MapFrom(x => x.Condition.Id))
                 .ForMember(s => s.Condition, d => d.Ignore())
+                .ForMember(s => s.CurrentStatus, d => d.MapFrom(x => x.CurrentStatus.Id))
+                .ForMember(s => s.CurrentStatus, d => d.Ignore())
                 .ForMember(s => s.Equipment, d => d.Ignore())
                 .ReverseMap();
             CreateMap<EquipmentShipmentDetailViewModel, EquipmentTransaction>()
@@ -538,6 +548,8 @@ namespace Models.Mapper
                 .ForMember(s => s.Location, d => d.Ignore())
                 .ForMember(s => s.ConditionId, d => d.MapFrom(x => x.Condition.Id))
                 .ForMember(s => s.Condition, d => d.Ignore())
+                .ForMember(s => s.CurrentStatus, d => d.MapFrom(x => x.CurrentStatus.Id))
+                .ForMember(s => s.CurrentStatus, d => d.Ignore())
                 .ForMember(s => s.Equipment, d => d.Ignore())
                 .ReverseMap();
             CreateMap<EquipmentShipmentBriefViewModel, EquipmentTransaction>().ReverseMap();
@@ -734,6 +746,18 @@ namespace Models.Mapper
             CreateMap<SubCategoryDetailViewModel, Subcategory>().ReverseMap();
             CreateMap<SubCategoryBriefViewModel, Subcategory>().ReverseMap();
             CreateMap<SubCategoryModifyViewModel, SubCategoryDetailViewModel>().ReverseMap();
+            CreateMap<TransactionNotesViewModel, TransactionsNotes>().ReverseMap();
+
+            //Condition
+            CreateMap<CurrentStatusModifyViewModel, CurrentStatus>().ReverseMap();
+            CreateMap<CurrentStatusDetailViewModel, CurrentStatus>().ReverseMap();
+            CreateMap<CurrentStatusBriefViewModel, CurrentStatus>().ReverseMap();
+            CreateMap<CurrentStatusModifyViewModel, CurrentStatusDetailViewModel>().ReverseMap();
+
+            CreateMap<EquipmentTransactionNotesViewModel, EquipmentTransactionsNotes>().ForMember(dest => dest.EquipmentTransactionId,
+               opt => opt.MapFrom(src => src.TransactionId))
+    .ReverseMap();
+
 
             //IgnoreGlobalProperties();
         }

@@ -86,6 +86,7 @@ namespace Repositories.Common
                                       join sp in _db.Suppliers on t.SupplierId equals sp.Id
                                       select new
                                       {
+                                          t.Id,
                                           t.LotNO,
                                           t.InventoryId,
                                           InventoryName = i.Description ?? "-",
@@ -102,6 +103,7 @@ namespace Repositories.Common
                                       }).GroupBy(x => new { x.InventoryId, x.LotNO, x.SourceId, x.SupplierId, x.LocationId, x.ItemPrice })
                                       .Select(x => new TransactionDetailViewModel()
                                       {
+                                          Id = x.Max(y=>y.Id),
                                           LotNO = x.Key.LotNO,
                                           Inventory = new InventoryDetailViewModel()
                                           {

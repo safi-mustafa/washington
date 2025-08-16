@@ -162,7 +162,6 @@
 		<Folder Include="wwwroot\js\views\order\" />
 		<Folder Include="wwwroot\js\views\cart\" />
 		<Folder Include="wwwroot\js\views\work-order\" />
-		<Folder Include="Views\Equipment\" />
 		<Folder Include="Views\Shared\Select2\Condition\" />
 		<Folder Include="Views\Shared\Select2\TaskType\" />
 		<Folder Include="Views\Report\WorkOrder\" />

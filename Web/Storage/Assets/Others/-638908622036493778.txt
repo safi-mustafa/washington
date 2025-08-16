@@ -1,0 +1,82 @@
+Ans - 
+The following **11** numbers of departments use less than **8** workstations:  
+
+- East End Customer Service: 5 workstations  
+- Operations: 5 workstations  
+- Collab 1: 2 workstations  
+- Customer Service: 2 workstations  
+- IT: 2 workstations  
+- OEM: 2 workstations  
+- Sweere Conf Room: 2 workstations  
+- EM Engineering: 1 workstation  
+- Events: 1 workstation  
+- Exec Team: 1 workstation  
+- Product Management: 1 workstation  
+=============================================
+Questions
+
+Which departments are using fewer than 8 workstations?
+
+Can you list the departments with less than 8 workstations?
+
+Which departments operate with fewer than 8 workstations?
+
+Identify departments that have fewer than 8 workstations.
+
+What are the departments with a workstation count below 8?
+
+Which departments have less than 8 workstations allocated?
+
+Provide a list of departments using fewer than 8 workstations.
+
+Which departments have a workstation total under 8?
+
+Can you show the departments with a count of workstations below 8?
+
+Which departments utilize fewer than 8 workstations?
+
+What departments are assigned less than 8 workstations?
+
+Which departments maintain a count of fewer than 8 workstations?
+
+List the departments that have fewer than 8 workstations in use.
+
+Which departments manage less than 8 workstations?
+
+What are the departments with workstation usage under 8?
+
+Which departments fall below 8 workstations in total?
+
+Can you identify departments with fewer than 8 active workstations?
+
+Which departments allocate less than 8 workstations to their staff?
+
+Provide details of departments operating with fewer than 8 workstations.
+
+What departments are below the threshold of 8 workstations?
+
+What areas are using less than 8 workstations?
+
+I am trying to see where is using less than 8 carts?
+
+Where all is using less than 8 workstations
+
+Are any departments using less than 8 workstations?
+
+How can I find out which areas currently have less than 8 workstations?
+
+Does anywhere have less than 8 carts right now?
+
+Currently is there a department that has less than 8 workstations?
+
+I am looking to see if anywhere has less than 8 carts?
+
+Where all has less than 8 workstations?
+
+Is there a floor with less than 8 workstations?
+
+Does any department have less than 8 carts?
+
+Generate a report of departments with less than 8 carts.
+
+Is there a way to tell if any areas have less than 8 workstations?

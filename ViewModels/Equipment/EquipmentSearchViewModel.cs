@@ -9,6 +9,9 @@ namespace ViewModels
         public CategoryBriefViewModel Category { get; set; } = new(false,"");
         public ManufacturerBriefViewModel Manufacturer { get; set; } = new(false,"");
         public UOMBriefViewModel UOM { get; set; } = new(false,"");
+        public SubCategoryBriefViewModel SubCategory { get; set; } = new(false,"");
+        public CurrentStatusBriefViewModel CurrentStatus { get; set; } = new(false,"");
+        public ConditionBriefViewModel Condition { get; set; } = new(false,"");
         public UserSearchSettingBriefViewModel UserSearchSetting { get; set; } = new();
         public SearchFilterTypeCatalog? Type { get; set; }
         public string SearchView { get; set; }

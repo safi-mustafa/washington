@@ -221,6 +221,7 @@ namespace Web.Extensions
             services.AddScoped(typeof(ICustomerProjectService<,,>), typeof(CustomerProjectService<,,>));
             services.AddScoped<ICustomerProfileService, CustomerProfileService>();
             services.AddScoped(typeof(ISubCategoryService<,,>), typeof(SubCategoryService<,,>));
+            services.AddScoped(typeof(ICurrentStatusService<,,>), typeof(CurrentStatusService<,,>));
             services.AddDefaultCorrelationId();
         }
     }

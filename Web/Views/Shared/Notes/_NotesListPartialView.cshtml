@@ -28,7 +28,47 @@
                             }
                             else
                             {
-                                <a class='download-btn' href='@item.FileUrl' target='_blank'><i class='fa fa-file-download'></i></a>
+                                @if (!string.IsNullOrWhiteSpace(item.FileUrl))
+                                {
+
+                                    var fileExtension = System.IO.Path.GetExtension(item.FileUrl);
+
+                                    string iconPath = ""; // default icon
+
+                                    var ext = fileExtension.ToLower();
+
+                                    var imageExts = new[] { ".jpg", ".jpeg", ".png", ".svg" };
+                                    var audioExts = new[] { ".mp3", ".wav", ".ogg" };
+                                    var docExts = new[] { ".docx", ".doc", ".xlsx", ".xls", ".txt" };
+
+                                    if (imageExts.Contains(ext))
+                                        iconPath = "img/icons/image.svg";
+                                    else if (ext == ".mp4")
+                                        iconPath = "img/icons/video.svg";
+                                    else if (audioExts.Contains(ext))
+                                        iconPath = "img/icons/audio.svg";
+                                    else if (ext == ".pdf")
+                                        iconPath = "img/icons/pdf.svg";
+                                    else if (docExts.Contains(ext))
+                                        iconPath = "img/icons/document.svg";
+
+                                    @if (!string.IsNullOrEmpty(iconPath))
+                                    {
+                                        <a class="download-btn" href="@item.FileUrl" target="_blank">
+                                            <img src="@iconPath" alt="File Icon" width="20" />
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="download-btn" href="@item.FileUrl" target="_blank">
+                                           <i class='fa fa-file-download'></i>
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    <a class='download-btn' href='@item.FileUrl' target='_blank'><i class='fa fa-file-download'></i></a>
+                                }
                             }
                         </td>
                         <td>@item.FormattedCreatedOn</td>

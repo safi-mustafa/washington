@@ -3,6 +3,7 @@
 @{
     var prefix = ViewData.TemplateInfo.HtmlFieldPrefix ?? "SubCategory";
     var elementId = ViewData["Id"] != null && !string.IsNullOrEmpty(ViewData["Id"].ToString()) ? ViewData["Id"].ToString() : "SubCategory-id";
+    var CategoryId = ViewData["CategoryId"] != null && !string.IsNullOrEmpty(ViewData["CategoryId"].ToString()) ? ViewData["CategoryId"].ToString() : "Category-id";
     var label = ViewData["Label"] != null && !string.IsNullOrEmpty(ViewData["Label"].ToString()) ? ViewData["Label"].ToString() : "Sub Category";
     var hideLabel = ViewData["HideLabel"] != null && !string.IsNullOrEmpty(ViewData["HideLabel"].ToString()) ? ViewData["HideLabel"].ToString() : "false";
 }
@@ -16,17 +17,17 @@
     @Html.DropDownListFor(model => model.Id, new List<SelectListItem>() {
     new SelectListItem()
     {
-    Value = (Model!=null&&Model.Id > 0)?Model.Id.ToString():"",
-    Text = (Model!=null&&Model.Id > 0)?Model.Select2Text:"",
-    Selected = (Model!=null&&Model.Id > 0)?true:false,
+        Value = (Model != null && Model.Id > 0) ? Model.Id.ToString() : "",
+        Text = (Model != null && Model.Id > 0) ? Model.Select2Text : "",
+        Selected = (Model != null && Model.Id > 0) ? true : false,
     }},
-    new
-    {
-    @id = elementId,
-    @class = "form-control disable-field",
-    data_val_required = Model?.ErrorMessage,
-    data_val = Model?.IsValidationEnabled.ToString().ToLower()
-    })
+        new
+        {
+            @id = elementId,
+            @class = "form-control disable-field",
+            data_val_required = Model?.ErrorMessage,
+            data_val = Model?.IsValidationEnabled.ToString().ToLower()
+        })
     <input type="hidden" data-identifier="@prefix" data-input-name="Name" name="Category.Name" value="@Model.Select2Text" />
     <span asp-validation-for="Id" class="validation-invalid-label category-error-span"></span>
 </div>
@@ -35,6 +36,7 @@
 <script>
     $(function () {
         var id = "#" + "@elementId";
+        
         var pageSize = 10;
         var url = '/SubCategory/GetSubCategoryByIdSelect2DropDown';
 
@@ -44,8 +46,8 @@
                 prefix: params.term,
                 pageSize: pageSize,
                 pageNumber: params.page,
-                customParams: JSON.stringify({ 
-                      SearchView: $("#Category-id").val()
+                customParams: JSON.stringify({
+                      SearchView: $("#" + "@CategoryId").val()
                 })
             }
         };

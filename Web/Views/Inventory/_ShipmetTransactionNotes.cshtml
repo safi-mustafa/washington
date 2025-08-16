@@ -1,0 +1,24 @@
+﻿@using ViewModels
+@using ViewModels.Shared.Notes
+@model List<INotesViewModel>
+
+@{
+    Layout = null;
+    var TransactionId = ViewBag.Transaction;
+}
+
+@await Html.PartialAsync("~/Views/Shared/Notes/_NotesPartialView.cshtml", Model, new ViewDataDictionary(ViewData) { { "ParentId", TransactionId }, { "ParentName", "TransactionId" } })
+
+<script src="~/js/views/notes/notes.js"></script>
+<script>
+    $(function () {
+        notesUrl = "/Inventory/SaveShipmentTransactionNotes";
+        closeNotesModalOnSubmit = false;
+    })
+
+    function getNotesList() {
+        $.get("/Inventory/GetShipmentTransactionNotes/" + @TransactionId, function (response) {
+            $("#notes-list-container tbody").html($(response).find("tbody").html());
+        });
+    }
+</script>

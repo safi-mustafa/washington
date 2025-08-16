@@ -1,5 +1,7 @@
 ﻿using Models.Common.Interfaces;
+
 using Repositories.Interfaces;
+
 using ViewModels;
 using ViewModels.Shared;
 
@@ -10,7 +12,7 @@ namespace Repositories.Common
       where CreateViewModel : class, IBaseCrudViewModel, new()
       where UpdateViewModel : class, IBaseCrudViewModel, IIdentitifier, new()
     {
-        Task<List<EquipmentTransactionDetailViewModel>> GetGroupedTransactionsByItems(List<long> inventoryId);
+        Task<List<EquipmentTransactionDetailViewModel>> GetGroupedTransactionsByItems(List<long> inventoryId, long? currentStatusId = 0, long? conditionId = 0);
         Task<List<EquipmentTransactionDetailViewModel>> GetGroupedTransactionsByItemsForOrder(List<long> inventoryId);
         Task<List<EquipmentTransactionDetailViewModel>> GetWorkOrderTransactions(string WorkOrderId);
     }

@@ -7,16 +7,16 @@
 <form action="CreateShipments" method="post" id="save-line-items-form">
 
     <table class="table" id="subline-table">
-        <thead>@* class="thead-primary" *@
+        <thead>
             <tr>
-                @*<th>Status</th>*@
-                <th>Serial #</th>
-                <th>Supplier</th>
+                <th>Asset Tag</th>
+                <th>Serial Number</th>
                 <th>Location</th>
-                @* <th>Purchase Date</th> *@
+                <th>Supplier</th>
                 <th style="width:15%;">Purchase Price</th>
-                @* <th>Hourly Rate</th> *@
                 <th>Quantity</th>
+                <th>Condition</th>
+                <th>Current Status</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -26,40 +26,49 @@
                 for (int i = 0; i < Model.EquipmentShipments.Count; i++)
                 {
                     var locationId = "location-id-" + i;
+                    var currentstatusId = "currentstatus-id-" + i;
+                    var conditionId = "condition-id-" + i;
                     var supplierId = "supplier-id-" + i;
-                    @* var conditionId = "condition-id-" + i; *@
+
                     <tr class="subline-table-row">
-                        @*<td style="width: 120px;">
-                <select asp-for="@Model.EquipmentShipments[i].Status" class="form-select"
-                asp-items="@Html.GetEnumSelectList<EquipmentStatusCatalog>()"></select>
-                <span class="validation-invalid-label field-validation-valid" data-valmsg-for="EquipmentShipments[@i].Status" data-valmsg-replace="true"></span>
-                </td>*@
+
+                        <td style="width:180px;">
+                            <input type="text" class="form-control" name="EquipmentShipments[@i].AssetTag" data-val="true" data-val-required="The field asset tag is required." />
+                            <span class="validation-invalid-label field-validation-valid" data-valmsg-for="EquipmentShipments[@i].AssetTag" data-valmsg-replace="true"></span>
+                        </td>
+
                         <td style="width:180px;">
                             <input type="text" class="form-control" name="EquipmentShipments[@i].PONo" data-val="true" data-val-required="The field PO # is required." />
                             <span class="validation-invalid-label field-validation-valid" data-valmsg-for="EquipmentShipments[@i].PONo" data-valmsg-replace="true"></span>
                         </td>
+
+
+                        <td style="width:180px;">
+                            <partial name="~/Views/Shared/Select2/_Location.cshtml" for="@Model.EquipmentShipments[i].Location" view-data='new ViewDataDictionary(ViewData) { { "HideLabel", true }, { "Id", locationId } }' />
+                        </td>
+
                         <td style="width:180px;">
                             <partial name="~/Views/Shared/Select2/_Supplier.cshtml" for="@Model.EquipmentShipments[i].Supplier" view-data='new ViewDataDictionary(ViewData) { {"HideLabel",true}, {"Id", supplierId} }' />
                         </td>
 
-                        <td style="width:180px;">
-                            <partial name="~/Views/Shared/Select2/_Location.cshtml" for="@Model.EquipmentShipments[i].Location" view-data='new ViewDataDictionary(ViewData) { {"HideLabel",true}, {"Id", locationId } }' />
-                        </td>
-                        @*            <td style="width: 120px;">
-                <input type="date" class="form-control" name="EquipmentShipments[@i].PurchaseDate" data-val="true" data-val-required="The field Purchase Date is required." />
-                <span class="validation-invalid-label field-validation-valid" data-valmsg-for="EquipmentShipments[@i].PurchaseDate" data-valmsg-replace="true"></span>
-                </td> *@
+                       
                         <td style="width: 120px;">
                             <input type="text" class="form-control input-currency" name="EquipmentShipments[@i].ItemPrice" data-val="true" data-val-required="The field Cost is required." />
                             <span class="validation-invalid-label field-validation-valid" data-valmsg-for="EquipmentShipments[@i].ItemPrice" data-valmsg-replace="true"></span>
                         </td>
-                        @*       <td style="width: 120px;">
-                <input type="text" class="form-control input-currency" name="EquipmentShipments[@i].HourlyRate" data-val="true" data-val-required="The field Hourly Rate is required." />
-                <span class="validation-invalid-label field-validation-valid" data-valmsg-for="EquipmentShipments[@i].HourlyRate" data-valmsg-replace="true"></span>
-                </td> *@
+                       
                         <td style="width: 120px;">
                             <input type="number" class="form-control" name="EquipmentShipments[@i].Quantity" data-val="true" data-val-required="The field Quantity is required." />
                             <span class="validation-invalid-label field-validation-valid" data-valmsg-for="EquipmentShipments[@i].Quantity" data-valmsg-replace="true"></span>
+                        </td>
+                        
+
+                        <td style="width:180px;">
+                            <partial name="~/Views/Shared/Select2/_Condition.cshtml" for="@Model.EquipmentShipments[i].Condition" view-data='new ViewDataDictionary(ViewData) { { "HideLabel", true }, { "Id", conditionId } }' />
+                        </td>
+
+                        <td style="width:180px;">
+                            <partial name="~/Views/Shared/Select2/_CurrentStatus.cshtml" for="@Model.EquipmentShipments[i].CurrentStatus" view-data='new ViewDataDictionary(ViewData) { { "HideLabel", true }, { "Id", currentstatusId } }' />
                         </td>
 
                         <td class="delete-action-container">
@@ -215,9 +224,11 @@
         updateSelect2Ids("location", lastSelect2Index);
         updateSelect2Ids("condition", lastSelect2Index);
         updateSelect2Ids("supplier", lastSelect2Index);
+        updateSelect2Ids("currentstatus", lastSelect2Index);
         initializeLocationSelect2($("#location-id-" + lastSelect2Index));
         initializeConditionSelect2($("#condition-id-" + lastSelect2Index));
         initializeSupplierSelect2($("#supplier-id-" + lastSelect2Index));
+        initializeCurrentStatusSelect2($("#currentstatus-id-" + lastSelect2Index));
         addCurrencyMasking();
     }
     function updateSelect2Ids(name, newIndex) {
@@ -242,6 +253,11 @@
     function initializeSupplierSelect2(supplierIds) {
         supplierIds.each(function () {
             SetSupplierSelect2("#" + $(this).attr('id'));
+        });
+    }
+     function initializeCurrentStatusSelect2(CurrentStatusIds) {
+        CurrentStatusIds.each(function () {
+            SetCurrentStatusSelect2("#" + $(this).attr('id'));
         });
     }
 </script>

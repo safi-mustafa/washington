@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
-using Repositories.Common;
-using ViewModels.DataTable;
-using ViewModels;
-using Web.Controllers.Shared;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Mvc;
-using ViewModels.CRUD;
-using ViewModels.Shared.Notes;
 using Pagination;
+using Repositories.Common;
+using ViewModels;
+using ViewModels.CRUD;
+using ViewModels.DataTable;
+using ViewModels.Shared.Notes;
+using Web.Controllers.Shared;
 
 namespace Web.Controllers
 {
@@ -33,21 +34,21 @@ namespace Web.Controllers
                 new DataTableViewModel{title = "<input type='checkbox' class='select-all-checkbox' onclick='selectAllCheckBoxChanged(this)'>",className="select-all-checkbox action text-right exclude-from-export", data = "Id"},
                 new DataTableViewModel{title = "", data = "Id",format="expand",className="action dt-control expand exclude-form-export"},
                  new DataTableViewModel{title = "Image",data = "ImageUrl", format = "html", formatValue="image", className = "image-thumbnail action"},
-                new DataTableViewModel{title = "MaterialID",data = "FormattedSystemGeneratedId", orderable = true, sortingColumn = "SystemGeneratedId"},
+                new DataTableViewModel{title = "ID",data = "FormattedSystemGeneratedId", orderable = true, sortingColumn = "SystemGeneratedId"},
                 //new DataTableViewModel{title = "Item #",data = "ItemNo", orderable = true},
                 new DataTableViewModel{title = "Category",data = "Category.Name", orderable = true, filterId="categoryId", hasFilter = true},
-                new DataTableViewModel{title = "SubCategory",data = "SubCategory.Name", orderable = true, filterId="sucategoryId", hasFilter = true},
+                new DataTableViewModel{title = "Sub Category",data = "SubCategory.Name", orderable = true, filterId="sucategoryId", hasFilter = true},
                 new DataTableViewModel{title = "Description",data = "FormattedDescription", orderable = true},
                 new DataTableViewModel{title = "Manufacturer",data = "Manufacturer.Name", orderable = true, filterId="manufacturerId", hasFilter = true},
                 //new DataTableViewModel{title = "MUTCD",data = "MUTCD.Name", orderable = true, sortingColumn = "MUTCD.Code", filterId="mutcdId", hasFilter = true},
                 //new DataTableViewModel{title = "Image",data = "MUTCD.ImageUrl", format = "html",formatValue="image", className = "image-thumbnail action"},
-                new DataTableViewModel{title = "PartNumber",data = "PartNumber", orderable = true, filterId="partnumberId", hasFilter = true},
-                new DataTableViewModel{title = "UnitofMeasure",data = "UOM.Name", orderable = true, filterId="uomId", hasFilter = true},
-                new DataTableViewModel{title = "Unit Cost",data = "UnitCost",className = "dt-currency", orderable = true},
-                new DataTableViewModel{title = "StockQuantity",data = "Quantity", orderable = true},
-                new DataTableViewModel{title = "ReorderLevel",data = "ReOrderLevel", orderable = true},
+                //new DataTableViewModel{title = "PartNumber",data = "PartNumber", orderable = true, filterId="partnumberId", hasFilter = true},
+                new DataTableViewModel{title = "UOM",data = "UOM.Name", orderable = true, filterId="uomId", hasFilter = true},
+                new DataTableViewModel{title = "Value",data = "UnitCost",className = "dt-currency", orderable = true},
+                new DataTableViewModel{title = "Qty",data = "Quantity", orderable = true},
+                //new DataTableViewModel{title = "ReorderLevel",data = "ReOrderLevel", orderable = true},
                 //new DataTableViewModel{title = "Total Value",data = "TotalValue", className = "dt-currency" ,orderable = true},
-                new DataTableViewModel{title = "Location",data = "Location.Name" ,orderable = true},
+                //new DataTableViewModel{title = "Location",data = "Location.Name" ,orderable = true},
                 new DataTableViewModel{title = "Action",data = null,className="action action-td text-right exclude-form-export"}
 
             };
@@ -211,6 +212,27 @@ namespace Web.Controllers
         public async Task<bool> IsItemNoUnique(long id, string itemNo)
         {
             return await _service.IsItemNoUnique(id, itemNo);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetShipmentTransactionNotes(int Id)
+        {
+
+            try
+            {
+                var notes = await _service.GetNotesByTransactionId(Id);
+                List<INotesViewModel> notesViewModels = notes.Cast<INotesViewModel>().ToList();
+                ViewBag.Transaction = Id;
+                return View("_ShipmetTransactionNotes", notesViewModels);
+            }
+            catch (Exception ex) { _logger.LogError($"Inventory Notes method threw an exception, Message: {ex.Message}"); return RedirectToAction("Index"); }
+
+        }
+
+        public async Task<ActionResult> SaveShipmentTransactionNotes(TransactionNotesViewModel model)
+        {
+            var notes = await _service.SaveShipmentTransactionNotes(model);
+            return Json(notes);
         }
     }
 }

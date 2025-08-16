@@ -31,16 +31,16 @@ namespace Web.Controllers
             {
                 new DataTableViewModel{title = "<input type='checkbox' class='select-all-checkbox' onclick='selectAllCheckBoxChanged(this)'>",className="action text-right exclude-from-export", data = "Id"},
                 new DataTableViewModel{title = "", data = "Id",format="expand",className="action dt-control expand exclude-form-export"},
-               
+
                 new DataTableViewModel{title = "Image",data = "ImageUrl", format = "html", formatValue="image", className = "image-thumbnail action"},
-                new DataTableViewModel{title = "ModelID",data = "FormattedSystemGeneratedId", orderable = true, sortingColumn = "SystemGeneratedId"},
+                new DataTableViewModel{title = "ID",data = "FormattedSystemGeneratedId", orderable = true, sortingColumn = "SystemGeneratedId"},
                  new DataTableViewModel{title = "Category",data = "Category.Name", orderable = true, filterId="categoryId", hasFilter = true},
-                 new DataTableViewModel{title = "Sub Category",data = "SubCategory.Name", orderable = true, filterId="categoryId", hasFilter = true},
+                 new DataTableViewModel{title = "Sub Category",data = "SubCategory.Name", orderable = true, filterId="subcategoryId", hasFilter = true},
 
-                 new DataTableViewModel{title = "Manufacturer",data = "Manufacturer.Name", orderable = true, filterId="manufacturerId", hasFilter = true},
+                 new DataTableViewModel{title = "Make",data = "Manufacturer.Name", orderable = true, filterId="manufacturerId", hasFilter = true},
 
-                new DataTableViewModel{title = "Model #",data = "ItemNo", orderable = true},
-                
+                new DataTableViewModel{title = "Model",data = "ItemNo", orderable = true},
+
                 new DataTableViewModel{title = "Description",data = "Description", orderable = true},
                 
                 //new DataTableViewModel{title = "MUTCD",data = "MUTCD.Name"},
@@ -48,11 +48,11 @@ namespace Web.Controllers
                 //new DataTableViewModel{title = "Quantity",data = "Quantity", orderable = true},
                 //new DataTableViewModel{title = "UOM",data = "UOM.Name", orderable = true, filterId="uomId", hasFilter = true},
 
-                new DataTableViewModel{title = "Default Rental Rate One Time",data = "DefaultRentalRateOneTime",className = "dt-currency", orderable = true},
-                new DataTableViewModel{title = "Default Rental Rate Daily",data = "DefaultRentalRateDaily", className = "dt-currency", orderable = true},
-                new DataTableViewModel{title = "Default Rental Rate Weekly",data = "DefaultRentalRateWeekly", className = "dt-currency", orderable = true},
-                new DataTableViewModel{title = "Default Rental Rate Monthly",data = "DefaultRentalRateMonthly",className = "dt-currency", orderable = true},
-                new DataTableViewModel{title = "Useful Life Months",data = "UsefulLifeMonths", orderable = true},
+                //new DataTableViewModel{title = "Default Rental Rate One Time",data = "DefaultRentalRateOneTime",className = "dt-currency", orderable = true},
+                new DataTableViewModel{title = "Daily",data = "DefaultRentalRateDaily", className = "dt-currency", orderable = true},
+                new DataTableViewModel{title = "Weekly",data = "DefaultRentalRateWeekly", className = "dt-currency", orderable = true},
+                new DataTableViewModel{title = "Monthly",data = "DefaultRentalRateMonthly",className = "dt-currency", orderable = true},
+                //new DataTableViewModel{title = "Useful Life Months",data = "UsefulLifeMonths", orderable = true},
                 //new DataTableViewModel{title = "Total Value",data = "TotalValue", className = "dt-currency" ,orderable = true},
                
                 new DataTableViewModel{title = "Action",data = null,className="action text-right exclude-form-export"}
@@ -138,9 +138,9 @@ namespace Web.Controllers
             return Json(notes);
         }
 
-        public async Task<PartialViewResult> GetExpandedData(long id)
+        public async Task<PartialViewResult> GetExpandedData(long id, long? currentstatusId, long? conditionId)
         {
-            var items = await _transactionService.GetGroupedTransactionsByItems(new List<long> { id });
+            var items = await _transactionService.GetGroupedTransactionsByItems(new List<long> { id }, currentstatusId, conditionId);
             ViewBag.EquipmentId = id;
             return PartialView("_TransactionItemRows", items);
         }
@@ -213,6 +213,28 @@ namespace Web.Controllers
         public async Task<bool> IsItemNoUnique(long id, string itemNo)
         {
             return await _service.IsItemNoUnique(id, itemNo);
+        }
+
+        public async Task<ActionResult> SaveShipmentTransactionNotes(EquipmentTransactionNotesViewModel model)
+        {
+            var notes = await _service.SaveShipmentTransactionNotes(model);
+            return Json(notes);
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult> GetShipmentTransactionNotes(int Id)
+        {
+
+            try
+            {
+                var notes = await _service.GetNotesByTransactionId(Id);
+                List<INotesViewModel> notesViewModels = notes.Cast<INotesViewModel>().ToList();
+                ViewBag.EQTransaction = Id;
+                return View("_ShipmetTransactionNotes", notesViewModels);
+            }
+            catch (Exception ex) { _logger.LogError($"Equipment Transaction Notes method threw an exception, Message: {ex.Message}"); return RedirectToAction("Index"); }
+
         }
     }
 }

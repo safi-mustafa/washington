@@ -10,10 +10,10 @@
         @* border: 1px solid #666666 !important; *@
     }
 
-    .chart-container .card-footer {
-        background-color: #CACACA;
-        color: #666666;
-    }
+        .chart-container .card-footer {
+            background-color: #CACACA;
+            color: #666666;
+        }
 
     .card-header {
         background: none;
@@ -41,6 +41,20 @@
     .header-actions i {
         font-size: 20px;
     }
+
+    .shoppingCartIcon{
+        background-color:#F54E00 !important;
+        color:#ffffff !important;
+        position:relative;
+    }
+
+    .shoppingCartIcon .count{
+        border:1px solid;
+        position:absolute;
+        top:-10px;
+        right:-10px;
+    }
+
 </style>
 <script src="~/js/views/dashboard/dashboard-card.js"></script>
 <script src="~/js/views/dashboard/dashboard-table.js"></script>
@@ -63,9 +77,13 @@
                         <button class="btn btn-light bg-white me-3">
                             <i class="fa-solid fa-sliders"></i>
                         </button>
-                        <button class="btn btn-light bg-white">
+                        @* <button class="btn btn-light bg-white">
                             <i class="fa-solid fa-bell"></i>
-                        </button>
+                        </button> *@
+                        <a class="btn btn-light bg-white shoppingCartIcon" href="/Cart/Step1">
+                            <div class="count">2</div>
+                            <i class="fa fa-shopping-cart"></i>
+                        </a>
                     </div>
                 </div>
             </div>

@@ -904,6 +904,41 @@ namespace DataLibrary.Migrations
                     b.ToTable("CraftSkills");
                 });
 
+            modelBuilder.Entity("Models.CurrentStatus", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CurrentStatus");
+                });
+
             modelBuilder.Entity("Models.CustomerProject", b =>
                 {
                     b.Property<long>("Id")
@@ -1257,6 +1292,10 @@ namespace DataLibrary.Migrations
                     b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
 
+                    b.Property<string>("AssetTag")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long?>("ConditionId")
                         .HasColumnType("bigint");
 
@@ -1265,6 +1304,9 @@ namespace DataLibrary.Migrations
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<long?>("CurrentStatusId")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("EntityDetailId")
                         .HasColumnType("bigint");
@@ -1321,6 +1363,8 @@ namespace DataLibrary.Migrations
 
                     b.HasIndex("ConditionId");
 
+                    b.HasIndex("CurrentStatusId");
+
                     b.HasIndex("EquipmentId");
 
                     b.HasIndex("LocationId");
@@ -1330,6 +1374,49 @@ namespace DataLibrary.Migrations
                     b.HasIndex("SupplierId");
 
                     b.ToTable("EquipmentTransactions");
+                });
+
+            modelBuilder.Entity("Models.EquipmentTransactionsNotes", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("EquipmentTransactionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("FileUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EquipmentTransactionId");
+
+                    b.ToTable("EquipmentTransactionsNotes");
                 });
 
             modelBuilder.Entity("Models.Inventory", b =>
@@ -2997,6 +3084,49 @@ namespace DataLibrary.Migrations
                     b.ToTable("Transactions");
                 });
 
+            modelBuilder.Entity("Models.TransactionsNotes", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("TransactionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("TransactionsNotes");
+                });
+
             modelBuilder.Entity("Models.UOM", b =>
                 {
                     b.Property<long>("Id")
@@ -3783,6 +3913,10 @@ namespace DataLibrary.Migrations
                         .WithMany()
                         .HasForeignKey("ConditionId");
 
+                    b.HasOne("Models.CurrentStatus", "CurrentStatus")
+                        .WithMany()
+                        .HasForeignKey("CurrentStatusId");
+
                     b.HasOne("Models.Equipment", "Equipment")
                         .WithMany("EquipmentTransactions")
                         .HasForeignKey("EquipmentId")
@@ -3807,6 +3941,8 @@ namespace DataLibrary.Migrations
 
                     b.Navigation("Condition");
 
+                    b.Navigation("CurrentStatus");
+
                     b.Navigation("Equipment");
 
                     b.Navigation("Location");
@@ -3814,6 +3950,17 @@ namespace DataLibrary.Migrations
                     b.Navigation("Reference");
 
                     b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("Models.EquipmentTransactionsNotes", b =>
+                {
+                    b.HasOne("Models.EquipmentTransaction", "EquipmentTransaction")
+                        .WithMany()
+                        .HasForeignKey("EquipmentTransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EquipmentTransaction");
                 });
 
             modelBuilder.Entity("Models.Inventory", b =>
@@ -4102,6 +4249,17 @@ namespace DataLibrary.Migrations
                     b.Navigation("Source");
 
                     b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("Models.TransactionsNotes", b =>
+                {
+                    b.HasOne("Models.Transaction", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("Models.WorkOrder", b =>

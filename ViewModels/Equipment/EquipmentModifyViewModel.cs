@@ -74,9 +74,9 @@ namespace ViewModels
         [Display(Name = "Default Rental Rate Monthly")]
         public string? DefaultRentalRateMonthly { get; set; }
 
-        [Required]
+        //[Required]
         [Display(Name = "Useful Life Months")]
-        public string? UsefulLifeMonths { get; set; }
+        public string? UsefulLifeMonths { get; set; } = "10";
     }
 }
 
