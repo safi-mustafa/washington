@@ -1,4 +1,5 @@
-﻿@model List<Models.CustomerProject>
+﻿@using ViewModels.Cart
+@model CustomerProjectInformation
         @{
             var step2Data = ViewBag.Step2Data as Web.Controllers.Step2Data;
         }
@@ -81,6 +82,31 @@
         background-color: #b2b2b2;
         width: 19vw;
     }
+    
+    #imagePreview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .file-item {
+        display: inline-flex;
+        align-items: center;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 0.875rem;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .file-item i {
+        margin-right: 5px;
+        color: #6c757d;
+    }
 </style>
 <h4 class="text-xl font-bold text-gray-900  mb-4">Checkout</h4>
 <!---------------new----------------->
@@ -115,15 +141,42 @@
 
         <h5 class="mb-3 fw-bold">Order Details</h5>
 
-
         <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+            <div class="mb-4">
+                <h6 class="fw-bold mb-3">Select Customer</h6>
+                <select class="form-select" id="customer-select">
+                    @for (int i = 0; i < Model.Companies.Count; i++)
+                    {
+                        var selected = step2Data != null && step2Data.CustomerId == Model.Companies[i].Id ? "selected" : "";
+                        <option value="@Model.Companies[i].Id" selected="@selected">@Model.Companies[i].CompanyName</option>
+                    }
+                </select>
+            </div>
+
             <div class="mb-4">
                 <h6 class="fw-bold mb-3">Select Project</h6>
                 <select class="form-select" id="customer-project-select">
-                    @for (int i = 0; i < Model.Count; i++)
+                    <option value="">Select a project...</option>
+                    @for (int i = 0; i < Model.Projects.Count; i++)
                     {
-                        var selected = step2Data != null && step2Data.CustomerProjectId == Model[i].Id ? "selected" : "";
-                        <option value="@Model[i].Id" selected="@selected">@Model[i].JobName</option>
+                        var selected = step2Data != null && step2Data.CustomerProjectId == Model.Projects[i].Id ? "selected" : "";
+                        <option value="@Model.Projects[i].Id" data-customer-id="@Model.Projects[i].CustomerId" data-purchase-order="@Model.Projects[i].PurchaseOrderNumber" selected="@selected">@Model.Projects[i].JobName</option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <h6 class="fw-bold mb-3">Purchase Order:</h6>
+                <div id="purchase-order-display" class="form-control-plaintext fw-bold text-primary">Select a project to view Purchase Order</div>
+            </div>
+
+            <div class="mb-4">
+                <h6 class="fw-bold mb-3">Select Work Step</h6>
+                <select class="form-select" id="customer-project-purchase-order-select">
+                    @for (int i = 0; i < Model.WorkOrders.Count; i++)
+                    {
+                        var selected = step2Data != null && step2Data.WorkOrderId == Model.WorkOrders[i].Id ? "selected" : "";
+                        <option value="@Model.WorkOrders[i].Id" selected="@selected">@Model.WorkOrders[i].SystemGeneratedId</option>
                     }
                 </select>
             </div>
@@ -135,7 +188,9 @@
             <textarea name="SpecialInstructions" class="form-control" rows="3" placeholder="Add any special instructions or notes for this order...">@(step2Data?.SpecialInstructions ?? "")</textarea>
 
             <label class="form-label mt-3">Attachments</label>
-            <input name="attachments" type="file" class="form-control" multiple>
+            <input name="attachments" type="file" class="form-control" multiple accept="image/*,.pdf,.doc,.docx">
+            <small class="form-text text-muted">Supported formats: Images (JPG, PNG, GIF), PDF, Word documents</small>
+            <div id="imagePreview" class="mt-3"></div>
         </div>
 
         <div class="d-flex justify-content-between mt-4">
@@ -149,26 +204,45 @@
 
 <script>
     $(document).ready(function() {
+        // Initialize dynamic filtering
+        initializeProjectFiltering();
+        
         // Load session data on page load
         loadStep2SessionData();
         $('#nextBtn').click(function() {
             var formData = new FormData();
 
+            // Get selected customer ID
+            var customerId = $("#customer-select").val() || 0;
+            formData.append('CustomerId', customerId);
+
             // Get selected project ID
-                var projectId = $("#customer-project-select").val() || 0;
+            var projectId = $("#customer-project-select").val() || 0;
             formData.append('CustomerProjectId', projectId);
+
+            // Get selected work order ID
+            var workOrderId = $("#customer-project-purchase-order-select").val() || 0;
+            formData.append('WorkOrderId', workOrderId);
 
             // Get special instructions
             var instructions = $('textarea[name="SpecialInstructions"]').val() || '';
             formData.append('SpecialInstructions', instructions);
 
-            // Get attachments
+            // Get attachments and save images
             var fileInput = $('input[name="attachments"]')[0];
             if (fileInput.files.length > 0) {
                 for (var i = 0; i < fileInput.files.length; i++) {
                     formData.append('attachments', fileInput.files[i]);
                 }
             }
+            
+            console.log('Form data:', {
+                customerId: customerId,
+                projectId: projectId,
+                workOrderId: workOrderId,
+                instructions: instructions,
+                fileCount: fileInput.files.length
+            });
 
             $.ajax({
                 url: '@Url.Action("SaveStep2Data", "Cart")',
@@ -177,14 +251,38 @@
                 processData: false,
                 contentType: false,
                 success: function(response) {
+                    console.log('Response:', response);
                     if (response.success) {
-                        window.location.href = '@Url.Action("Step3", "Cart")';
+                        // Show success message if files were uploaded
+                        if (fileInput.files.length > 0) {
+                            var message = fileInput.files.length === 1 ? 
+                                '1 attachment saved successfully!' : 
+                                fileInput.files.length + ' attachments saved successfully!';
+                            
+                            // Show temporary success message
+                            var successAlert = $('<div class="alert alert-success alert-dismissible fade show" role="alert">')
+                                .html('<i class="fa fa-check-circle"></i> ' + message + 
+                                      '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>');
+                            
+                            $('.card').prepend(successAlert);
+                            
+                            // Auto-dismiss after 2 seconds
+                            setTimeout(function() {
+                                successAlert.fadeOut();
+                            }, 2000);
+                        }
+                        
+                        // Navigate to next step after a brief delay
+                        setTimeout(function() {
+                            window.location.href = '@Url.Action("Step3", "Cart")';
+                        }, fileInput.files.length > 0 ? 1500 : 0);
                     } else {
                         alert('Error saving data: ' + response.message);
                     }
                 },
-                error: function() {
-                    alert('Error saving data. Please try again.');
+                error: function(xhr, status, error) {
+                    console.log('AJAX Error:', xhr.responseText);
+                    alert('Error saving data: ' + (xhr.responseJSON?.message || error));
                 }
             });
         });
@@ -196,10 +294,115 @@
             type: 'GET',
             success: function(data) {
                 if (data.success && data.step2Data) {
+                    $('#customer-select').val(data.step2Data.customerId || 0);
                     $('#customer-project-select').val(data.step2Data.customerProjectId || 0);
+                    $('#customer-project-purchase-order-select').val(data.step2Data.workOrderId || 0);
                     $('textarea[name="SpecialInstructions"]').val(data.step2Data.specialInstructions || '');
+                    
+                    // Display saved attachments
+                    if (data.step2Data.attachmentUrls && data.step2Data.attachmentUrls.length > 0) {
+                        displaySavedAttachments(data.step2Data.attachmentUrls);
+                    }
                 }
+            },
+            error: function() {
+                console.log('Error loading Step2 session data');
             }
         });
     }
+
+    // Image preview functionality
+    $('input[name="attachments"]').on('change', function() {
+        var files = this.files;
+        var preview = $('#imagePreview');
+        preview.empty();
+        
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            if (file.type.startsWith('image/')) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var img = $('<img>').attr('src', e.target.result)
+                        .addClass('img-thumbnail me-2 mb-2')
+                        .css({'max-width': '100px', 'max-height': '100px'});
+                    preview.append(img);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                var fileIcon = $('<div>').addClass('file-item me-2 mb-2 p-2 border rounded')
+                    .html('<i class="fa fa-file"></i> ' + file.name);
+                preview.append(fileIcon);
+            }
+        }
+    });
+
+        function displaySavedAttachments(attachmentUrls) {
+        var preview = $('#imagePreview');
+        preview.empty();
+
+        attachmentUrls.forEach(function (url) {
+            var fileName = url.split('/').pop();
+            var isImage = /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(fileName);
+
+            if (isImage) {
+                var img = $('<img>').attr('src', url)
+                    .addClass('img-thumbnail me-2 mb-2')
+                    .css({ 'max-width': '100px', 'max-height': '100px' });
+                preview.append(img);
+            } else {
+                var fileIcon = $('<div>').addClass('file-item me-2 mb-2 p-2 border rounded')
+                    .html('<i class="fa fa-file"></i> ' + fileName.split('_').slice(1).join('_'));
+                preview.append(fileIcon);
+            }
+        });
+
+        if (attachmentUrls.length > 0) {
+            var savedLabel = $('<small>').addClass('text-muted').text('Previously saved attachments:');
+            preview.prepend(savedLabel);
+        }
+    }
+
+    function initializeProjectFiltering() {
+        // Customer selection change handler
+        $('#customer-select').on('change', function() {
+            var selectedCustomerId = $(this).val();
+            var projectSelect = $('#customer-project-select');
+            
+            // Reset project selection and purchase order display
+            projectSelect.val('');
+            $('#purchase-order-display').text('Select a project to view Purchase Order');
+            
+            // Show/hide projects based on selected customer
+            projectSelect.find('option').each(function() {
+                var option = $(this);
+                if (option.val() === '') {
+                    option.show(); // Always show the default option
+                } else {
+                    var projectCustomerId = option.data('customer-id');
+                    if (selectedCustomerId === '' || projectCustomerId == selectedCustomerId) {
+                        option.show();
+                    } else {
+                        option.hide();
+                    }
+                }
+            });
+        });
+        
+        // Project selection change handler
+        $('#customer-project-select').on('change', function() {
+            var selectedOption = $(this).find('option:selected');
+            var purchaseOrderId = selectedOption.data('purchase-order');
+            
+            if (purchaseOrderId) {
+                $('#purchase-order-display').text(purchaseOrderId);
+            } else {
+                $('#purchase-order-display').text('Select a project to view Purchase Order');
+            }
+        });
+        
+        // Initialize on page load
+        $('#customer-select').trigger('change');
+        $('#customer-project-select').trigger('change');
+    }
+
 </script>

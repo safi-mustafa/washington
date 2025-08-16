@@ -238,7 +238,7 @@ namespace Repositories.Services.CustomerProject
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"GetCompanyContactInfoById() for {typeof(Models.CompanyContact).FullName} threw an exception");
+                _logger.LogError(ex, $"GetProjects() for {typeof(Models.CompanyContact).FullName} threw an exception");
                 return (List<Models.CustomerProject>)Response.BadRequestResponse(_response);
             }
         }
@@ -252,11 +252,40 @@ namespace Repositories.Services.CustomerProject
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"GetCompanyContactInfoById() for {typeof(Models.CompanyContact).FullName} threw an exception");
+                _logger.LogError(ex, $"GetProjectByid() for {typeof(Models.CompanyContact).FullName} threw an exception");
                 return (Models.CustomerProject)Response.BadRequestResponse(_response);
             }
         }
 
+        public async Task<List<CompanyInformation>> GetCompanies()
+        {
+            try
+            {
+                var companyInfoList = await _db.CompanyInformations.ToListAsync();
+
+                return companyInfoList;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"GetCompanies() for {typeof(Models.CompanyContact).FullName} threw an exception");
+                return (List<CompanyInformation>)Response.BadRequestResponse(_response);
+            }
+        }
+
+        public async Task<List<WorkOrder>> GetWorkOrders()
+        {
+            try
+            {
+                var workOrderList = await _db.WorkOrder.ToListAsync();
+
+                return workOrderList;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"GetWorkOrders() for {typeof(Models.CompanyContact).FullName} threw an exception");
+                return (List<WorkOrder>)Response.BadRequestResponse(_response);
+            }
+        }
 
         public async Task<PaginatedResultModel<T>> GetCustomerDropdown<T>(CustomerProjectSearchViewModel searchVM)
         {
@@ -313,7 +342,7 @@ namespace Repositories.Services.CustomerProject
             }
         }
 
-        public async Task<IRepositoryResponse> CreateOrder(OrderModifyViewModel model, long customerProjectId)
+        public async Task<IRepositoryResponse> CreateOrder(OrderModifyViewModel model, long customerProjectId, long workOrderId, string? imageUrl)
         {
             var transaction = await _db.Database.BeginTransactionAsync();
             try
@@ -325,33 +354,34 @@ namespace Repositories.Services.CustomerProject
                     return Response.NotFoundResponse(_response);
                 }
                 
-                var workOrderCount = await _db.WorkOrder.IgnoreQueryFilters().CountAsync();
-                var workOrder = new WorkOrder
-                {
-                    SystemGeneratedId = "WO-" + (workOrderCount + 1).ToString("D4"),
-                    Title = $"Order for {customerProject.JobName}",
-                    Description = model.Notes ?? "Customer order",
-                    Status = WOStatusCatalog.Open,
-                    Urgency = Urgency.Low,
-                    Task = TaskCatalog.Maintenance,
-                    Type = WorkOrderTypeCatalog.Maintenance,
-                    CreatedOn = DateTime.UtcNow
-                };
+                //var workOrderCount = await _db.WorkOrder.IgnoreQueryFilters().CountAsync();
+                //var workOrder = new WorkOrder
+                //{
+                //    SystemGeneratedId = "WO-" + (workOrderCount + 1).ToString("D4"),
+                //    Title = $"Order for {customerProject.JobName}",
+                //    Description = model.Notes ?? "Customer order",
+                //    Status = WOStatusCatalog.Open,
+                //    Urgency = Urgency.Low,
+                //    Task = TaskCatalog.Maintenance,
+                //    Type = WorkOrderTypeCatalog.Maintenance,
+                //    CreatedOn = DateTime.UtcNow
+                //};
                 
-                await _db.AddAsync(workOrder);
-                await _db.SaveChangesAsync();
+                //await _db.AddAsync(workOrder);
+                //await _db.SaveChangesAsync();
                 
                 // Create the Order
                 var order = new Order
                 {
                     Notes = model.Notes,
-                    Status = OrderStatus.Submitted,
+                    Status = OrderStatus.DeliveryScheduled,
                     Type = OrderTypeCatalog.Inventory,
-                    WorkOrderId = workOrder.Id,
+                    WorkOrderId = workOrderId,
                     CreatedOn = DateTime.UtcNow,
-                    ImageUrl ="",
-                    CustomerProjectId = customerProjectId
-
+                    ImageUrl = imageUrl,
+                    CustomerProjectId = customerProjectId,
+                    ActiveStatus = ActiveStatus.Active,
+                    Cost = model.Cost ?? 0,
                 };
                 
                 var currentCount = await _db.Orders.IgnoreQueryFilters().CountAsync();
@@ -371,7 +401,10 @@ namespace Repositories.Services.CustomerProject
                         InventoryId = item.Inventory?.Id > 0 ? item.Inventory.Id : null,
                         EquipmentId = item.Equipment?.Id > 0 ? item.Equipment.Id : null,
                         IsIssued = false,
-                        CreatedOn = DateTime.UtcNow
+                        CreatedOn = DateTime.UtcNow,
+                        StartDate = item.StartDate,
+                        EndDate = item.EndDate,
+                        ActiveStatus = ActiveStatus.Active
                     };
                     orderItems.Add(orderItem);
                 }

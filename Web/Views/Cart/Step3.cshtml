@@ -239,10 +239,35 @@
             <!-- Navigation Buttons -->
             <div class="d-flex justify-content-between">
             <a asp-controller="Cart" asp-action="Step2" class="btn btn-outline-secondary" >Back to Details</a>
-            <form method="post" asp-controller="Cart" asp-action="SubmitOrder" style="display: inline;">
+            <form method="post" asp-controller="Cart" asp-action="SubmitOrder" style="display: inline;" id="submitOrderForm">
+                <input type="hidden" name="CustomerId" id="hiddenCustomerId" />
+                <input type="hidden" name="CustomerProjectId" id="hiddenCustomerProjectId" />
+                <input type="hidden" name="WorkOrderId" id="hiddenWorkOrderId" />
+                <input type="hidden" name="SpecialInstructions" id="hiddenSpecialInstructions" />
                 <button type="submit" class="btn btn-success">Submit Order</button>
             </form>
             </div>
         </div>
     </div>
+
+<script>
+    $(document).ready(function() {
+        loadStep2DataForSubmit();
+    });
+
+    function loadStep2DataForSubmit() {
+        $.ajax({
+            url: '@Url.Action("GetStep2Data", "Cart")',
+            type: 'GET',
+            success: function(data) {
+                if (data.success && data.step2Data) {
+                    $('#hiddenCustomerId').val(data.step2Data.customerId || 0);
+                    $('#hiddenCustomerProjectId').val(data.step2Data.customerProjectId || 0);
+                    $('#hiddenWorkOrderId').val(data.step2Data.workOrderId || 0);
+                    $('#hiddenSpecialInstructions').val(data.step2Data.specialInstructions || '');
+                }
+            }
+        });
+    }
+</script>
 

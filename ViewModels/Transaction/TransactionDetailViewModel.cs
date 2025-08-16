@@ -36,5 +36,6 @@ namespace ViewModels
         public decimal DefaultRentalRateDaily { get; set; }
         public decimal DefaultRentalRateMonthly { get; set; }
         public string? DefaultRentalRateWeekly { get; set; }
+        public string? UnitCost { get; set; }
     }
 }

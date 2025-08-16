@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Models;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto;
 using Repositories.Common;
 using ViewModels;
+using ViewModels.Cart;
 using ViewModels.CustomerProject;
 
 namespace Web.Controllers
@@ -136,8 +138,8 @@ namespace Web.Controllers
 
         public async Task<ActionResult> Step2()
         {
-            var projects = await _customerProjectService.GetProjects();
-            
+            CustomerProjectInformation customerProjectInformation = GetCustomerProjectInformation().Result;
+
             var sessionData = HttpContext.Session.GetString("Step2Data");
             if (!string.IsNullOrEmpty(sessionData))
             {
@@ -145,7 +147,7 @@ namespace Web.Controllers
                 ViewBag.Step2Data = step2Data;
             }
             
-            return View("Step2", projects);
+            return View("Step2", customerProjectInformation);
         }
 
         public async Task<ActionResult> Step3()
@@ -235,20 +237,36 @@ namespace Web.Controllers
                     .Where(index => index.HasValue)
                     .Select(index => index.Value)
                     .Distinct();
-                
+                double? totalCost = 0;
                 foreach (var index in orderItemIndexes)
                 {
+                    double? individualCost = 0;
                     var inventoryIdStr = step1Data.Items.FirstOrDefault(x => x.Name == $"OrderItems[{index}].Inventory.Id")?.Value;
                     var equipmentIdStr = step1Data.Items.FirstOrDefault(x => x.Name == $"OrderItems[{index}].Equipment.Id")?.Value;
                     var quantityStr = step1Data.Items.FirstOrDefault(x => x.Name == $"OrderItems[{index}].Quantity")?.Value;
-                    
+                    var tempPrice = decimal.Parse(step1Data.Items.FirstOrDefault(x => x.Name == $"cartTotal_{index}")?.Value?.Replace("$", "") ?? "0");
+                    var frequency = step1Data.Items.FirstOrDefault(x => x.Name == $"OrderItems[{index}].Frequency")?.Value;
+
+                    DateTime? startDate = null;
+                    DateTime? endDate = null;
+
+                    if (DateTime.TryParse(step1Data.Items.FirstOrDefault(x => x.Name == $"OrderItems[{index}].StartDate")?.Value, out DateTime sDate))
+                        startDate = sDate;
+
+                    if (DateTime.TryParse(step1Data.Items.FirstOrDefault(x => x.Name == $"OrderItems[{index}].EndDate")?.Value, out DateTime eDate))
+                        endDate = eDate;
+
+                    endDate ??= startDate; // if EndDate missing, use StartDate
+
                     if (long.TryParse(quantityStr, out long quantity) && quantity > 0)
                     {
                         var orderItem = new OrderItemModifyViewModel
                         {
-                            Quantity = quantity
+                            Quantity = quantity,
+                            StartDate = startDate,
+                            EndDate = endDate
                         };
-                        
+
                         if (long.TryParse(inventoryIdStr, out long inventoryId) && inventoryId > 0)
                         {
                             orderItem.Inventory = new InventoryDetailViewModel { Id = inventoryId };
@@ -257,13 +275,20 @@ namespace Web.Controllers
                         {
                             orderItem.Equipment = new EquipmentDetailViewModel { Id = equipmentId };
                         }
-                        
+                        individualCost = (double?)tempPrice;
+                        totalCost += individualCost;
                         orderModel.OrderItems.Add(orderItem);
                     }
                 }
-                
+                orderModel.Cost = totalCost;
+                string attachMentUrl = string.Empty;
+                if(step2Data.AttachmentCount > 0)
+                {
+                    attachMentUrl = step2Data.AttachmentUrls[0];
+                }
+                long workorderid = step2Data.WorkOrderId;
                 // Create order
-                var result = await _customerProjectService.CreateOrder(orderModel, step2Data.CustomerProjectId);
+                var result = await _customerProjectService.CreateOrder(orderModel, step2Data.CustomerProjectId, workorderid, attachMentUrl);
                 
                 if (result != null)
                 {
@@ -616,13 +641,29 @@ namespace Web.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> SaveStep2Data([FromForm] Step2Data step2Data, IFormFileCollection attachments)
+        public async Task<IActionResult> SaveStep2Data(long CustomerId, long CustomerProjectId, long WorkOrderId, string SpecialInstructions, IFormFileCollection attachments)
         {
             try
             {
-                _logger.LogInformation($"Saving Step2 data - Project: {step2Data.CustomerProjectId}, Instructions: {step2Data.SpecialInstructions}");
-                step2Data.AttachmentCount = attachments?.Count ?? 0;
+                _logger.LogInformation($"Saving Step2 data - Project: {CustomerProjectId}, Instructions: {SpecialInstructions}");
+                
+                var step2Data = new Step2Data
+                {
+                    CustomerId = CustomerId,
+                    CustomerProjectId = CustomerProjectId,
+                    WorkOrderId = WorkOrderId,
+                    SpecialInstructions = SpecialInstructions,
+                    AttachmentCount = attachments?.Count ?? 0
+                };
+                
                 step2Data.Project = await _customerProjectService.GetProjectByid(step2Data.CustomerProjectId);
+                
+                // Save attachments and store URLs
+                if (attachments != null && attachments.Count > 0)
+                {
+                    step2Data.AttachmentUrls = await SaveAttachments(attachments);
+                }
+                
                 HttpContext.Session.SetString("Step2Data", JsonConvert.SerializeObject(step2Data));
                 
                 return Json(new { success = true });
@@ -634,6 +675,40 @@ namespace Web.Controllers
             }
         }
         
+        private async Task<List<string>> SaveAttachments(IFormFileCollection attachments)
+        {
+            var attachmentUrls = new List<string>();
+            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "Storgae", "uploads", "attachments");
+            
+            // Create directory if it doesn't exist
+            if (!Directory.Exists(uploadsPath))
+            {
+                Directory.CreateDirectory(uploadsPath);
+            }
+            
+            foreach (var file in attachments)
+            {
+                if (file.Length > 0)
+                {
+                    var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+                    var filePath = Path.Combine(uploadsPath, fileName);
+                    
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                    
+                    // Store relative URL path
+                    var urlPath = $"/Storage/uploads/attachments/{fileName}";
+                    attachmentUrls.Add(urlPath);
+                    
+                    _logger.LogInformation($"Saved attachment: {fileName} at {urlPath}");
+                }
+            }
+            
+            return attachmentUrls;
+        }
+        
         [HttpGet]
         public IActionResult GetStep2Data()
         {
@@ -643,7 +718,7 @@ namespace Web.Controllers
                 if (!string.IsNullOrEmpty(sessionData))
                 {
                     var step2Data = JsonConvert.DeserializeObject<Step2Data>(sessionData);
-                    return Json(new { success = true, step2Data = new { customerProjectId = step2Data.CustomerProjectId, specialInstructions = step2Data.SpecialInstructions } });
+                    return Json(new { success = true, step2Data = new { customerId = step2Data.CustomerId, customerProjectId = step2Data.CustomerProjectId, workOrderId = step2Data.WorkOrderId, specialInstructions = step2Data.SpecialInstructions, attachmentUrls = step2Data.AttachmentUrls } });
                 }
                 return Json(new { success = false, message = "No Step2 data found" });
             }
@@ -652,6 +727,48 @@ namespace Web.Controllers
                 _logger.LogError(ex, ex.Message);
                 return Json(new { success = false, message = ex.Message });
             }
+        }
+
+        [HttpPost]
+        public IActionResult ClearSessionData(long? inventoryId = null, long? equipmentId = null)
+        {
+            try
+            {
+                var cart = GetCartFromSession();
+                bool hasItems = cart.InventoryItems.Any() || cart.EquipmentItems.Any();
+                
+                if (!hasItems)
+                {
+                    HttpContext.Session.Remove("Step1FormData");
+                    HttpContext.Session.Remove("Step2Data");
+                }
+                else
+                {
+                    // Clear Step1 session data completely - it will be rebuilt when user navigates
+                    HttpContext.Session.Remove("Step1FormData");
+                }
+                
+                return Json(new { success = true, cartEmpty = !hasItems });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        public async Task<CustomerProjectInformation> GetCustomerProjectInformation()
+        {
+            var customerProjectInformation = new CustomerProjectInformation();
+            var companies = await _customerProjectService.GetCompanies();
+            var projects = await _customerProjectService.GetProjects();
+            var workOrders = await _customerProjectService.GetWorkOrders();
+            return new CustomerProjectInformation
+            {
+                Companies = companies,
+                Projects = projects,
+                WorkOrders = workOrders
+            };
         }
     }
     
@@ -682,8 +799,11 @@ namespace Web.Controllers
     public class Step2Data
     {
         public long CustomerProjectId { get; set; }
+        public long CustomerId { get; set; }
+        public long WorkOrderId { get; set; }
         public string SpecialInstructions { get; set; }
         public int AttachmentCount { get; set; }
+        public List<string> AttachmentUrls { get; set; } = new List<string>();
         public CustomerProject Project { get; set; }
     }
 

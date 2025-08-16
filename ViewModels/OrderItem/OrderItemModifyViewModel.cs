@@ -19,6 +19,8 @@ namespace ViewModels
         public EquipmentDetailViewModel? Equipment { get; set; } = new();
 
         public OrderDetailViewModel Order { get; set; } = new();
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
     }
 
 }

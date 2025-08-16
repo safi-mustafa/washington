@@ -185,8 +185,7 @@ namespace Repositories.Common
                             Id = g.Max(x => x.LocationId),
                             Name = g.Max(x => x.LocationName)
                         },
-                        PartNumber = g.Max(x => x.PartNumber),
-                        UnitCost = g.Max(x => x.UnitCost)
+                        PartNumber = g.Max(x => x.PartNumber)
                     })
                         //.Where(x => (searchModel.ShowZeroQuantityItems || x.Quantity > 0))
                         .AsQueryable();

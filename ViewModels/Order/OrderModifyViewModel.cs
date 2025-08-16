@@ -21,6 +21,8 @@ namespace ViewModels
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string Frequency { get; set; }
+        public double? Cost { get; set; }
+        public string? UnitCost { get; set; }
     }
 
 }

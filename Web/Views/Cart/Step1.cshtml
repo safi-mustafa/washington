@@ -103,7 +103,7 @@
                             <input type="hidden" name="OrderItems[@i].ItemName" value="@item.Inventory.ItemNo" />
                             <div class="col-12">
                                 <div class="d-flex p-3 border rounded mb-3">
-                                    <input type="hidden" name="inventoryrateonetime_@i" value="@item.Inventory.ItemPrice" />
+                                    <input type="hidden" name="inventoryrateonetime_@i" value="@item.Inventory.UnitCost" />
                                     <img src="@(string.IsNullOrWhiteSpace(item.Inventory?.ImageUrl) ? "/img/no-img.jpg" : item.Inventory.ImageUrl)" alt="itemImg" class="me-3" style="width:100px; height:auto;" />
                                     <div class="flex-grow-1">
                                         <h5>@item.Inventory.ItemNo</h5>
@@ -371,12 +371,12 @@
                 data: { id: itemId },
                 success: function (res) {
                     if (res.success) {
+                        clearSessionData(null, itemId);
                         if (res.redirectUrl) {
-                            // Cart empty — go to Step1
                             window.location.href = res.redirectUrl;
                         } else {
-                            // Just remove this row from the DOM
-                            $(el).closest(".row").remove();
+                            $(el).closest(".col-12").remove();
+                            updateCartTotal();
                         }
                     } else {
                         alert("Failed to remove item.");
@@ -386,7 +386,7 @@
         }
     } // ✅ Closing brace added here
 
-        function deleteInventoryFromCart(itemId, el) {
+    function deleteInventoryFromCart(itemId, el) {
         if (confirm("Are you sure you want to remove this item?")) {
             $.ajax({
                 url: '/Cart/DeleteInventoryFromCart',
@@ -394,12 +394,12 @@
                 data: { id: itemId },
                 success: function (res) {
                     if (res.success) {
+                        clearSessionData(itemId, null);
                         if (res.redirectUrl) {
-                            // Cart empty — go to Step1
                             window.location.href = res.redirectUrl;
                         } else {
-                            // Just remove this row from the DOM
-                            $(el).closest(".row").remove();
+                            $(el).closest(".col-12").remove();
+                            updateCartTotal();
                         }
                     } else {
                         alert("Failed to remove item.");
@@ -460,6 +460,27 @@
                 alert('Error saving data. Please try again.');
             }
         });
+    }
+
+    function clearSessionData(inventoryId, equipmentId) {
+        $.ajax({
+            url: '/Cart/ClearSessionData',
+            type: 'POST',
+            data: { inventoryId: inventoryId, equipmentId: equipmentId },
+            success: function(response) {
+                console.log('Session data managed:', response);
+            }
+        });
+    }
+
+    function updateCartTotal() {
+        let cartTotal = 0;
+        $(".cart-total").each(function () {
+            let priceText = $(this).text();
+            let price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 0;
+            cartTotal += price;
+        });
+        $(".bg-light .fw-bold.text-primary").text(`$${cartTotal}`);
     }
 </script>
 
