@@ -50,6 +50,8 @@ using Repositories.Services.Dashboard;
 using Repositories.Services.Dashboard.Interface;
 using Repositories.Services.ExcelHelper;
 using Repositories.Services.ExcelHelper.Interface;
+using Repositories.Services.MyOrder;
+using Repositories.Services.MyOrder.Interface;
 using Repositories.Services.Report;
 using Repositories.Services.Report.Common;
 using Repositories.Services.Report.Common.interfaces;
@@ -209,6 +211,7 @@ namespace Web.Extensions
             services.AddScoped<ICustomerProfileService, CustomerProfileService>();
             services.AddScoped(typeof(ISubCategoryService<,,>), typeof(SubCategoryService<,,>));
             services.AddScoped(typeof(ICurrentStatusService<,,>), typeof(CurrentStatusService<,,>));
+            services.AddScoped<IMyOrderService, MyOrderService>();
             services.AddDefaultCorrelationId();
         }
     }

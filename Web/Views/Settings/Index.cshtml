@@ -1,8 +1,25 @@
-﻿@{
+﻿
+@{
     ViewBag.Title = "Settings";
 
 }
+<style>
+    .settingCard:nth-child(1) i.fa-solid,
+    .settingCard:nth-child(2) i.fa-solid,
+    .settingCard:nth-child(3) i.fa-solid,
+    .settingCard:nth-child(4) i.fa-solid ,
+    .settingCard:nth-child(5) i.fa-solid {
+        color: #157347;
+    }
 
+    .settingCard:nth-child(1) .card-title,
+    .settingCard:nth-child(2) .card-title,
+    .settingCard:nth-child(4) .card-title,
+    .settingCard:nth-child(3) .card-title ,
+    .settingCard:nth-child(5) .card-title {
+        color: #157347;
+    }
+</style>
 <link rel="stylesheet" href="~/css/tabs.css" asp-append-version="true" />
 <h3 class="default-heading">
     Settings
@@ -158,6 +175,69 @@
                     "icon": "fa-solid fa-newspaper",
                     "description": "Create and manage customer profiles."
                 },
+                {
+                    "name": "Projects",
+                    "link": "/CustomerProject/Index",
+                    "icon": "fa-solid fa-tape",
+                    "description": "Customer project."
+                },
+                {
+                    "name": "Work Steps",
+                    "link": "/TaskType/Index",
+                    "icon": "fa-solid fa-list-check",
+                    "description": "Define and organize work order task types and steps."
+                },
+                {
+                    "name": "Craft",
+                    "link": "/CraftSkill/Index",
+                    "icon": "fa-solid fa-hammer",
+                    "description": "Configure craft skills and qualifications."
+                },
+                 {
+                    "name": "Category",
+                    "link": "/Category/Index",
+                    "icon": "fa-solid fa-folder",
+                    "description": "Organize and manage inventory categories."
+                },
+                {
+                    "name": "Sub Category",
+                    "link": "/SubCategory/Index",
+                    "icon": "fa-solid fa-folder",
+                    "description": "Organize and manage inventory categories."
+                },
+                 {
+                    "name": "Make",
+                    "link": "/Manufacturer/Index",
+                    "icon": "fa-solid fa-industry",
+                    "description": "Track and manage product manufacturers."
+                },
+
+                {
+                    "name": "Supplier",
+                    "link": "/Supplier/Index",
+                    "icon": "fa-solid fa-truck",
+                    "description": "Manage inventory suppliers and vendors."
+                },
+
+
+                {
+                    "name": "UOM",
+                    "link": "/UOM/Index",
+                    "icon": "fa-solid fa-ruler",
+                    "description": "Configure units of measurement for inventory items."
+                },
+                 {
+                    "name": "Branch",
+                    "link": "/Location/Index",
+                    "icon": "fa-solid fa-location-dot",
+                    "description": "Manage inventory storage locations."
+                },
+                 {
+                    "name": "Condition",
+                    "link": "/Condition/Index",
+                    "icon": "fa-solid fa-exclamation-circle",
+                    "description": "Organize and manage conditions."
+                },
                 // {
                 //     "name": "MUTCDs",
                 //     "link": "/MUTCD/Index",
@@ -176,78 +256,33 @@
                 //     "icon": "fa-solid fa-list",
                 //     "description": "Define and manage custom fields for assets."
                 // },
-                {
-                    "name": "Craft",
-                    "link": "/CraftSkill/Index",
-                    "icon": "fa-solid fa-hammer",
-                    "description": "Configure craft skills and qualifications."
-                },
-                {
-                    "name": "Custom Fields",
-                    "link": "/WorkOrderCustomFields/Index",
-                    "icon": "fa-solid fa-clipboard-list",
-                    "description": "Set up custom fields for work orders."
-                },
-                {
-                    "name": "Work Steps",
-                    "link": "/TaskType/Index",
-                    "icon": "fa-solid fa-list-check",
-                    "description": "Define and organize work order task types and steps."
-                },
-                {
-                    "name": "Category",
-                    "link": "/Category/Index",
-                    "icon": "fa-solid fa-folder",
-                    "description": "Organize and manage inventory categories."
-                },
-                {
-                    "name": "Sub Category",
-                    "link": "/SubCategory/Index",
-                    "icon": "fa-solid fa-folder",
-                    "description": "Organize and manage inventory categories."
-                },
-                {
-                    "name": "Location",
-                    "link": "/Location/Index",
-                    "icon": "fa-solid fa-location-dot",
-                    "description": "Manage inventory storage locations."
-                },
-                {
-                    "name": "Make",
-                    "link": "/Manufacturer/Index",
-                    "icon": "fa-solid fa-industry",
-                    "description": "Track and manage product manufacturers."
-                },
-                {
-                    "name": "Source",
-                    "link": "/Source/Index",
-                    "icon": "fa-solid fa-box",
-                    "description": "Configure inventory source locations."
-                },
-                {
-                    "name": "Supplier",
-                    "link": "/Supplier/Index",
-                    "icon": "fa-solid fa-truck",
-                    "description": "Manage inventory suppliers and vendors."
-                },
-                {
-                    "name": "UOM",
-                    "link": "/UOM/Index",
-                    "icon": "fa-solid fa-ruler",
-                    "description": "Configure units of measurement for inventory items."
-                },
-                {
-                    "name": "Asset Type",
-                    "link": "/AssetType/Index",
-                    "icon": "fa-solid fa-tape",
-                    "description": "Organize and manage asset types for assets."
-                },
-                {
-                    "name": "Projects",
-                    "link": "/CustomerProject/Index",
-                    "icon": "fa-solid fa-tape",
-                    "description": "Customer project."
-                }
+                // {
+                //     "name": "Craft",
+                //     "link": "/CraftSkill/Index",
+                //     "icon": "fa-solid fa-hammer",
+                //     "description": "Configure craft skills and qualifications."
+                // },
+                // {
+                //     "name": "Custom Fields",
+                //     "link": "/WorkOrderCustomFields/Index",
+                //     "icon": "fa-solid fa-clipboard-list",
+                //     "description": "Set up custom fields for work orders."
+                // },
+
+                //  {
+                //     "name": "Source",
+                //     "link": "/Source/Index",
+                //     "icon": "fa-solid fa-box",
+                //     "description": "Configure inventory source locations."
+                // },
+
+                // {
+                //     "name": "Asset Type",
+                //     "link": "/AssetType/Index",
+                //     "icon": "fa-solid fa-tape",
+                //     "description": "Organize and manage asset types for assets."
+                // },
+
             ]
         }
     ];
@@ -263,7 +298,7 @@
 
         if (section) {
             $.each(section.items, function (index, item) {
-                let cardLink = `<a href="${item.link}" class="card-link" style="text-decoration: none;"`;
+                let cardLink = `<a href="${item.link}" class="card-link settingCard" style="text-decoration: none;"`;
 
                 // Check if target exists, and if it does, add it to the link
                 if (item.target) {

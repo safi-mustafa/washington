@@ -1,0 +1,196 @@
+﻿<style>
+
+    .setting-page-search.filter_wrap form > div {
+        border-radius: 4px;
+    }
+
+    .setting-page-search.filter_wrap form.filter input:not([type="checkbox"]) {
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid #8898AA;
+    }
+
+    .reportFilter .control_field {
+        width: 100%;
+        border-radius: 10px;
+        border-color: #8898AA;
+        color: #8898AA;
+        background: #fff;
+    }
+
+    .reportFilter {
+        margin: 0;
+        padding: 0;
+    }
+
+    .filter_wrap form.filter select {
+        height: 36px;
+        border: 1px solid #8898AA !important;
+    }
+
+    .headerSec i.fa{
+        margin-right:10px;
+    }
+
+    .viewDetail{
+        color:#f54e00;
+    }
+
+    #viewReportDetails .modal-dialog.modal-lg{
+        width:500px !important;
+    }
+</style>
+<div class="report-list-table">
+
+    <div class="d-flex justify-content-between align-items-center mb-3 headerSec">
+        <h3>Dashboard</h3>
+        <a href="/Inventories" class="btn btn-primary"><i class="fa fa-file-export"></i>Export</a>
+    </div>
+    <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+        <!-- Filter -->
+        <div class="filter_wrap setting-page-search reportFilter">
+            <form class=" filter search-form" id="report-filter-form" method="post">
+                <div class="control_field">
+                    <input type="search" class="form-control" placeholder="Search" autocomplete="new-password" id="Search_value" value="">
+                </div>
+                <div class="control_field">
+                    <input type="search" class="form-control" placeholder="OrderId" autocomplete="new-password" id="Search_value" value="">
+                </div>
+
+                <div class="control_field">
+                    <div class="form-group">
+
+                        <select class="form-control text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" placeholder="Customer Name">
+                            <option value="Customer Name 1">Customer Name 1</option>
+                            <option value="Customer Name 2">Customer Name 2</option>
+                            <option value="Customer Name 3">Customer Name 3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control_field">
+                    <div class="form-group">
+
+                        <select class="form-control text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" placeholder="Project Name">
+                            <option value="Project Name 1">Project Name 1</option>
+                            <option value="Project Name 2">Project Name 2</option>
+                            <option value="Project Name 3">Project Name 3</option>
+                        </select>
+                    </div>
+                </div>
+                
+
+
+
+                <div class="actions_field">
+                    <button class="clear btn clear-form-btn border text-primary">
+                        Clear
+                    </button>
+                    <button type="button" class="btn btn-primary search-form-btn">
+                        Search
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table dataTable">
+            <thead class=" text-center">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer Name</th>
+                    <th>Project Name</th>
+                    <th>Purchase Order</th>
+                    <th>Item Type</th>
+                    <th>Asset Tag / Material Supplier</th>
+                    <th>Qty</th>
+                    <th>Rental Start Date</th>
+                    <th>Rental End Date</th>
+                    <th>Total Cost</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ORD001</td>
+                    <td>John Doe</td>
+                    <td>Highway Expansion</td>
+                    <td>PO12345</td>
+                    <td>Excavator</td>
+                    <td>CAT / ABC Rentals</td>
+                    <td>3</td>
+                    <td>2025-08-20</td>
+                    <td>2025-09-05</td>
+                    <td>$12,000</td>
+                    <td><a data-bs-toggle="modal" data-bs-target="#viewReportDetails"><div class="viewDetail">View</div></a></td>
+                </tr>
+                <tr>
+                    <td>ORD002</td>
+                    <td>Jane Smith</td>
+                    <td>Bridge Project</td>
+                    <td>PO67890</td>
+                    <td>Generator</td>
+                    <td>Honda / XYZ Supplies</td>
+                    <td>5</td>
+                    <td>2025-08-22</td>
+                    <td>2025-08-30</td>
+                    <td>$4,500</td>
+                    <td><a data-bs-toggle="modal" data-bs-target="#viewReportDetails"><div class="viewDetail">View</div></a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="viewReportDetails" tabindex="-1" aria-labelledby="viewReportDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewReportDetailsModalLabel">Report Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <!-- Order Information -->
+                        <div class="col-md-12">
+                            @* <h6 class="orderDetailTitle">Report Information</h6> *@
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Order ID:</span><span class="fw-semibold val"> ORD-001</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Customer ID:</span> <span class="fw-semibold val">CUST-005</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Customer Name:</span> <span class="fw-semibold val">Customer 5</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Project ID:</span> <span class="fw-semibold val">PRJ-998</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Project Name:</span> <span class="fw-semibold val">Project 1</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Purchase Order:</span> <span class="fw-semibold val">PO-48917</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Item Type:</span> <span class="fw-semibold val">Material</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">TopLine ID:</span> <span class="fw-semibold val">12</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">TopLine Description:</span> <span class="fw-semibold val">Material Item 12</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">SubLine ID:</span> <span class="fw-semibold val">MAT012-01</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">AssetTag/Material Supplier:</span> <span class="fw-semibold val">Fastenal</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Serial/Part Number:</span> <span class="fw-semibold val">PN-9049</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">UOM:</span> <span class="fw-semibold val">Each</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Qty:</span> <span class="fw-semibold val">40</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Rate Type:</span> <span class="fw-semibold val">Unit</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Rate Value:</span> <span class="fw-semibold val">45.6</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Rental StartDate:</span> <span class="fw-semibold val">2025-05-22</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Rental EndDate:</span> <span class="fw-semibold val">2025-08-05</span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Base Cost:</span> <span class="fw-semibold val"> $ 1,824.00 </span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Labor Cost:</span> <span class="fw-semibold val"> $ 338.68 </span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Commissioning Cost:</span> <span class="fw-semibold val"> $ 483.00 </span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Mileage Cost:</span> <span class="fw-semibold val"> $ 105.21 </span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Freight Cost:</span> <span class="fw-semibold val"> $ 412.18 </span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">UnreturnedFuel Cost:</span> <span class="fw-semibold val"> $ 176.99 </span></div>
+                            <div class="mb-2 d-flex justify-content-between"><span class="title">Total Cost:</span> <span class="fw-semibold val"> $ 3,340.06 </span></div>
+                        
+                        
+                        </div>
+
+                    
+                    </div>
+                </div>
+        
+
+            </div>
+        </div>
+    </div>
+</div>

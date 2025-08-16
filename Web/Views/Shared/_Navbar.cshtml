@@ -94,9 +94,18 @@
             <div class="navigation">
                 <ul class="nav-ul">
                     <li>
-                        <a href="/Home/Dashboard" class="@(currentPath.Contains("/home/dashboard") ? "active" : "")">
+                      @*   <a href="/Home/Dashboard" class="@(currentPath.Contains("/home/dashboard") ? "active" : "")">
                             <img src="~/img/icons/dashboard.svg">
                             <span class="name">Dashboard</span>
+                        </a> *@
+                        @{
+                            // Define the activeClass variable based on the condition
+                            var activeClass = currentPath.Contains("/report") ? "active" : "";
+                        }
+                        <a href="/Reports/Index" class="@activeClass">
+                            <img src="~/img/icons/dashboard.svg">
+                            <span class="name">Dashboard</span>
+                            @*<a type="button" class="dropdown-toggle btn btn-nav-line btn-nav-site reports-dropdown" href="#" >Reports</a>*@
                         </a>
                     </li>
                     <li>
@@ -109,6 +118,12 @@
                         <a href="/MyOrders" class="@(currentPath.Contains("/myorders") ? "active" : "")">
                             <img src="~/img/icons/list.svg">
                             <span class="name">My Orders</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/ReportTable" class="@(currentPath.Contains("/reporttable") ? "active" : "")">
+                            <img src="~/img/icons/reports.svg">
+                            <span class="name">Report</span>
                         </a>
                     </li>
                     @* <li>
@@ -130,16 +145,7 @@
                 <span class="name">Requests</span>
                 </a>
                 </li> *@
-                    <li>
-                        @{
-                            // Define the activeClass variable based on the condition
-                            var activeClass = currentPath.Contains("/report") ? "active" : "";
-                        }
-                        <a href="/Reports/Index" class="@activeClass">
-                            <img src="~/img/icons/reports.svg">
-                            <span class="name">Reports</span>
-                            @*<a type="button" class="dropdown-toggle btn btn-nav-line btn-nav-site reports-dropdown" href="#" >Reports</a>*@
-                        </a>
+                    
                         @*  <div class="collapse" id="report-collapse" style="">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     <li><a class="dropdown-item" attr-parent="reports-dropdown" href="/Report/Maintenance"
@@ -164,7 +170,7 @@
                     </a></li>
                     </ul>
                     </div> *@
-                    </li>
+                    
                     @* <li>
                         <a href="/Assets" class="@(currentPath.Contains("/assets") ? "active" : "")">
                             <img src="~/img/icons/assets.svg">
