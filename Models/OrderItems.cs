@@ -19,6 +19,8 @@ namespace Models
         [ForeignKey("Order")]
         public long OrderId { get; set; }
         public Order Order { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
     }
 }
