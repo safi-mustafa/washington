@@ -348,7 +348,10 @@ namespace Repositories.Services.CustomerProject
                     Status = OrderStatus.Submitted,
                     Type = OrderTypeCatalog.Inventory,
                     WorkOrderId = workOrder.Id,
-                    CreatedOn = DateTime.UtcNow
+                    CreatedOn = DateTime.UtcNow,
+                    ImageUrl ="",
+                    CustomerProjectId = customerProjectId
+
                 };
                 
                 var currentCount = await _db.Orders.IgnoreQueryFilters().CountAsync();
