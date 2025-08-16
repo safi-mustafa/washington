@@ -151,7 +151,33 @@
         font-weight:400;
     }
 
+    .setting-page-search.filter_wrap form > div {
+        border-radius: 4px;
+    }
+
+    .setting-page-search.filter_wrap form.filter input:not([type="checkbox"]) {
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid #8898AA;
+    }
+
+    .reportFilter .control_field {
+        width: 100%;
+        border-radius: 10px;
+        border-color: #8898AA;
+        color: #8898AA;
+        background: #fff;
+    }
+
+    .reportFilter {
+        margin: 0;
+        padding: 0;
+    }
    
+    .filter_wrap form.filter select{
+        height:36px;
+        border: 1px solid #8898AA !important;
+    }
 </style>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -211,6 +237,54 @@
         </ul>
     </div>
 
+     <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
+        <!-- Filter -->
+        <div class="filter_wrap setting-page-search reportFilter">
+                <form  class=" filter search-form" id="report-filter-form" method="post" >
+                    <div class="control_field">
+                        <input type="search" class="form-control" placeholder="Keyword"  autocomplete="new-password"   id="Search_value"value="">
+                    </div>
+                   
+                    <div class="control_field">
+                        <div class="form-group">
+
+                        <select class="form-control text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" placeholder="Customer Name">
+                                <option value="Customer Name 1">Customer Name 1</option>
+                                <option value="Customer Name 2">Customer Name 2</option>
+                                <option value="Customer Name 3">Customer Name 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control_field">
+                        <div class="form-group">
+
+                            <select class="form-control text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" placeholder="Project Name">
+                                <option value="Project Name 1">Project Name 1</option>
+                                <option value="Project Name 2">Project Name 2</option>
+                                <option value="Project Name 3">Project Name 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control_field">
+                        <input type="search" class="form-control" placeholder="Search PO" autocomplete="new-password" id="Search_value" value="">
+                    </div>
+
+           
+            
+                    <div class="actions_field">
+                        <button class="clear btn clear-form-btn border text-primary">
+                            Clear
+                        </button>
+                        <button type="button" class="btn btn-primary search-form-btn">
+                            Search
+                        </button>
+                    </div>
+            
+                </form>
+            </div>
+    </div>
+
+
     <!-- Orders List -->
     <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-all-order" role="tabpanel">
@@ -222,7 +296,7 @@
                         ORD-001
                             <span class="badge bg-pending">Pending Approval</span>
                     </h6>
-                    <p class="mb-2 orderDes">Pipeline Installation Phase 1</p>
+                    <p class="mb-2 orderDes"></p>
                 </div>
                 <div class="text-end">
                     <h5 class="fw-bold">$1,890</h5>
@@ -329,7 +403,7 @@
                                 ORD-003
                                 <span class="badge bg-pending">Pending Approval</span>
                             </h6>
-                            <p class="mb-2 orderDes">Pipeline Installation Phase 1</p>
+                            <p class="mb-2 orderDes"></p>
                         </div>
                         <div class="text-end">
                             <h5 class="fw-bold">$1,890</h5>
@@ -470,7 +544,7 @@
                                 <div class="col-md-6">
                                     <h6 class="orderDetailTitle">Order Information</h6>
                         <div class="mb-2 d-flex justify-content-between"><span class="title">Order ID:</span><span class="fw-semibold val"> ORD-001</span></div>
-                        <div class="mb-2 d-flex justify-content-between"><span class="title">Project:</span> <span class="fw-semibold val">Pipeline Installation Phase 1</span></div>
+                        <div class="mb-2 d-flex justify-content-between"><span class="title">Project:</span> <span class="fw-semibold val"></span></div>
                         <div class="mb-2 d-flex justify-content-between">
                             <span class="title">Status:</span>
                                         <span class="badge bg-success bg-opacity-25 text-success">On Rent</span>
