@@ -140,6 +140,7 @@ namespace Repositories.Services.CustomerProject
                                 ProjectEndDate = project.ProjectEndDate.Value.Date.ToString("MM/dd/yyyy"),
                                 CustomerName = company.CompanyName ?? "-",
                                 ProjectManagerName = companyContact.ContactPersonName ?? "-",
+                                PurchaseOrderNumber = project.PurchaseOrderNumber ?? "-",
                                 Id = project.Id,
                             };
 
@@ -342,6 +343,41 @@ namespace Repositories.Services.CustomerProject
             }
         }
 
+        public async Task<List<CustomerProjectNotesViewModel>> GetNotesByCustomerProjectId(int id)
+        {
+            try
+            {
+                var notes = await (from n in _db.CustomerProjectNotes.Include(x => x.CustomerProject)
+                                   where (n.CustomerProjectId == id)
+                                   select new CustomerProjectNotesViewModel
+                                   {
+                                       Description = n.Description,
+                                       FileUrl = n.FileUrl,
+                                       CreatedOn = n.CreatedOn,
+                                   }).ToListAsync();
+                return notes;
+            }
+            catch (Exception ex)
+            {
+                return new();
+            }
+        }
+
+        public async Task<bool> SaveCustomerProjectNotes(CustomerProjectNotesViewModel model)
+        {
+            try
+            {
+                model.FileUrl = _fileHelper.Save(model);
+                var mappedNotes = _mapper.Map<CustomerProjectNotes>(model);
+                await _db.AddAsync(mappedNotes);
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
         public async Task<IRepositoryResponse> CreateOrder(OrderModifyViewModel model, long customerProjectId, long workOrderId, string? imageUrl)
         {
             var transaction = await _db.Database.BeginTransactionAsync();

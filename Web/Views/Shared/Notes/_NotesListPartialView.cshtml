@@ -42,15 +42,15 @@
                                     var docExts = new[] { ".docx", ".doc", ".xlsx", ".xls", ".txt" };
 
                                     if (imageExts.Contains(ext))
-                                        iconPath = "img/icons/image.svg";
+                                        iconPath = "../img/icons/image.svg";
                                     else if (ext == ".mp4")
-                                        iconPath = "img/icons/video.svg";
+                                        iconPath = "../img/icons/video.svg";
                                     else if (audioExts.Contains(ext))
-                                        iconPath = "img/icons/audio.svg";
+                                        iconPath = "../img/icons/audio.svg";
                                     else if (ext == ".pdf")
-                                        iconPath = "img/icons/pdf.svg";
+                                        iconPath = "../img/icons/pdf.svg";
                                     else if (docExts.Contains(ext))
-                                        iconPath = "img/icons/document.svg";
+                                        iconPath = "../img/icons/document.svg";
 
                                     @if (!string.IsNullOrEmpty(iconPath))
                                     {
