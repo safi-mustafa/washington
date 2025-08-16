@@ -98,6 +98,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<CurrentStatus> CurrentStatus { get; set; }
     public DbSet<TransactionsNotes> TransactionsNotes { get; set; }
     public DbSet<EquipmentTransactionsNotes> EquipmentTransactionsNotes { get; set; }
+    public DbSet<OrderConfirmStatus> OrderConfirmStatus { get; set; }
 
 
     [DbFunction("GetWeekNumber", "dbo")]
