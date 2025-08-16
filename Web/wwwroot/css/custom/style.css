@@ -3943,10 +3943,14 @@ div#tab-content-loader {
 }
     #crud-list-table_wrapper .image-thumbnail .data-table-images img.photo {
         transition: transform 0.4s ease;
-        width:auto !important;
-        height:60px !important;
-        border-radius:10px !important
+        width:70px !important;
+        height:70px !important;
+        border-radius:10px !important;
+        object-fit:contain !important;
     }
+#crud-list-table_wrapper .table.dataTable tbody td.select-checkbox.action.text-right.exclude-from-export {
+    font-size: 0 !important;
+}
     #crud-list-table_wrapper .image-thumbnail .data-table-images:hover img.photo {
         transform: scale(1.8);
     }
@@ -3964,3 +3968,4 @@ div#tab-content-loader {
    
     border-bottom: 1px solid #eeeeee !important;
 }
+ 
