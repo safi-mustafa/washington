@@ -17,6 +17,12 @@ namespace Models
         public WorkOrder WorkOrder { get; set; }
 
         public List<OrderItem> OrderItems { get; set; }
+
+        public string? ImageUrl { get; set; }
+
+        [ForeignKey("CustomerProjectId")]
+        public long? CustomerProjectId { get; set; }
+        public CustomerProject CustomerProject { get; set; }
     }
 }
 
