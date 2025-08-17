@@ -55,5 +55,24 @@ namespace Web.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteOrder(int orderId)
+        {
+            try
+            {
+                var result = await _myOrderService.DeleteOrder(orderId);
+                if (result)
+                {
+                    return Json(new { success = true, message = "Order deleted successfully" });
+                }
+                return Json(new { success = false, message = "Order not found" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"DeleteOrder threw an exception, Message: {ex.Message}");
+                return Json(new { success = false, message = "An error occurred while deleting the order" });
+            }
+        }
     }
 }

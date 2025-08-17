@@ -31,7 +31,7 @@ namespace Repositories.Services.MyOrder
             {
                 List<AllOrderViewModel> allOrderViewModels = new();
 
-                var orders = orderId > 0 ? await _db.Orders.Where(x=>x.Id == orderId).ToListAsync() : await _db.Orders.ToListAsync();
+                var orders = orderId > 0 ? await _db.Orders.Where(x=>x.Id == orderId && !x.IsDeleted).ToListAsync() : await _db.Orders.Where(x => !x.IsDeleted).ToListAsync();
 
                 var orderIds = orders.Select(p => p.Id).ToList();
 
@@ -419,6 +419,25 @@ namespace Repositories.Services.MyOrder
             catch (Exception ex)
             {
                 return string.Empty;
+            }
+        }
+
+        public async Task<bool> DeleteOrder(int orderId)
+        {
+            try
+            {
+                var order = await _db.Orders.FindAsync((long)orderId);
+                if (order != null)
+                {
+                    order.IsDeleted = true;
+                    await _db.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
     }
