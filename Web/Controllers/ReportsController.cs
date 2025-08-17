@@ -59,13 +59,20 @@ namespace Web.Controllers
             var result = await _reportsService.Orders();
             var result1 = await _reportsService.GetActiveRentals();
             var result2 = await _reportsService.GetCustomerProjects();
-            //return View(result);
+            var OnRent = await _reportsService.GetCostbyOnRent();
+            var Delivered = await _reportsService.GetCostbyDelivered();
+            var Scheduled = await _reportsService.GetCostbyScheduled();
+            var Pending = await _reportsService.GetCostbyPending();
             var viewModel = new ReportMasterViewModel
             {
                 TabData = tab,
                 ReportsCount = result,
                 ActiveRentals = result1,
-                CustomerProjects = result2
+                CustomerProjects = result2,
+                CostbyOnRent = OnRent,
+                CostbyDelivered = Delivered,
+                CostbyScheduled = Scheduled,
+                CostbyPending = Pending
             };
             return View(viewModel);
         }
