@@ -22,6 +22,7 @@ using ViewModels.Timesheet;
 using ViewModels.Users;
 using ViewModels.WorkOrderTasks;
 using ViewModels.WorkOrderTechnician;
+using ViewModels.WorkStepCategory;
 
 namespace Models.Mapper
 {
@@ -609,7 +610,10 @@ namespace Models.Mapper
                 .ForMember(s => s.EquipmentId, d => d.MapFrom(x => x.Equipment.Id))
                 .ForMember(s => s.Equipment, d => d.Ignore())
                 .ReverseMap();
-
+            CreateMap<TaskCategoryViewModel, TaskCategory>()
+              .ForMember(s => s.WorkStepCategoryId, d => d.MapFrom(x => x.WorkOrderCategory.Id))
+              .ForMember(s => s.WorkStepCategory, d => d.Ignore())
+              .ReverseMap();
 
             //Ticket
             CreateMap<TicketModifyViewModel, Ticket>().ReverseMap();
@@ -758,6 +762,7 @@ namespace Models.Mapper
                opt => opt.MapFrom(src => src.TransactionId)).ReverseMap();
 
             CreateMap<CustomerProjectNotesViewModel, CustomerProjectNotes>().ReverseMap();
+            CreateMap<WorkStepCategoryBriefViewModel, WorkStepCategory>().ReverseMap();
 
 
             //IgnoreGlobalProperties();

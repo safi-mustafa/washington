@@ -5,15 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModels.WorkOrderCategory
+namespace ViewModels.WorkStepCategory
 {
-    public class WorkOrderCategoryBriefViewModel : BaseSelect2VM, ISelect2BaseVM
+    public class WorkStepCategoryBriefViewModel : BaseSelect2VM, ISelect2BaseVM
     {
-        public WorkOrderCategoryBriefViewModel() : base(true, "The Category field is required.")
+        public WorkStepCategoryBriefViewModel() : base(true, "The Category field is required.")
         {
 
         }
-        public WorkOrderCategoryBriefViewModel(bool isValidationEnabled, string errorMessage) : base(isValidationEnabled, errorMessage)
+        public WorkStepCategoryBriefViewModel(bool isValidationEnabled, string errorMessage) : base(isValidationEnabled, errorMessage)
         {
 
         }

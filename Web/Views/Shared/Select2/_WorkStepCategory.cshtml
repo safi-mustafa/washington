@@ -1,0 +1,14 @@
+﻿@model ViewModels.BaseSelect2VM
+@{
+    var elementId = ViewData["Id"] != null && !string.IsNullOrEmpty(ViewData["Id"].ToString()) ? ViewData["Id"].ToString() : "task-cat-id";
+}
+<partial name="~/Views/Shared/Select2/WorkStepCategory/_WorkStepCategory.cshtml" model="@Model" />
+<partial name="~/Views/Shared/Select2/WorkStepCategory/_WorkStepCategoryJs.cshtml" />
+
+<script src="~/js/custom/select2/select2-methods.js"></script>
+<script>
+    $(function () {
+        var id = "#" + "@elementId";
+        WorkStepCategorySelect2(id);
+    });
+</script>

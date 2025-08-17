@@ -23,8 +23,8 @@ namespace Web.Controllers
                 new DataTableViewModel{title = "Category",data = "Category", orderable = true},
                 new DataTableViewModel{title = "Title",data = "Title", orderable = true},
                 new DataTableViewModel{title = "Labor",data = "Labor", className="dt-currency", orderable = true},
-                new DataTableViewModel{title = "Equipment",data = "Equipment", className="dt-currency", orderable = true},
-                new DataTableViewModel{title = "Material",data = "Material", className="dt-currency", orderable = true},
+                //new DataTableViewModel{title = "Equipment",data = "Equipment", className="dt-currency", orderable = true},
+                new DataTableViewModel{title = "Variable Costs",data = "Material", className="dt-currency", orderable = true},
                 new DataTableViewModel{title = "Total",data = "BudgetCost", className="dt-currency", orderable = true},
                 new DataTableViewModel{title = "Action",data = null,className="action text-right exclude-form-export"}
 
@@ -67,6 +67,12 @@ namespace Web.Controllers
             return PartialView("_EquipmentRow", model);
         }
 
+        public IActionResult _TaskWorkStepRow(int rowNumber)
+        {
+            ViewData["RowNumber"] = rowNumber;
+            var model = new TaskCategoryViewModel();
+            return PartialView("_TaskCategoryRow", model);
+        }
         private void ValidateRecords(TaskTypeModifyViewModel model)
         {
             var invalidTaskWorkSteps = model.TaskWorkSteps.Where(x => string.IsNullOrEmpty(x.Title)).Count() > 0;
