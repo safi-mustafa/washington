@@ -52,6 +52,11 @@
         background-color: #b2b2b2;
         width: 19vw;
     }
+    
+    .is-invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    }
 </style>
 <h4 class="text-xl font-bold text-gray-900  mb-4">Checkout</h4>
 <!---------------new----------------->
@@ -113,7 +118,7 @@
                                                 <label>Delivary Date</label>
                                                 <input type="date" class="form-control start-date"
                                                        name="OrderItems[@i].StartDate"
-                                                       value="@item.Inventory.StartDate?.ToString("yyyy-MM-dd")" />
+                                                       value="@item.Inventory.StartDate?.ToString("yyyy-MM-dd")" required />
                                             </div>
                                             @* <div class="col-md-3">
                                                 <label>End Date</label>
@@ -129,7 +134,7 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <label>Quantity</label>
-                                                <input name="@quantityName" class="form-control quantity" type="number" value="@item.Quantity" min="1" max="@item.OHQuantity" />
+                                                <input name="@quantityName" class="form-control quantity" type="number" value="@item.Quantity" min="1" max="@item.OHQuantity" required />
                                             </div>
                                         </div>
                                     </div>
@@ -165,13 +170,13 @@
                                                 <label>Start Date</label>
                                                 <input type="date" class="form-control start-date"
                                                        name="OrderItems[@i].StartDate"
-                                                       value="@item.Equipment.StartDate?.ToString("yyyy-MM-dd")" />
+                                                       value="@item.Equipment.StartDate?.ToString("yyyy-MM-dd")" required />
                                             </div>
                                             <div class="col-md-3">
                                                 <label>End Date</label>
                                                 <input type="date" class="form-control end-date"
                                                        name="OrderItems[@i].EndDate"
-                                                       value="@item.Equipment.EndDate?.ToString("yyyy-MM-dd")" />
+                                                       value="@item.Equipment.EndDate?.ToString("yyyy-MM-dd")" required />
                                             </div>
                                             <div class="col-md-3">
                                                 <label>Frequency</label>
@@ -183,7 +188,7 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <label>Quantity</label>
-                                                <input name="@quantityName" class="form-control" type="number" value="@item.Quantity" min="1" max="@item.OHQuantity" />
+                                                <input name="@quantityName" class="form-control" type="number" value="@item.Quantity" min="1" max="@item.OHQuantity" required />
                                             </div>
                                         </div>
                                     </div>
@@ -410,6 +415,27 @@
     }
 
     function proceedToStep2() {
+        // Clear previous validation messages
+        $('.validation-error').remove();
+        
+        // Validate required fields
+        let isValid = true;
+        
+        $('input[required], select[required]').each(function() {
+            if (!$(this).val()) {
+                isValid = false;
+                $(this).addClass('is-invalid');
+                let label = $(this).closest('.col-md-3, .col-md-2').find('label').text() || 'Field';
+                $(this).after('<div class="validation-error text-danger small mt-1">' + label + ' is required</div>');
+            } else {
+                $(this).removeClass('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            return;
+        }
+        
         let formData = {
             items: [],
             totalCost: $(".bg-light .fw-bold.text-primary").text()

@@ -107,6 +107,11 @@
         margin-right: 5px;
         color: #6c757d;
     }
+    
+    .is-invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    }
 </style>
 <h4 class="text-xl font-bold text-gray-900  mb-4">Checkout</h4>
 <!---------------new----------------->
@@ -144,7 +149,7 @@
         <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
             <div class="mb-4">
                 <h6 class="fw-bold mb-3">Select Customer</h6>
-                <select class="form-select" id="customer-select">
+                <select class="form-select" id="customer-select" required>
                     @for (int i = 0; i < Model.Companies.Count; i++)
                     {
                         var selected = step2Data != null && step2Data.CustomerId == Model.Companies[i].Id ? "selected" : "";
@@ -155,7 +160,7 @@
 
             <div class="mb-4">
                 <h6 class="fw-bold mb-3">Select Project</h6>
-                <select class="form-select" id="customer-project-select">
+                <select class="form-select" id="customer-project-select" required>
                     <option value="">Select a project...</option>
                     @for (int i = 0; i < Model.Projects.Count; i++)
                     {
@@ -172,7 +177,7 @@
 
             <div class="mb-4">
                 <h6 class="fw-bold mb-3">Select Work Step</h6>
-                <select class="form-select" id="customer-project-purchase-order-select">
+                <select class="form-select" id="customer-project-purchase-order-select" required>
                     @for (int i = 0; i < Model.WorkOrders.Count; i++)
                     {
                         var selected = step2Data != null && step2Data.WorkOrderId == Model.WorkOrders[i].Id ? "selected" : "";
@@ -185,7 +190,7 @@
         <div class="bg-white rounded p-4 shadow-sm border border-gray-200 mb-4">
             <h6 class="fw-bold mb-3">Order Notes & Attachments</h6>
             <label class="form-label mt-2">Special Instructions</label>
-            <textarea name="SpecialInstructions" class="form-control" rows="3" placeholder="Add any special instructions or notes for this order...">@(step2Data?.SpecialInstructions ?? "")</textarea>
+            <textarea name="SpecialInstructions" class="form-control" rows="3" placeholder="Add any special instructions or notes for this order..." required>@(step2Data?.SpecialInstructions ?? "")</textarea>
 
             <label class="form-label mt-3">Attachments</label>
             <input name="attachments" type="file" class="form-control" multiple accept="image/*,.pdf,.doc,.docx">
@@ -210,6 +215,27 @@
         // Load session data on page load
         loadStep2SessionData();
         $('#nextBtn').click(function() {
+            // Clear previous validation messages
+            $('.validation-error').remove();
+            
+            // Validate required fields
+            let isValid = true;
+            
+            $('select[required], textarea[required]').each(function() {
+                if (!$(this).val()) {
+                    isValid = false;
+                    $(this).addClass('is-invalid');
+                    let label = $(this).closest('.mb-4').find('h6, label').first().text() || 'Field';
+                    $(this).after('<div class="validation-error text-danger small mt-1">' + label + ' is required</div>');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                return;
+            }
+            
             var formData = new FormData();
 
             // Get selected customer ID
