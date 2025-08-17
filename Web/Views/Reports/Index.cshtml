@@ -352,10 +352,40 @@
         <div class="CostByProjectSection">
 
             <!-- Cost by Project -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <h6 class="fw-bold  mb-4">Cost by Project</h6>
-                    @if (Model != null)
+          
+                   
+                    <div class="costByStatus">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">Cost by Project</h6>
+                                @if (Model != null)
+                                {
+                                    @foreach (var item in Model.CustomerProjects)
+                                    {
+                                        <div class="status rentStatus mb-3">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>@item.JobName</span>
+                                                <span class="fw-bold">@item.TotalCost</span>
+                                            </div>
+                                            <div class="progress mb-1" style="height: 12px;">
+                                                <div class="progress-bar "
+                                                     role="progressbar"
+                                                     style="@item.PercentageComplete%;"
+                                                     aria-valuenow="@item.PercentageComplete"
+                                                     aria-valuemin="0"
+                                                     aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                            @* <div class="mb-2 precentageShow">35%</div> *@
+
+                                        </div>
+                                    }
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+@*                     @if (Model != null)
                     {
                         @foreach (var item in Model.CustomerProjects)
                         {
@@ -374,12 +404,12 @@
                                 </div>
                                 <div class="text-end">
                                     <div class="fw-bold projectPrice">$@item.TotalCost</div>
-                                    @* <small class="text-muted totalPercentage">53% of total</small> *@
+                                  
                                 </div>
                             </div>
                         }
                     }
-                    <!-- Project 1 -->
+     *@                <!-- Project 1 -->
                    @*  <div class="d-flex justify-content-between align-items-center bg-light rounded p-3 my-2">
                         <div>
                             <div class="fw-semibold mb-2 projectName">Pipeline Installation Phase 1</div>
@@ -463,8 +493,9 @@
                         </div>
                     </div> *@
 
-                </div>
-            </div>
+                
+
+            
 
             <!-- Monthly Cost Trend -->
             @*  <div class="card shadow-sm">

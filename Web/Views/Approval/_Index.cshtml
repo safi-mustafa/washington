@@ -38,6 +38,21 @@
             <h3 class="page-title text-site-primary m-md-0">@Model.Title</h3>
         }
     }
+    <div class="header-search-wrapper SettingTopSearch">
+        <div class="d-flex justify-content-end align-items-center header-actions">
+            <div class="search-container me-3">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" class="form-control search-input" placeholder="Search..." id="global_search_value">
+            </div>
+            @*  <button class="btn btn-light bg-white">
+            <i class="fa-solid fa-bell"></i>
+        </button> *@
+            <a class="btn btn-light bg-white shoppingCartIcon" href="/Cart/Step1">
+                <div class="count">2</div>
+                <i class="fa fa-shopping-cart"></i>
+            </a>
+        </div>
+    </div>
     @if (Model.HideCreateButton == false)
     {
         <button class="btn btn-primary" onclick="loadCreateModalPanel('@createUrl')" data-bs-target="#newSupModal">
