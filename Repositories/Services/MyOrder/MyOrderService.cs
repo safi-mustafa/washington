@@ -1,5 +1,7 @@
 ﻿using DataLibrary;
 
+using Enums;
+
 using Microsoft.EntityFrameworkCore;
 
 using Models;
@@ -25,14 +27,21 @@ namespace Repositories.Services.MyOrder
             _db = db;
         }
 
-        public async Task<List<AllOrderViewModel>> GetAllOrders(int? orderId = 0)
+        public async Task<List<AllOrderViewModel>> GetAllOrders(int? orderId = 0, int? statusId = 0)
         {
             try
             {
                 List<AllOrderViewModel> allOrderViewModels = new();
+                var orders = new List<Order>();
 
-                var orders = orderId > 0 ? await _db.Orders.Where(x=>x.Id == orderId).ToListAsync() : await _db.Orders.ToListAsync();
-
+                if (statusId > 0)
+                {
+                    orders = orderId > 0 ? await _db.Orders.Where(x => x.Id == orderId && x.Status == (OrderStatus)statusId).ToListAsync() : await _db.Orders.Where(p => p.Status == (OrderStatus)statusId).ToListAsync();
+                }
+                else
+                {
+                    orders = orderId > 0 ? await _db.Orders.Where(x => x.Id == orderId).ToListAsync() : await _db.Orders.ToListAsync();
+                }
                 var orderIds = orders.Select(p => p.Id).ToList();
 
                 var orderItems = await _db.OrderItems.Include(p => p.Equipment).Include(p => p.Inventory)
@@ -52,7 +61,7 @@ namespace Repositories.Services.MyOrder
                     var customerName = string.Empty;
                     var purchanseOrderNumber = string.Empty;
                     var workStepName = string.Empty;
-                    var notes = order.Notes != null ? order.Notes : string.Empty ;
+                    var notes = order.Notes != null ? order.Notes : string.Empty;
 
                     var orderItemsForOrder = order.Status != null ? orderConfirmStatus.Where(p => p.Id == (int)order.Status).FirstOrDefault() : null;
                     if (orderItemsForOrder != null)
@@ -112,39 +121,6 @@ namespace Repositories.Services.MyOrder
                         .DefaultIfEmpty()
                         .Max();
 
-                    //    orderItems = orderItemsList.Select(p => new OrderItemViewModel()
-                    //    {
-                    //        Id = p.Id,
-                    //                OrderItemName = p.EquipmentId > 0
-                    //? Convert.ToString(p.Equipment.Description)
-                    //: Convert.ToString(p.Inventory.Description),
-
-                    //                OrderItemPrice = p.EquipmentId > 0
-                    //? Convert.ToString(p.Equipment.TotalValue)
-                    //: Convert.ToString(p.Inventory.UnitCost),
-
-                    //                OrderStartDate = p.StartDate.HasValue
-                    //? p.StartDate.Value.ToString("yyyy-MM-dd")
-                    //: string.Empty,
-
-                    //                OrderEndDate = p.EndDate.HasValue
-                    //? p.EndDate.Value.ToString("yyyy-MM-dd")
-                    //: string.Empty,
-
-                    //                Quantity = p.Quantity,
-
-                    //                // new props
-                    //                MinStartDate = minStartDate != default(DateTime)
-                    //? minStartDate.ToString("yyyy-MM-dd")
-                    //: string.Empty,
-
-                    //                MaxEndDate = maxEndDate != default(DateTime)
-                    //? maxEndDate.ToString("yyyy-MM-dd")
-                    //: string.Empty
-
-                    //    }).ToList();
-
-
                     var orderViewModel = new AllOrderViewModel
                     {
                         Id = order.Id,
@@ -154,7 +130,6 @@ namespace Repositories.Services.MyOrder
                         Project = projectsName,
                         TotalCost = Convert.ToString(order.Cost),
                         TotalBudget = totalBudget,
-                        //UsageBudget = orderItemsList.Count > 0 ? (orderItemsList[0].InventoryId > 0 ? "100" : usageBudget) : "0",
                         UsageBudget = usageBudget,
                         RemainingBudget = remainingBudget,
                         PercentageUsageBudget = percentageBudget,
@@ -190,6 +165,85 @@ namespace Repositories.Services.MyOrder
             }
         }
 
+        public async Task<OrderStatusCountViewModel> GetStatusCount()
+        {
+            try
+            {
+                OrderStatusCountViewModel orderStatusCountViewModel = new OrderStatusCountViewModel();
+
+                var statusTotals = _db.Orders
+                            .GroupBy(o => o.Status)
+                            .Select(g => new
+                            {
+                                Status = g.Key,
+                                Total = g.Count()
+                            })
+                            .ToList();
+
+
+                orderStatusCountViewModel.AllOrderCount = statusTotals.Sum(p => p.Total);
+
+                foreach (var item in statusTotals)
+                {
+                    if ((int)item.Status == (int)OrderConfirmStatusEnum.PendingApproval)
+                    {
+                        orderStatusCountViewModel.PendingApprovalCount = item.Total;
+                    }
+                    else if ((int)item.Status == (int)OrderConfirmStatusEnum.Delivered)
+                    {
+                        orderStatusCountViewModel.DeliveredCount = item.Total;
+                    }
+                    else if ((int)item.Status == (int)OrderConfirmStatusEnum.Scheduled)
+                    {
+                        orderStatusCountViewModel.ScheduledCount = item.Total;
+                    }
+                    else if ((int)item.Status == (int)OrderConfirmStatusEnum.Returned)
+                    {
+                        orderStatusCountViewModel.ReturnedCount = item.Total;
+                    }
+                    else if ((int)item.Status == (int)OrderConfirmStatusEnum.OnRent)
+                    {
+                        orderStatusCountViewModel.OnRentCount = item.Total;
+                    }
+                    else if ((int)item.Status == (int)OrderConfirmStatusEnum.OffRent)
+                    {
+                        orderStatusCountViewModel.OffRentCount = item.Total;
+                    }
+                }
+
+                return orderStatusCountViewModel;
+
+                //orderStatusCountViewModel.OffRentCount = statusTotals[0].Status==
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+
+        public async Task ChangeOrderStatus(int? status = 0, int? orderId = 0)
+        {
+            try
+            {
+                status = status == 0 ? 1 : status;
+
+                var dbRecord = await _db.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+                if (dbRecord != null)
+                {
+                    dbRecord.Status = (OrderStatus)status;
+                    await _db.SaveChangesAsync(); // just save, EF tracks changes
+                }
+            }
+            catch (Exception ex)
+            {
+                // log error
+            }
+        }
+
+        #region private
         private double? CalculateDailyCost(string totalCost, List<OrderItem> orderItemsList)
         {
             try
@@ -263,8 +317,7 @@ namespace Repositories.Services.MyOrder
                 return 0;
             }
         }
-
-        public string GetUsageCost(string cost, List<OrderItem> orderItemsList)
+        private string GetUsageCost(string cost, List<OrderItem> orderItemsList)
         {
             try
             {
@@ -304,7 +357,7 @@ namespace Repositories.Services.MyOrder
                             return cost;
 
                         startDate = firstItem.StartDate.Value;
-                        
+
                         //endDate = firstItem.StartDate.Value;
                         //maxDate = endDate.Subtract(startDate).TotalDays;
                     }
@@ -335,9 +388,7 @@ namespace Repositories.Services.MyOrder
                 return string.Empty;
             }
         }
-
-
-        public string RemainingCost(string totalCost, List<OrderItem> orderItemsList)
+        private string RemainingCost(string totalCost, List<OrderItem> orderItemsList)
         {
             try
             {
@@ -400,8 +451,7 @@ namespace Repositories.Services.MyOrder
                 return string.Empty;
             }
         }
-
-        public string GetBudgetUsagePercantage(string cost, List<OrderItem> orderItemsList, string totalBudget)
+        private string GetBudgetUsagePercantage(string cost, List<OrderItem> orderItemsList, string totalBudget)
         {
             try
             {
@@ -421,5 +471,6 @@ namespace Repositories.Services.MyOrder
                 return string.Empty;
             }
         }
+        #endregion
     }
 }

@@ -3,7 +3,7 @@
 
 @if (Model != null)
 {
-    <input id="hdnCountAllOrder" type="hidden" value="@Model.Count"/>
+    <input id="hdnCountAllOrder" type="hidden" value="@Model.Count" />
 
     @foreach (var itemOrder in Model)
     {
@@ -101,10 +101,22 @@
                 <div class="d-flex gap-2 orderListButtonGroup">
                     <div class="flex items-center updateStatusDropDown">
                         <label class="text-xs text-gray-500 mr-2">Update Status:</label>
-                        <select class="text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500">
+                        <select class="text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" onchange="ChangeOrderStatus($(this).val(), '@itemOrder.Id')">
                             @foreach (var item in itemOrder.orderConfirmStatuses)
                             {
-                                <option value="@item.Id">@item.Name</option>
+                                if (item.Id == (int)itemOrder.OrderStatusId)
+                                {
+                                    <option value="@item.Id" selected="selected">
+                                        @item.Name
+                                    </option>
+
+                                }
+                                else
+                                {
+                                    <option value="@item.Id">
+                                        @item.Name
+                                    </option>
+                                }
                             }
                         </select>
                     </div>
@@ -142,7 +154,7 @@
     }
 }
 
-<script>
+@* <script>
 $(document).on('click', '.view-details-btn', function() {
     var orderId = $(this).data('order-id');
     $.get('@Url.Action("ViewOrderDetailsModal", "MyOrders")', { orderId: orderId }, function(data) {
@@ -154,4 +166,4 @@ $(document).on('click', '.view-details-btn', function() {
     $(document).on('hidden.bs.modal', '#viewOrderDetailsById', function() {
     $(this).remove();
 });
-</script>
+</script> *@

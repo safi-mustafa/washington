@@ -45,4 +45,15 @@ namespace ViewModels.MyOrder
         public string? Total { get; set; } = "0";
         public string? Category { get; set; }
     }
+
+    public class OrderStatusCountViewModel
+    {
+        public int AllOrderCount { get; set; }
+        public int PendingApprovalCount { get; set; }
+        public int ScheduledCount { get; set; }
+        public int DeliveredCount { get; set; }
+        public int OnRentCount { get; set; }
+        public int OffRentCount { get; set; }
+        public int ReturnedCount { get; set; }
+    }
 }   

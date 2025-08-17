@@ -21,8 +21,18 @@ namespace Web.Controllers
             _myOrderService = myOrderService;
             _logger = logger;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var allOrdersCount = await _myOrderService.GetStatusCount();
+
+            ViewBag.AllOrderCount = allOrdersCount.AllOrderCount;
+            ViewBag.PendingApprovalCount = allOrdersCount.PendingApprovalCount;
+            ViewBag.DeliveredCount = allOrdersCount.DeliveredCount;
+            ViewBag.ScheduledCount = allOrdersCount.ScheduledCount;
+            ViewBag.ReturnedCount = allOrdersCount.ReturnedCount;
+            ViewBag.OnRentCount = allOrdersCount.OnRentCount;
+            ViewBag.OffRentCount = allOrdersCount.OffRentCount;
+
             return View();
         }
 
@@ -53,6 +63,109 @@ namespace Web.Controllers
             {
                 _logger.LogError($"ViewOrderDetailsModal threw an exception, Message: {ex.Message}");
                 return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> PendingOrders()
+        {
+
+            try
+            {
+                var pendingsOrders = await _myOrderService.GetAllOrders(0, (int)Enums.OrderConfirmStatusEnum.PendingApproval);
+                return PartialView("_PendingOrder", pendingsOrders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Pending Orders threw an exception, Message: {ex.Message}"); return RedirectToAction("Index");
+            }
+        }
+        [HttpGet]
+        public async Task<ActionResult> ScheduledOrders()
+        {
+
+            try
+            {
+                var scheduledOrder = await _myOrderService.GetAllOrders(0, (int)Enums.OrderConfirmStatusEnum.Scheduled);
+                return PartialView("_ScheduledOrder", scheduledOrder);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Scheduled Orders threw an exception, Message: {ex.Message}"); return RedirectToAction("Index");
+            }
+        }
+        [HttpGet]
+        public async Task<ActionResult> DeliveredOrders()
+        {
+
+            try
+            {
+                var DeliveredOrders = await _myOrderService.GetAllOrders(0, (int)Enums.OrderConfirmStatusEnum.Delivered);
+                return PartialView("_DeliveredOrder", DeliveredOrders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Scheduled Orders threw an exception, Message: {ex.Message}"); return RedirectToAction("Index");
+            }
+        }
+        [HttpGet]
+        public async Task<ActionResult> OffrentOrders()
+        {
+
+            try
+            {
+                var Offrent = await _myOrderService.GetAllOrders(0, (int)Enums.OrderConfirmStatusEnum.OffRent);
+                return PartialView("_OffrentOrder", Offrent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Scheduled Orders threw an exception, Message: {ex.Message}"); return RedirectToAction("Index");
+            }
+        }
+        [HttpGet]
+        public async Task<ActionResult> OnrentOrders()
+        {
+
+            try
+            {
+                var Onrent = await _myOrderService.GetAllOrders(0, (int)Enums.OrderConfirmStatusEnum.OnRent);
+                return PartialView("_OnrentOrder", Onrent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Scheduled Orders threw an exception, Message: {ex.Message}"); return RedirectToAction("Index");
+            }
+        }
+        [HttpGet]
+        public async Task<ActionResult> ReturnedOrders()
+        {
+
+            try
+            {
+                var ReturnedOrders = await _myOrderService.GetAllOrders(0, (int)Enums.OrderConfirmStatusEnum.Returned);
+                return PartialView("_ReturnedOrder", ReturnedOrders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Scheduled Orders threw an exception, Message: {ex.Message}"); return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeOrderStatus(int? status, int? orderId)
+        {
+            try
+            {
+                await _myOrderService.ChangeOrderStatus(status, orderId);
+
+                var allOrdersCount = await _myOrderService.GetStatusCount();
+
+                return Json(new { success = true, count = allOrdersCount });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ChangeOrderStatus threw an exception, Message: {ex.Message}");
+                return Json(new { success = false, error = ex.Message });
             }
         }
     }

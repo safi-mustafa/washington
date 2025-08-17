@@ -69,5 +69,14 @@ namespace Enums
         //Returned
     }
 
+    public enum OrderConfirmStatusEnum
+    {
+        PendingApproval = 1,
+        Scheduled = 2,
+        Delivered = 3,
+        OnRent = 4,
+        OffRent = 5,
+        Returned = 6
+    }
 }
 
