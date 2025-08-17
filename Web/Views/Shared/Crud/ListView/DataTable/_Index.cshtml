@@ -19,6 +19,29 @@
 <link href="~/css/bundles/datatable-buttons.css" rel="stylesheet" />
 <link href="~/css/bundles/datatable.css" rel="stylesheet" />
 <script src="~/js/custom/loader/loader.js"></script>
+<style>
+    .shoppingCartIcon {
+        background-color: #F54E00 !important;
+        color: #ffffff !important;
+        position: relative;
+        padding: 12px 16px;
+        font-size: 18px;
+    }
+
+        .shoppingCartIcon .count {
+            border: 1px solid;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+        }
+
+    .BtnAddNew {
+        width: 180px;
+        font-size: 18px !important;
+        padding: 15px 11px !important;
+        margin-left: 16px;
+    }
+</style>
 @if (Model.LoadDatatableScript)
 {
     @* <script src="~/js/bundles/custom-datatable.js"></script> *@
@@ -39,18 +62,29 @@
             <h3 class="page-title text-site-primary m-md-0">@Model.Title</h3>
         }
     }
-    @if (Model.HideTopSearchBar == false)
+    @if (Model.HideTopSearchBar == false && Model.HideCreateButton == true)
     {
         @await Html.PartialAsync("~/Views/Shared/Crud/ListView/Common/_TopSearchBar.cshtml")
     }
-    @if (Model.HideCreateButton == false)
+    @if (Model.HideCreateButton == false )
     {
-        <div class="ms-auto">
-            <button type="button" class="btn orange" onclick="loadCreateModalPanel('@createUrl')"
+        
+        <div class="ms-auto ">
+            <div class="d-flex align-items-center">
+            <div class="search-container me-3">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" class="form-control search-input" placeholder="Search..." id="global_search_value">
+            </div>
+            <a class="btn btn-light bg-white shoppingCartIcon" href="/Cart/Step1">
+                <div class="count">2</div>
+                <i class="fa fa-shopping-cart"></i>
+            </a>
+            <button type="button" class="btn BtnAddNew orange" onclick="loadCreateModalPanel('@createUrl')"
                     data-bs-target="#newSupModal">
                 <i class="fa-regular fa-square-plus"></i>
-                Add New
+                    <div class="AddBtn">Add New</div>
             </button>
+            </div>
         </div>
 
     }
