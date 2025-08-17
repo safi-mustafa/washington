@@ -15,6 +15,7 @@ namespace ViewModels.MyOrder
         public string OrderStatus { get; set; } = default!;
         public int? OrderStatusId { get; set; } = default!;
         public string Project { get; set; } = default!;
+        public string ProjectId { get; set; } = default!;
         public string TotalCost { get; set; } = default!;
         public string TotalBudget { get; set; } = default!;
         public string UsageBudget { get; set; } = default!;
@@ -24,6 +25,7 @@ namespace ViewModels.MyOrder
         public string OrderNotes { get; set; } = default!;
         public int TotalOrderItemCount { get; set; } = default!;
         public string CustomerName { get; set; }
+        public string CustomerId { get; set; }
         public string PurchanseOrderNumber { get; set; }
         public string WorkStepName { get; set; }
         public string Notes { get; set; }

@@ -14,5 +14,7 @@ namespace Repositories.Services.MyOrder.Interface
         Task<OrderStatusCountViewModel> GetStatusCount();
 
         Task ChangeOrderStatus(int? status = 0, int? orderId = 0);
+        Task<bool> DeleteOrder(int orderId);
+        Task<AllOrderDropDownViewModel> AllOrderDropDown();
     }
 }

@@ -128,7 +128,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen mr-1"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
                         Edit Order
                     </button>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteOrderDetails" class="btn btn-outline-danger btn-sm">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#deleteOrderModal" data-order-id="@itemOrder.Id" class="btn btn-outline-danger btn-sm delete-order-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2 mr-1"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg>
                         Delete Order
                     </button>
@@ -154,16 +154,33 @@
     }
 }
 
-@* <script>
-$(document).on('click', '.view-details-btn', function() {
-    var orderId = $(this).data('order-id');
-    $.get('@Url.Action("ViewOrderDetailsModal", "MyOrders")', { orderId: orderId }, function(data) {
-        $('body').append(data);
-            $('#viewOrderDetailsById').modal('show');
-    });
-});
+<script>
+// $(document).on('click', '.view-details-btn', function() {
+//     var orderId = $(this).data('order-id');
+//     $.get('@Url.Action("ViewOrderDetailsModal", "MyOrders")', { orderId: orderId }, function(data) {
+//         $('body').append(data);
+//             $('#viewOrderDetailsById').modal('show');
+//     });
+// });
 
-    $(document).on('hidden.bs.modal', '#viewOrderDetailsById', function() {
-    $(this).remove();
-});
-</script> *@
+//     $(document).on('hidden.bs.modal', '#viewOrderDetailsById', function() {
+//     $(this).remove();
+// });
+
+// $(document).on('click', '.delete-order-btn', function() {
+//     var orderId = $(this).data('order-id');
+//     $('#confirmDeleteBtn').data('order-id', orderId);
+// });
+
+// $(document).on('click', '#confirmDeleteBtn', function() {
+//     var orderId = $(this).data('order-id');
+//     $.post('@Url.Action("DeleteOrder", "MyOrders")', { orderId: orderId }, function(response) {
+//         if (response.success) {
+//             $('#deleteOrderModal').modal('hide');
+//             location.reload();
+//         } else {
+//             alert('Error: ' + response.message);
+//         }
+//     });
+// });
+</script>

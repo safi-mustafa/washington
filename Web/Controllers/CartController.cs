@@ -678,7 +678,7 @@ namespace Web.Controllers
         private async Task<List<string>> SaveAttachments(IFormFileCollection attachments)
         {
             var attachmentUrls = new List<string>();
-            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "Storgae", "uploads", "attachments");
+            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "Storage", "uploads", "attachments");
             
             // Create directory if it doesn't exist
             if (!Directory.Exists(uploadsPath))

@@ -46,6 +46,23 @@ $(function () {
         $(this).remove();
     });
 
+    $(document).on('click', '.delete-order-btn', function () {
+        var orderId = $(this).data('order-id');
+        $('#confirmDeleteBtn').data('order-id', orderId);
+    });
+
+    $(document).on('click', '#confirmDeleteBtn', function () {
+        var orderId = $(this).data('order-id');
+        $.post("MyOrders/DeleteOrder", { orderId: orderId }, function (response) {
+            if (response.success) {
+                $('#deleteOrderModal').modal('hide');
+                location.reload();
+            } else {
+                alert('Error: ' + response.message);
+            }
+        });
+    });
+
 });
 
 function AllOrders() {

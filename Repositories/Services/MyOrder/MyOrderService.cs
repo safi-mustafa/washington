@@ -36,12 +36,14 @@ namespace Repositories.Services.MyOrder
 
                 if (statusId > 0)
                 {
-                    orders = orderId > 0 ? await _db.Orders.Where(x => x.Id == orderId && x.Status == (OrderStatus)statusId).ToListAsync() : await _db.Orders.Where(p => p.Status == (OrderStatus)statusId).ToListAsync();
+                    orders = orderId > 0 ? await _db.Orders.Where(x => x.Id == orderId && x.Status == (OrderStatus)statusId && !x.IsDeleted).ToListAsync() : await _db.Orders.Where(p => p.Status == (OrderStatus)statusId && !p.IsDeleted).ToListAsync();
                 }
                 else
                 {
-                    orders = orderId > 0 ? await _db.Orders.Where(x => x.Id == orderId).ToListAsync() : await _db.Orders.ToListAsync();
+                    orders = orderId > 0 ? await _db.Orders.Where(x => x.Id == orderId && !x.IsDeleted).ToListAsync() : await _db.Orders.Where(x => !x.IsDeleted).ToListAsync();
                 }
+                //var orders = orderId > 0 ? await _db.Orders.Where(x=>x.Id == orderId && !x.IsDeleted).ToListAsync() : await _db.Orders.Where(x => !x.IsDeleted).ToListAsync();
+
                 var orderIds = orders.Select(p => p.Id).ToList();
 
                 var orderItems = await _db.OrderItems.Include(p => p.Equipment).Include(p => p.Inventory)
@@ -62,6 +64,9 @@ namespace Repositories.Services.MyOrder
                     var purchanseOrderNumber = string.Empty;
                     var workStepName = string.Empty;
                     var notes = order.Notes != null ? order.Notes : string.Empty;
+                    var projectId = string.Empty;
+                    var customerId = string.Empty;
+
 
                     var orderItemsForOrder = order.Status != null ? orderConfirmStatus.Where(p => p.Id == (int)order.Status).FirstOrDefault() : null;
                     if (orderItemsForOrder != null)
@@ -76,6 +81,7 @@ namespace Repositories.Services.MyOrder
                     {
                         projectsName = projectsOrder.JobName;
                         purchanseOrderNumber = projectsOrder.PurchaseOrderNumber;
+                        projectId = Convert.ToString(projectsOrder.Id);
                     }
 
                     var customer = projectsOrder != null ? await _db.CompanyInformations.FirstOrDefaultAsync(p => p.Id == projectsOrder.CustomerId) : null;
@@ -83,6 +89,7 @@ namespace Repositories.Services.MyOrder
                     if (customer != null)
                     {
                         customerName = customer.CompanyName;
+                        customerId = customer.Id.ToString();
                     }
 
                     var TaskType = await _db.TaskTypes.FindAsync(order.WorkOrderId);
@@ -141,6 +148,8 @@ namespace Repositories.Services.MyOrder
                         PurchanseOrderNumber = purchanseOrderNumber,
                         WorkStepName = workStepName,
                         Notes = notes,
+                        CustomerId = customerId,
+                        ProjectId = projectId,
                         orderItems = orderItemsList.Select(p => new OrderItemViewModel()
                         {
                             Id = p.Id,
@@ -471,6 +480,46 @@ namespace Repositories.Services.MyOrder
                 return string.Empty;
             }
         }
+
         #endregion
+
+        public async Task<bool> DeleteOrder(int orderId)
+        {
+            try
+            {
+                var order = await _db.Orders.FindAsync((long)orderId);
+                if (order != null)
+                {
+                    order.IsDeleted = true;
+                    await _db.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<AllOrderDropDownViewModel> AllOrderDropDown()
+        {
+            AllOrderDropDownViewModel allOrderDropDownViewModel = new AllOrderDropDownViewModel();
+            try
+            {
+                allOrderDropDownViewModel.Customers = await _db.CompanyInformations
+                    .Where(c => !c.IsDeleted)
+                    .ToListAsync();
+                allOrderDropDownViewModel.Projects = await _db.CustomerProjects
+                    .Where(p => !p.IsDeleted)
+                    .ToListAsync();
+                return allOrderDropDownViewModel;
+            }
+            catch (Exception EX)
+            {
+                return allOrderDropDownViewModel;
+            }
+        }
+
     }
 }
