@@ -101,6 +101,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<OrderConfirmStatus> OrderConfirmStatus { get; set; }
     public DbSet<CustomerProjectNotes> CustomerProjectNotes { get; set; }
     public DbSet<WorkStepCategory> WorkStepCategories { get; set; }
+    public DbSet<TaskCategory> TaskCategories { get; set; }
 
 
     [DbFunction("GetWeekNumber", "dbo")]
