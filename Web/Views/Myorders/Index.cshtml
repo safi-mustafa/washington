@@ -1,4 +1,6 @@
-﻿<style>
+﻿@using ViewModels.MyOrder
+@model AllOrderDropDownViewModel
+<style>
     .orderTitle {
         font-weight: 500;
         font-size: 18px;
@@ -255,26 +257,28 @@
 
             <div class="control_field">
                 <div class="form-group">
-
-                    <select class="form-control text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" placeholder="Customer Name">
-                        <option value="Customer Name 1">Customer Name 1</option>
-                        <option value="Customer Name 2">Customer Name 2</option>
-                        <option value="Customer Name 3">Customer Name 3</option>
+                    <select class="form-control text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" name="CustomerId">
+                        <option value="">Select Customer</option>
+                        @foreach (var customer in Model.Customers)
+                        {
+                            <option value="@customer.Id">@customer.CompanyName</option>
+                        }
                     </select>
                 </div>
             </div>
             <div class="control_field">
                 <div class="form-group">
-
-                    <select class="form-control text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" placeholder="Project Name">
-                        <option value="Project Name 1">Project Name 1</option>
-                        <option value="Project Name 2">Project Name 2</option>
-                        <option value="Project Name 3">Project Name 3</option>
+                    <select class="form-control text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" name="ProjectId">
+                        <option value="">Select Project</option>
+                        @foreach (var project in Model.Projects)
+                        {
+                            <option value="@project.Id">@project.JobName</option>
+                        }
                     </select>
                 </div>
             </div>
             <div class="control_field">
-                <input type="search" class="form-control" placeholder="Search PO" autocomplete="new-password" id="Search_value" value="">
+                <input type="search" class="form-control" placeholder="Search PO" autocomplete="new-password" id="Search_PO" value="">
             </div>
 
 
@@ -316,6 +320,26 @@
         <partial name="_ReturnedOrder" />
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('.search-form-btn').on('click', function() {
+            var keyword = $('#Search_value').val();
+            var customerId = $('select[name="CustomerId"]').val();
+            var projectId = $('select[name="ProjectId"]').val();
+            var poNumber = $('#Search_PO').val();
+
+            $.get('@Url.Action("AllOrders", "MyOrders")', {
+                keyword: keyword,
+                customerId: customerId,
+                projectId: projectId,
+                poNumber: poNumber
+            }, function(data) {
+                $('#pills-all-order').html(data);
+            });
+        });
+    });
+</script>
 
 <!-- Modal for Add New Company Profile -->
 @* <div class="modal fade" id="viewOrderDetails" tabindex="-1" aria-labelledby="viewOrderDetailsModalLabel" aria-hidden="true">

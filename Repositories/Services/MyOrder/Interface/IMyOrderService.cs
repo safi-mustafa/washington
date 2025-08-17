@@ -12,5 +12,6 @@ namespace Repositories.Services.MyOrder.Interface
     {
         Task<List<AllOrderViewModel>> GetAllOrders(int? orderId = 0);
         Task<bool> DeleteOrder(int orderId);
+        Task<AllOrderDropDownViewModel> AllOrderDropDown();
     }
 }

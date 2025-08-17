@@ -21,18 +21,42 @@ namespace Web.Controllers
             _myOrderService = myOrderService;
             _logger = logger;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var allDrodowns = await _myOrderService.AllOrderDropDown();
+            return View(allDrodowns);
         }
 
         [HttpGet]
-        public async Task<ActionResult> AllOrders()
+        public async Task<ActionResult> AllOrders(string? keyword, string? customerId, string? projectId, string? poNumber)
         {
 
             try
             {
                 var allOrders = await _myOrderService.GetAllOrders();
+                if (!string.IsNullOrEmpty(keyword) || customerId != null || projectId != null || !string.IsNullOrEmpty(poNumber))
+                {
+                    if (customerId != null)
+                    {
+                        allOrders = allOrders.Where(o =>(o.CustomerId == customerId)).ToList();
+                    }
+                    if (projectId != null)
+                    {
+                        allOrders = allOrders.Where(o => (o.ProjectId == projectId)).ToList();
+                    }
+                    if(poNumber != null)
+                    {
+                        allOrders = allOrders.Where(o => o.PurchanseOrderNumber.Contains(poNumber, StringComparison.OrdinalIgnoreCase)).ToList();
+                    }
+                    if(keyword != null)
+                    {
+                        allOrders = allOrders.Where(o =>
+                            o.orderItems.Any(e =>
+                                e.OrderItemName.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                        ).ToList();
+                    }
+
+                }
                 return PartialView("_AllOrder", allOrders);
             }
             catch (Exception ex)
