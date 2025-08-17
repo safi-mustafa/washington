@@ -276,13 +276,13 @@
                         <div class="status rentStatus mb-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span>On Rent</span>
-                                <span class="fw-bold">$45,200</span>
+                                <span class="fw-bold">$@Model.CostbyOnRent.TotalOrderCost</span>
                             </div>
                             <div class="progress mb-1" style="height: 12px;">
                                 <div class="progress-bar "
                                      role="progressbar"
-                                     style="width: 35%;"
-                                     aria-valuenow="35"
+                                     style="width: @Model.CostbyOnRent.PercentageComplete%;"
+                                     aria-valuenow="@Model.CostbyOnRent.PercentageComplete"
                                      aria-valuemin="0"
                                      aria-valuemax="100">
                                 </div>
@@ -293,13 +293,13 @@
                         <div class="status deliveredStatus mb-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Delivered</span>
-                                <span class="fw-bold">$32,100</span>
+                                <span class="fw-bold">$@Model.CostbyDelivered.TotalOrderCost</span>
                             </div>
                             <div class="progress mb-1" style="height: 12px;">
                                 <div class="progress-bar green"
                                      role="progressbar"
-                                     style="width: 16%;"
-                                     aria-valuenow="16"
+                                     style="width: @Model.CostbyDelivered.PercentageComplete%;"
+                                     aria-valuenow="@Model.CostbyDelivered.PercentageComplete"
                                      aria-valuemin="0"
                                      aria-valuemax="100">
                                 </div>
@@ -310,13 +310,13 @@
                         <div class="status ScheduledStatus mb-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Scheduled</span>
-                                <span class="fw-bold">$28,750</span>
+                                <span class="fw-bold">$@Model.CostbyScheduled.TotalOrderCost</span>
                             </div>
                             <div class="progress mb-1" style="height: 12px;">
                                 <div class="progress-bar green"
                                      role="progressbar"
-                                     style="width: 25%;"
-                                     aria-valuenow="25"
+                                     style="width: @Model.CostbyScheduled.PercentageComplete%;"
+                                     aria-valuenow="@Model.CostbyScheduled.PercentageComplete"
                                      aria-valuemin="0"
                                      aria-valuemax="100">
                                 </div>
@@ -327,13 +327,13 @@
                         <div class="status PendingStatus mb-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Pending</span>
-                                <span class="fw-bold">$21,400</span>
+                                <span class="fw-bold">$@Model.CostbyPending.TotalOrderCost</span>
                             </div>
                             <div class="progress mb-1" style="height: 12px;">
                                 <div class="progress-bar green"
                                      role="progressbar"
-                                     style="width: 22%;"
-                                     aria-valuenow="22"
+                                     style="width: @Model.CostbyPending.PercentageComplete%;"
+                                     aria-valuenow="@Model.CostbyPending.PercentageComplete"
                                      aria-valuemin="0"
                                      aria-valuemax="100">
                                 </div>
@@ -362,7 +362,7 @@
                             <div class="d-flex justify-content-between align-items-center bg-light rounded p-3 my-2">
                                 <div>
                                     <div class="fw-semibold mb-2 projectName">@item.JobName</div>
-                                    <div class="progress " style="height: 6px;">
+                                    <div class="progress mb-1" style="height: 12px;">
                                         <div class="progress-bar green"
                                              role="progressbar"
                                              style="width: @item.PercentageComplete%;"
@@ -380,7 +380,7 @@
                         }
                     }
                     <!-- Project 1 -->
-                   @*  <div class="d-flex justify-content-between align-items-center bg-light rounded p-3 my-2">
+                    @*  <div class="d-flex justify-content-between align-items-center bg-light rounded p-3 my-2">
                         <div>
                             <div class="fw-semibold mb-2 projectName">Pipeline Installation Phase 1</div>
                             <div class="progress " style="height: 6px;">
@@ -515,6 +515,10 @@
                                         <td>$@item.DailyCost</td>
                                     </tr>
                                 }
+                            }
+                            else
+                            {
+                                <tr><td>There are currently no active rentals available.</td></tr>
                             }
                         </tbody>
                     </table>

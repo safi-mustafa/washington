@@ -62,6 +62,10 @@
         public ReportsCountViewModel ReportsCount { get; set; } // Type based on _reportsService.Orders()
         public List<ActiveRentalsModel> ActiveRentals { get; set; }
         public List<CustomerProjectsViewModel> CustomerProjects { get; set; }
+        public GetCostbyOnRentModel CostbyOnRent { get; set; }
+        public GetCostbyDeliveredModel CostbyDelivered { get; set; }
+        public GetCostbyScheduledModel CostbyScheduled { get; set; }
+        public GetCostbyPendingModel CostbyPending { get; set; }
     }
 
     public class CustomerProjectsViewModel
@@ -71,5 +75,33 @@
         public DateTime? ProjectStartDate { get; set; }
         public DateTime? ProjectEndDate { get; set; }
         public double? PercentageComplete { get; set; }
+    }
+    public class GetCostbyOnRentModel
+    {
+        public double? TotalOrderCost { get; set; }
+        public DateTime? OldestStartDate { get; set; }
+        public DateTime? LatestEndDate { get; set; }
+        public decimal? PercentageComplete { get; set; }
+    }
+    public class GetCostbyDeliveredModel
+    {
+        public double? TotalOrderCost { get; set; }
+        public DateTime? OldestStartDate { get; set; }
+        public DateTime? LatestEndDate { get; set; }
+        public decimal? PercentageComplete { get; set; }
+    }
+    public class GetCostbyScheduledModel
+    {
+        public double? TotalOrderCost { get; set; }
+        public DateTime? OldestStartDate { get; set; }
+        public DateTime? LatestEndDate { get; set; }
+        public decimal? PercentageComplete { get; set; }
+    }
+    public class GetCostbyPendingModel
+    {
+        public double? TotalOrderCost { get; set; }
+        public DateTime? OldestStartDate { get; set; }
+        public DateTime? LatestEndDate { get; set; }
+        public decimal? PercentageComplete { get; set; }
     }
 }

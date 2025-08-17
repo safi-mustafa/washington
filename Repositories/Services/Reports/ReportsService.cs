@@ -1,4 +1,5 @@
 ﻿using DataLibrary;
+using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Enums;
 using Microsoft.EntityFrameworkCore;
@@ -116,6 +117,282 @@ namespace Repositories.Services.Reports
 
 
             return projectCosts;
+        }
+
+        public async Task<GetCostbyOnRentModel> GetCostbyOnRent()
+        {
+            var today = DateTime.Today;
+
+            var hasScheduledOrders = await _db.Orders
+                .AnyAsync(o => o.Status == OrderStatus.Canceled);
+
+            if (!hasScheduledOrders)
+            {
+                return new GetCostbyOnRentModel
+                {
+                    TotalOrderCost = 0,
+                    OldestStartDate = today,
+                    LatestEndDate = today,
+                    PercentageComplete = 0
+                };
+            }
+
+            var totalCost = await (
+                from o in _db.Orders
+                where o.Status == OrderStatus.Canceled
+                select o.Cost
+            ).SumAsync();
+
+            var dateStats = await (
+                from o in _db.Orders
+                join oi in _db.OrderItems on o.Id equals oi.OrderId
+                where o.Status == OrderStatus.Canceled
+                group oi by 1 into g
+                select new
+                {
+                    OldestStartDate = g.Min(x => x.StartDate),
+                    LatestEndDate = g.Max(x => x.EndDate)
+                }
+            ).FirstOrDefaultAsync();
+
+            if (dateStats == null)
+                return null;
+
+            var totalDays = (dateStats.LatestEndDate - dateStats.OldestStartDate).GetValueOrDefault().Days;
+            var daysPassed = (today - dateStats.OldestStartDate).GetValueOrDefault().Days;
+
+            decimal percentageComplete;
+            if (totalDays == 0)
+            {
+                percentageComplete = today.Date == dateStats.OldestStartDate.GetValueOrDefault().Date ? 100m : 0m;
+            }
+            else if (today <= dateStats.OldestStartDate)
+            {
+                percentageComplete = 0m;
+            }
+            else if (today >= dateStats.LatestEndDate)
+            {
+                percentageComplete = 100m;
+            }
+            else
+            {
+                percentageComplete = (decimal)daysPassed * 100m / totalDays;
+            }
+
+            return new GetCostbyOnRentModel
+            {
+                TotalOrderCost = totalCost,
+                OldestStartDate = dateStats.OldestStartDate,
+                LatestEndDate = dateStats.LatestEndDate,
+                PercentageComplete = Math.Round(percentageComplete, 2)
+            };
+        }
+
+        public async Task<GetCostbyDeliveredModel> GetCostbyDelivered()
+        {
+            var today = DateTime.Today;
+
+            var hasScheduledOrders = await _db.Orders
+                .AnyAsync(o => o.Status == OrderStatus.PastDue);
+
+            if (!hasScheduledOrders)
+            {
+                return new GetCostbyDeliveredModel
+                {
+                    TotalOrderCost = 0,
+                    OldestStartDate = today,
+                    LatestEndDate = today,
+                    PercentageComplete = 0
+                };
+            }
+
+            var totalCost = await (
+                from o in _db.Orders
+                where o.Status == OrderStatus.PastDue
+                select o.Cost
+            ).SumAsync();
+
+            var dateStats = await (
+                from o in _db.Orders
+                join oi in _db.OrderItems on o.Id equals oi.OrderId
+                where o.Status == OrderStatus.PastDue
+                group oi by 1 into g
+                select new
+                {
+                    OldestStartDate = g.Min(x => x.StartDate),
+                    LatestEndDate = g.Max(x => x.EndDate)
+                }
+            ).FirstOrDefaultAsync();
+
+            if (dateStats == null)
+                return null;
+
+            var totalDays = (dateStats.LatestEndDate - dateStats.OldestStartDate).GetValueOrDefault().Days;
+            var daysPassed = (today - dateStats.OldestStartDate).GetValueOrDefault().Days;
+
+            decimal percentageComplete;
+            if (totalDays == 0)
+            {
+                percentageComplete = today.Date == dateStats.OldestStartDate.GetValueOrDefault().Date ? 100m : 0m;
+            }
+            else if (today <= dateStats.OldestStartDate)
+            {
+                percentageComplete = 0m;
+            }
+            else if (today >= dateStats.LatestEndDate)
+            {
+                percentageComplete = 100m;
+            }
+            else
+            {
+                percentageComplete = (decimal)daysPassed * 100m / totalDays;
+            }
+
+            return new GetCostbyDeliveredModel
+            {
+                TotalOrderCost = totalCost,
+                OldestStartDate = dateStats.OldestStartDate,
+                LatestEndDate = dateStats.LatestEndDate,
+                PercentageComplete = Math.Round(percentageComplete, 2)
+            };
+        }
+
+        public async Task<GetCostbyScheduledModel> GetCostbyScheduled()
+        {
+            var today = DateTime.Today;
+
+            var hasScheduledOrders = await _db.Orders
+                .AnyAsync(o => o.Status == OrderStatus.Delivered);
+
+            if (!hasScheduledOrders)
+            {
+                return new GetCostbyScheduledModel
+                {
+                    TotalOrderCost = 0,
+                    OldestStartDate = today,
+                    LatestEndDate = today,
+                    PercentageComplete = 0
+                };
+            }
+
+            var totalCost = await (
+                from o in _db.Orders
+                where o.Status == OrderStatus.Delivered
+                select o.Cost
+            ).SumAsync();
+
+            var dateStats = await (
+                from o in _db.Orders
+                join oi in _db.OrderItems on o.Id equals oi.OrderId
+                where o.Status == OrderStatus.Delivered
+                group oi by 1 into g
+                select new
+                {
+                    OldestStartDate = g.Min(x => x.StartDate),
+                    LatestEndDate = g.Max(x => x.EndDate)
+                }
+            ).FirstOrDefaultAsync();
+
+            if (dateStats == null)
+                return null;
+
+            var totalDays = (dateStats.LatestEndDate - dateStats.OldestStartDate).GetValueOrDefault().Days;
+            var daysPassed = (today - dateStats.OldestStartDate).GetValueOrDefault().Days;
+
+            decimal percentageComplete;
+            if (totalDays == 0)
+            {
+                percentageComplete = today.Date == dateStats.OldestStartDate.GetValueOrDefault().Date ? 100m : 0m;
+            }
+            else if (today <= dateStats.OldestStartDate)
+            {
+                percentageComplete = 0m;
+            }
+            else if (today >= dateStats.LatestEndDate)
+            {
+                percentageComplete = 100m;
+            }
+            else
+            {
+                percentageComplete = (decimal)daysPassed * 100m / totalDays;
+            }
+
+            return new GetCostbyScheduledModel
+            {
+                TotalOrderCost = totalCost,
+                OldestStartDate = dateStats.OldestStartDate,
+                LatestEndDate = dateStats.LatestEndDate,
+                PercentageComplete = Math.Round(percentageComplete, 2)
+            };
+        }
+
+        public async Task<GetCostbyPendingModel> GetCostbyPending()
+        {
+            var today = DateTime.Today;
+
+            var hasScheduledOrders = await _db.Orders
+                .AnyAsync(o => o.Status == OrderStatus.DeliveryScheduled);
+
+            if (!hasScheduledOrders)
+            {
+                return new GetCostbyPendingModel
+                {
+                    TotalOrderCost = 0,
+                    OldestStartDate = today,
+                    LatestEndDate = today,
+                    PercentageComplete = 0
+                };
+            }
+
+            var totalCost = await (
+                from o in _db.Orders
+                where o.Status == OrderStatus.DeliveryScheduled
+                select o.Cost
+            ).SumAsync();
+
+            var dateStats = await (
+                from o in _db.Orders
+                join oi in _db.OrderItems on o.Id equals oi.OrderId
+                where o.Status == OrderStatus.DeliveryScheduled
+                group oi by 1 into g
+                select new
+                {
+                    OldestStartDate = g.Min(x => x.StartDate),
+                    LatestEndDate = g.Max(x => x.EndDate)
+                }
+            ).FirstOrDefaultAsync();
+
+            if (dateStats == null)
+                return null;
+
+            var totalDays = (dateStats.LatestEndDate - dateStats.OldestStartDate).GetValueOrDefault().Days;
+            var daysPassed = (today - dateStats.OldestStartDate).GetValueOrDefault().Days;
+
+            decimal percentageComplete;
+            if (totalDays == 0)
+            {
+                percentageComplete = today.Date == dateStats.OldestStartDate.GetValueOrDefault().Date ? 100m : 0m;
+            }
+            else if (today <= dateStats.OldestStartDate)
+            {
+                percentageComplete = 0m;
+            }
+            else if (today >= dateStats.LatestEndDate)
+            {
+                percentageComplete = 100m;
+            }
+            else
+            {
+                percentageComplete = (decimal)daysPassed * 100m / totalDays;
+            }
+
+            return new GetCostbyPendingModel
+            {
+                TotalOrderCost = totalCost,
+                OldestStartDate = dateStats.OldestStartDate,
+                LatestEndDate = dateStats.LatestEndDate,
+                PercentageComplete = Math.Round(percentageComplete, 2)
+            };
         }
     }
 }

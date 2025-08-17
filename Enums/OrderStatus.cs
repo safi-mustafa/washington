@@ -43,6 +43,30 @@ namespace Enums
         [Display(Name = "Issued")]
         [Description("Order has been issued")]
         Issued
+
+        //     [Display(Name = "Pending Approval")]
+        //[Description("Order is pending approval")]
+        //PendingApproval = 1,
+
+        //[Display(Name = "Scheduled")]
+        //[Description("Order is scheduled")]
+        //Scheduled,
+
+        //[Display(Name = "Delivered")]
+        //[Description("Order has been delivered")]
+        //Delivered,
+
+        //[Display(Name = "On Rent")]
+        //[Description("Order is currently on rent")]
+        //OnRent,
+
+        //[Display(Name = "Off Rent")]
+        //[Description("Order is off rent")]
+        //OffRent,
+
+        //[Display(Name = "Returned")]
+        //[Description("Order has been returned")]
+        //Returned
     }
 
 }
