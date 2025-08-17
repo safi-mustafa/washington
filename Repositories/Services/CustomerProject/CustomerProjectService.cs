@@ -273,18 +273,18 @@ namespace Repositories.Services.CustomerProject
             }
         }
 
-        public async Task<List<WorkOrder>> GetWorkOrders()
+        public async Task<List<TaskType>> GetWorkOrders()
         {
             try
             {
-                var workOrderList = await _db.WorkOrder.ToListAsync();
+                var workOrderList = await _db.TaskTypes.ToListAsync();
 
                 return workOrderList;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"GetWorkOrders() for {typeof(Models.CompanyContact).FullName} threw an exception");
-                return (List<WorkOrder>)Response.BadRequestResponse(_response);
+                return (List<TaskType>)Response.BadRequestResponse(_response);
             }
         }
 
@@ -378,7 +378,7 @@ namespace Repositories.Services.CustomerProject
                 return false;
             }
         }
-        public async Task<IRepositoryResponse> CreateOrder(OrderModifyViewModel model, long customerProjectId, long workOrderId, string? imageUrl)
+        public async Task<IRepositoryResponse> CreateOrder(OrderModifyViewModel model, long customerProjectId, long workStepid, string? imageUrl)
         {
             var transaction = await _db.Database.BeginTransactionAsync();
             try
@@ -389,30 +389,31 @@ namespace Repositories.Services.CustomerProject
                 {
                     return Response.NotFoundResponse(_response);
                 }
-                
-                //var workOrderCount = await _db.WorkOrder.IgnoreQueryFilters().CountAsync();
-                //var workOrder = new WorkOrder
-                //{
-                //    SystemGeneratedId = "WO-" + (workOrderCount + 1).ToString("D4"),
-                //    Title = $"Order for {customerProject.JobName}",
-                //    Description = model.Notes ?? "Customer order",
-                //    Status = WOStatusCatalog.Open,
-                //    Urgency = Urgency.Low,
-                //    Task = TaskCatalog.Maintenance,
-                //    Type = WorkOrderTypeCatalog.Maintenance,
-                //    CreatedOn = DateTime.UtcNow
-                //};
-                
-                //await _db.AddAsync(workOrder);
-                //await _db.SaveChangesAsync();
-                
+
+                var workOrderCount = await _db.WorkOrder.IgnoreQueryFilters().CountAsync();
+                var workOrder = new WorkOrder
+                {
+                    SystemGeneratedId = "WO-" + (workOrderCount + 1).ToString("D4"),
+                    Title = $"Order for {customerProject.JobName}",
+                    Description = model.Notes ?? "Customer order",
+                    Status = WOStatusCatalog.Open,
+                    Urgency = Urgency.Low,
+                    Task = TaskCatalog.Maintenance,
+                    Type = WorkOrderTypeCatalog.Maintenance,
+                    CreatedOn = DateTime.UtcNow,
+                    TaskTypeId = workStepid
+                };
+
+                await _db.AddAsync(workOrder);
+                await _db.SaveChangesAsync();
+
                 // Create the Order
                 var order = new Order
                 {
                     Notes = model.Notes,
                     Status = OrderStatus.DeliveryScheduled,
                     Type = OrderTypeCatalog.Inventory,
-                    WorkOrderId = workOrderId,
+                    WorkOrderId = workOrder.Id,
                     CreatedOn = DateTime.UtcNow,
                     ImageUrl = imageUrl,
                     CustomerProjectId = customerProjectId,

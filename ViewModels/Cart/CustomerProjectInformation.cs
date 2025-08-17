@@ -11,6 +11,6 @@ namespace ViewModels.Cart
     {
         public List<CompanyInformation> Companies { get; set; }
         public List<Models.CustomerProject> Projects { get; set; }
-        public List<Models.WorkOrder> WorkOrders { get; set; }
+        public List<Models.TaskType> WorkOrders { get; set; }
     }
 }

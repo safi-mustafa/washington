@@ -286,9 +286,9 @@ namespace Web.Controllers
                 {
                     attachMentUrl = step2Data.AttachmentUrls[0];
                 }
-                long workorderid = step2Data.WorkOrderId;
+                long workStepid = step2Data.WorkOrderId;
                 // Create order
-                var result = await _customerProjectService.CreateOrder(orderModel, step2Data.CustomerProjectId, workorderid, attachMentUrl);
+                var result = await _customerProjectService.CreateOrder(orderModel, step2Data.CustomerProjectId, workStepid, attachMentUrl);
                 
                 if (result != null)
                 {

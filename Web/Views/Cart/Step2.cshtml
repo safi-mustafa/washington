@@ -176,7 +176,7 @@
                     @for (int i = 0; i < Model.WorkOrders.Count; i++)
                     {
                         var selected = step2Data != null && step2Data.WorkOrderId == Model.WorkOrders[i].Id ? "selected" : "";
-                        <option value="@Model.WorkOrders[i].Id" selected="@selected">@Model.WorkOrders[i].SystemGeneratedId</option>
+                        <option value="@Model.WorkOrders[i].Id" selected="@selected">@Model.WorkOrders[i].Code</option>
                     }
                 </select>
             </div>

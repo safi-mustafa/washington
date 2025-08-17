@@ -26,9 +26,10 @@ namespace Repositories.Common
         Task<List<CustomerProject>> GetProjects();
         Task<CustomerProject> GetProjectByid(long id);
         Task<List<CompanyInformation>> GetCompanies();
-        Task<List<WorkOrder>> GetWorkOrders();
         Task<IRepositoryResponse> CreateOrder(OrderModifyViewModel model, long customerProjectId, long workOrderId, string imageUrl);
         Task<List<CustomerProjectNotesViewModel>> GetNotesByCustomerProjectId(int id);
         Task<bool> SaveCustomerProjectNotes(CustomerProjectNotesViewModel model);
+        Task<List<TaskType>> GetWorkOrders();
+        Task<IRepositoryResponse> CreateOrder(OrderModifyViewModel model, long customerProjectId, long workStepid, string imageUrl);
     }
 }
