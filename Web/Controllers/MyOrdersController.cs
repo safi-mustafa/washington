@@ -40,5 +40,20 @@ namespace Web.Controllers
                 _logger.LogError($"All Order threw an exception, Message: {ex.Message}"); return RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewOrderDetailsModal(int orderId)
+        {
+            try
+            {
+                var orderDetails = await _myOrderService.GetAllOrders(orderId);
+                return PartialView("_ViewOrderDetailsModal", orderDetails.FirstOrDefault());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ViewOrderDetailsModal threw an exception, Message: {ex.Message}");
+                return BadRequest();
+            }
+        }
     }
 }

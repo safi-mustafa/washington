@@ -23,6 +23,10 @@ namespace ViewModels.MyOrder
         public string NumberUsageBudget { get; set; } = default!;
         public string OrderNotes { get; set; } = default!;
         public int TotalOrderItemCount { get; set; } = default!;
+        public string CustomerName { get; set; }
+        public string PurchanseOrderNumber { get; set; }
+        public string WorkStepName { get; set; }
+        public string Notes { get; set; }
         public List<OrderConfirmStatus> orderConfirmStatuses { get; set; } = default!;
         public List<OrderItemViewModel> orderItems { get; set; } = default!;
     }
@@ -38,5 +42,7 @@ namespace ViewModels.MyOrder
         public string MinStartDate { get; set; } = default!;
         public string OrderEndDate { get; set; } = default!;
         public string MaxEndDate { get; set; } = default!;
+        public string? Total { get; set; } = "0";
+        public string? Category { get; set; }
     }
-}
+}   

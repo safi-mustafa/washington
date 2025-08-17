@@ -25,13 +25,13 @@ namespace Repositories.Services.MyOrder
             _db = db;
         }
 
-        public async Task<List<AllOrderViewModel>> GetAllOrders()
+        public async Task<List<AllOrderViewModel>> GetAllOrders(int? orderId = 0)
         {
             try
             {
                 List<AllOrderViewModel> allOrderViewModels = new();
 
-                var orders = await _db.Orders.ToListAsync();
+                var orders = orderId > 0 ? await _db.Orders.Where(x=>x.Id == orderId).ToListAsync() : await _db.Orders.ToListAsync();
 
                 var orderIds = orders.Select(p => p.Id).ToList();
 
@@ -49,6 +49,10 @@ namespace Repositories.Services.MyOrder
                 {
                     var OrderStatus = string.Empty;
                     var projectsName = string.Empty;
+                    var customerName = string.Empty;
+                    var purchanseOrderNumber = string.Empty;
+                    var workStepName = string.Empty;
+                    var notes = order.Notes != null ? order.Notes : string.Empty ;
 
                     var orderItemsForOrder = order.Status != null ? orderConfirmStatus.Where(p => p.Id == (int)order.Status).FirstOrDefault() : null;
                     if (orderItemsForOrder != null)
@@ -62,6 +66,20 @@ namespace Repositories.Services.MyOrder
                     if (projectsOrder != null)
                     {
                         projectsName = projectsOrder.JobName;
+                        purchanseOrderNumber = projectsOrder.PurchaseOrderNumber;
+                    }
+
+                    var customer = projectsOrder != null ? await _db.CompanyInformations.FirstOrDefaultAsync(p => p.Id == projectsOrder.CustomerId) : null;
+
+                    if (customer != null)
+                    {
+                        customerName = customer.CompanyName;
+                    }
+
+                    var TaskType = await _db.TaskTypes.FindAsync(order.WorkOrderId);
+                    if (TaskType != null)
+                    {
+                        workStepName = TaskType.Code;
                     }
 
                     var orderItemsList = orderItems.Where(p => p.OrderId == order.Id).ToList();
@@ -144,6 +162,10 @@ namespace Repositories.Services.MyOrder
                         OrderNotes = order.Notes,
                         TotalOrderItemCount = orderItems.Count(oi => oi.OrderId == order.Id),
                         orderConfirmStatuses = orderConfirmStatus,
+                        CustomerName = customerName,
+                        PurchanseOrderNumber = purchanseOrderNumber,
+                        WorkStepName = workStepName,
+                        Notes = notes,
                         orderItems = orderItemsList.Select(p => new OrderItemViewModel()
                         {
                             Id = p.Id,
@@ -151,7 +173,9 @@ namespace Repositories.Services.MyOrder
                             OrderItemPrice = p.EquipmentId > 0 ? Convert.ToString(p.Equipment.TotalValue) : Convert.ToString(p.Inventory.UnitCost),
                             OrderStartDate = minStartDate != null ? minStartDate.ToString("yyyy-MM-dd") : string.Empty,
                             OrderEndDate = maxEndDate != null ? maxEndDate.ToString("yyyy-MM-dd") : string.Empty,
-                            Quantity = p.Quantity
+                            Quantity = p.Quantity,
+                            Total = (p.EquipmentId > 0 ? (p.Quantity * p.Equipment.TotalValue) : (p.Quantity * (double.TryParse(p.Inventory.UnitCost, out var unitCost) ? unitCost : 0))).ToString(),
+                            Category = p.EquipmentId > 0 ? "Equipment" : "Inventory",
                         }).ToList()
                     };
                     allOrderViewModels.Add(orderViewModel);
