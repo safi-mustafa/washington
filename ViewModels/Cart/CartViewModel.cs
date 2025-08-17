@@ -6,7 +6,7 @@ namespace ViewModels
         public List<CartItem> InventoryItems { get; set; } = new();
         public List<CartItem> EquipmentItems { get; set; } = new();
 
-        public int TotalItems => InventoryItems.Count + EquipmentItems.Count;
+        public int TotalItems => (InventoryItems?.Count ?? 0) + (EquipmentItems?.Count ?? 0);
 
     }
 }

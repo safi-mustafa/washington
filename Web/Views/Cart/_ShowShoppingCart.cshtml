@@ -1,10 +1,13 @@
 ﻿@model ViewModels.CartViewModel
 <a id="aCartLink" class="cart-btn order-lg-6 position-relative" href="#" onclick="fnRedirectToCart()">
-    <img src="~/img/icons/orders.svg">
-    <span class="name">My Orders</span>
+    @* <img src="~/img/icons/orders.svg"> *@
+    @* <span class="name">My Orders</span> *@
     @if (Model.TotalItems > 0)
     {
         <span class="count">@Model.TotalItems</span>
+    }
+    else{
+    <span class="count">0</span>
     }
 </a>
 <script>
