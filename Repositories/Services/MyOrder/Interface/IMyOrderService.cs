@@ -10,6 +10,6 @@ namespace Repositories.Services.MyOrder.Interface
 {
     public interface IMyOrderService
     {
-        Task<List<AllOrderViewModel>> GetAllOrders();
+        Task<List<AllOrderViewModel>> GetAllOrders(int? orderId = 0);
     }
 }

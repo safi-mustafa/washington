@@ -12,7 +12,7 @@
                 <div class="d-flex justify-content-between">
                     <div>
                         <h6 class="mb-1 orderTitle">
-                            @itemOrder.OrderNumber
+                            @itemOrder.OrderNumber || @itemOrder.CustomerName || <b>PO:</b> @itemOrder.PurchanseOrderNumber
                             <span class="badge bg-pending">@itemOrder.OrderStatus</span>
                         </h6>
                         <p class="mb-2 orderDes">@itemOrder.Project</p>
@@ -89,13 +89,13 @@
                         @foreach (var item in itemOrder.orderItems)
                         {
                             <div class="d-flex align-items-center justify-content-between text-sm">
-                                <span>@item.OrderItemName (x @item.Quantity)</span>
+                                <span><b>@item.Category </b> - @item.OrderItemName (x @item.Quantity)</span>
                                 <span class="font-medium"> $@item.OrderItemPrice</span>
                             </div>
                         }
                     </div>
                 </div>
-                <p class="small text-muted mb-3 noteSec"><span class="font-medium">Notes:</span> Critical timeline - daily updates required</p>
+                <p class="small text-muted mb-3 noteSec"><span class="font-medium">Notes:</span> @itemOrder.Notes</p>
 
 
                 <div class="d-flex gap-2 orderListButtonGroup">
@@ -108,7 +108,7 @@
                             }
                         </select>
                     </div>
-                    <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#viewOrderDetails">
+                    <button class="btn btn-outline-secondary btn-sm view-details-btn" type="button" data-order-id="@itemOrder.Id">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text mr-1"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
                         View Details
                     </button>
@@ -141,3 +141,17 @@
         </div>
     }
 }
+
+<script>
+$(document).on('click', '.view-details-btn', function() {
+    var orderId = $(this).data('order-id');
+    $.get('@Url.Action("ViewOrderDetailsModal", "MyOrders")', { orderId: orderId }, function(data) {
+        $('body').append(data);
+            $('#viewOrderDetailsById').modal('show');
+    });
+});
+
+    $(document).on('hidden.bs.modal', '#viewOrderDetailsById', function() {
+    $(this).remove();
+});
+</script>

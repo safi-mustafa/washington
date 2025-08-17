@@ -54,7 +54,7 @@ namespace Web.Controllers
         public IActionResult Index()
         {
 
-            return RedirectToAction("Dashboard", "Home");
+            return RedirectToAction("Index", "Reports");
         }
 
 
