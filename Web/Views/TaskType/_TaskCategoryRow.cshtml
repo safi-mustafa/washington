@@ -1,0 +1,44 @@
+﻿@using ViewModels
+@using Web.Extensions
+@model TaskCategoryViewModel
+@{
+    var collectionType = "TaskCategories";
+    var rowNumber = ViewData["RowNumber"] != null ? int.Parse(ViewData["RowNumber"].ToString()) : 0;
+    var rowId = rowNumber;
+
+    var description = collectionType + "[" + rowNumber + "].Description";
+    var qty = collectionType + "[" + rowNumber + "].Qty";
+    var rate = collectionType + "[" + rowNumber + "].Rate";
+    var totalName = collectionType + "[" + rowNumber + "].Total";
+    var taskcatId = "task-cat-id-" + rowNumber;
+    var woCategory = collectionType + "[" + rowNumber + "].WorkOrderCategory";
+}
+
+<tr class="cat-labor-row" id="@rowId">
+
+    <td>
+        @await Html.PartialAsync("~/Views/Shared/Select2/WorkStepCategory/_WorkStepCategoryHtml.cshtml",
+        Model.WorkOrderCategory, woCategory, new ViewDataDictionary(ViewData)
+                { { "HideLabel", true },                { "Id", taskcatId }, { "Class", "craft-skill" } })
+    </td>
+    <td>
+        <input type="text" name="@description" value="@Model.Description" class="form-control" />
+    </td>
+    <td>
+        <input type="text" name="@qty" value="@Model.Qty" class="form-control qty" />
+    </td>
+    <td>
+        <input type="text" name="@rate" value="@Model.Rate" class="form-control input-currency catrate" />
+    </td>
+    <td>
+        <input type="text" name="@totalName" value="@Model.Total" class="form-control input-currency total cost total-ws-cat" readonly />
+    </td>
+    <td>
+        <a href="javascript:void(0)" class="remove-workstep-cat mx-1 datatable-action btn bg-custom-dark" data-toggle="tooltip" title="Delete Category"><i class="icon-trash"></i></a>
+    </td>
+</tr>
+<script>
+    $(function () {
+        WorkStepCategorySelect2('#@taskcatId');
+    });
+</script>

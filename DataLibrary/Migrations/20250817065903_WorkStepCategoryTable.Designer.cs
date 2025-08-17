@@ -4,6 +4,7 @@ using DataLibrary;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLibrary.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250817065903_WorkStepCategoryTable")]
+    partial class WorkStepCategoryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2527,62 +2530,6 @@ namespace DataLibrary.Migrations
                     b.ToTable("Suppliers");
                 });
 
-            modelBuilder.Entity("Models.TaskCategory", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<int>("ActiveStatus")
-                        .HasColumnType("int");
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Qty")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Rate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("TaskTypeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Total")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("UpdatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("WorkStepCategoryId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TaskTypeId");
-
-                    b.HasIndex("WorkStepCategoryId");
-
-                    b.ToTable("TaskCategories");
-                });
-
             modelBuilder.Entity("Models.TaskEquipment", b =>
                 {
                     b.Property<long>("Id")
@@ -4282,23 +4229,6 @@ namespace DataLibrary.Migrations
                         .HasForeignKey("CategoryId");
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Models.TaskCategory", b =>
-                {
-                    b.HasOne("Models.TaskType", "TaskType")
-                        .WithMany()
-                        .HasForeignKey("TaskTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.WorkStepCategory", "WorkStepCategory")
-                        .WithMany()
-                        .HasForeignKey("WorkStepCategoryId");
-
-                    b.Navigation("TaskType");
-
-                    b.Navigation("WorkStepCategory");
                 });
 
             modelBuilder.Entity("Models.TaskEquipment", b =>

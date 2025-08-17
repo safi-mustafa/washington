@@ -16,7 +16,9 @@
 <tr class="labor-row" id="@rowId">
 
     <td>
-        @await Html.PartialAsync("~/Views/Shared/Select2/CraftSkill/_CraftSkillHtml.cshtml", Model.CraftSkill, craftSkill, new ViewDataDictionary(ViewData) { { "HideLabel", true }, { "Id", craftSkillId }, { "Class", "craft-skill" } })
+        @await Html.PartialAsync("~/Views/Shared/Select2/CraftSkill/_CraftSkillHtml.cshtml", 
+        Model.CraftSkill, craftSkill, new ViewDataDictionary(ViewData) { { "HideLabel", true }, 
+        { "Id", craftSkillId }, { "Class", "craft-skill" } })
     </td>
     <td>
         <input type="text" name="@hoursName" value="@Model.Hours" class="form-control hour" />

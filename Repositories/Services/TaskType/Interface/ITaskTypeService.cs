@@ -15,6 +15,7 @@ namespace Repositories.Common
         Task<List<TaskEquipmentViewModel>> GetTaskEquipments(long id);
         Task<List<TaskLaborViewModel>> GetTaskLabors(long id);
         Task<List<TaskWorkStepViewModel>> GetTaskSteps(long id);
+        Task<List<TaskCategoryViewModel>> GetTaskCategories(long id);
     }
 }
 

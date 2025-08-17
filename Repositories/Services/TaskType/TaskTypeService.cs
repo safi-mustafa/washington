@@ -1,20 +1,31 @@
-﻿using Models.Common.Interfaces;
-using ViewModels.Shared;
-using Models;
-using AutoMapper;
-using Microsoft.Extensions.Logging;
-using Centangle.Common.ResponseHelpers.Models;
-using DataLibrary;
-using Pagination;
-using System.Linq.Expressions;
-using ViewModels;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using Helpers.Extensions;
+﻿using AutoMapper;
+
 using Centangle.Common.ResponseHelpers;
+using Centangle.Common.ResponseHelpers.Models;
+
+using DataLibrary;
+
+using DocumentFormat.OpenXml.Office2010.Excel;
+
 using Enums;
+
+using Helpers.Extensions;
+
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+using Models;
+using Models.Common.Interfaces;
+
+using Pagination;
+
+using System.Linq.Expressions;
+
+using ViewModels;
+using ViewModels.Shared;
+using ViewModels.WorkStepCategory;
 
 namespace Repositories.Common
 {
@@ -89,6 +100,10 @@ namespace Repositories.Common
                 {
                     await SetTaskEquipments(viewModel.TaskEquipments, id);
                 }
+                if (viewModel.TaskCategories.Count > 0)
+                {
+                    await SetTaskCategories(viewModel.TaskCategories, id);
+                }
 
             }
             return response;
@@ -140,6 +155,24 @@ namespace Repositories.Common
                 var mappedTaskEquipments = _mapper.Map<List<TaskEquipment>>(taskEquipments);
                 mappedTaskEquipments.ForEach(x => x.TaskTypeId = id);
                 await _db.AddRangeAsync(mappedTaskEquipments);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private async Task SetTaskCategories(List<TaskCategoryViewModel> taskCat, long id)
+        {
+            try
+            {
+                var dbRecords = await _db.TaskCategories.Where(x => x.TaskTypeId == id).ToListAsync();
+                dbRecords.ForEach(x => x.IsDeleted = true);
+
+                var mappedTaskCategories = _mapper.Map<List<TaskCategory>>(taskCat);
+                mappedTaskCategories.ForEach(x => x.TaskTypeId = id);
+                await _db.AddRangeAsync(mappedTaskCategories);
                 await _db.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -285,6 +318,34 @@ namespace Repositories.Common
 
         }
 
+        public async Task<List<TaskCategoryViewModel>> GetTaskCategories(long id)
+        {
+            try
+            {
+                var taskCategories = await _db.TaskCategories.Include(x => x.WorkStepCategory)
+                                        .Where(x => x.TaskTypeId == id)
+                                        .Select(x => new TaskCategoryViewModel
+                                        {
+                                            Id = x.Id,
+                                            WorkOrderCategory = new WorkStepCategoryBriefViewModel
+                                            {
+                                                Id = x.WorkStepCategoryId,
+                                                Name = x.WorkStepCategory.Name,
+                                            },
+                                            Description = x.Description,
+                                            Qty = x.Qty,
+                                            Rate = !string.IsNullOrWhiteSpace(x.Rate) ? Convert.ToDouble(x.Rate) : 0
+                                        })
+                                        .ToListAsync();
+                return taskCategories;
+            }
+            catch (Exception ex)
+            {
+                return new();
+            }
+
+        }
+
         public async Task<List<TaskWorkStepViewModel>> GetTaskSteps(long id)
         {
             try
@@ -333,19 +394,31 @@ namespace Repositories.Common
                 {
                     await SetTaskEquipments(viewModel.TaskEquipments, id);
                 }
+                if (viewModel.TaskCategories.Count > 0)
+                {
+                    await SetTaskCategories(viewModel.TaskCategories, id);
+                }
             }
             return response;
         }
 
         public async override Task<IRepositoryResponse> GetById(long id)
         {
-            var response = await base.GetById(id);
-            var parsedResponse = response as RepositoryResponseWithModel<TaskTypeDetailViewModel>;
-            parsedResponse.ReturnModel.TaskWorkSteps = await GetTaskWorkSteps(id);
-            parsedResponse.ReturnModel.TaskLabors = await GetTaskLabors(id);
-            parsedResponse.ReturnModel.TaskMaterials = await GetTaskMaterials(id);
-            parsedResponse.ReturnModel.TaskEquipments = await GetTaskEquipments(id);
-            return parsedResponse;
+            try
+            {
+                var response = await base.GetById(id);
+                var parsedResponse = response as RepositoryResponseWithModel<TaskTypeDetailViewModel>;
+                parsedResponse.ReturnModel.TaskWorkSteps = await GetTaskWorkSteps(id);
+                parsedResponse.ReturnModel.TaskLabors = await GetTaskLabors(id);
+                parsedResponse.ReturnModel.TaskMaterials = await GetTaskMaterials(id);
+                parsedResponse.ReturnModel.TaskEquipments = await GetTaskEquipments(id);
+                parsedResponse.ReturnModel.TaskCategories = await GetTaskCategories(id);
+                return parsedResponse;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
     }

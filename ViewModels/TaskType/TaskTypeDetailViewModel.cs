@@ -22,6 +22,7 @@ namespace ViewModels
         public List<TaskMaterialViewModel> TaskMaterials { get; set; } = new();
         public List<TaskEquipmentViewModel> TaskEquipments { get; set; } = new();
         public List<TaskWorkStepViewModel> TaskWorkSteps { get; set; } = new();
+        public List<TaskCategoryViewModel> TaskCategories { get; set; } = new();
 
     }
 }

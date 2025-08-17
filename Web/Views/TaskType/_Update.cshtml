@@ -7,6 +7,7 @@
     var totalMaterialCost = Model.TaskMaterials.Sum(x => x.Cost);
     var totalEquipmentCost = Model.TaskEquipments.Sum(x => x.Cost);
     var totalLaborCost = Model.TaskLabors.Sum(x => x.Total);
+    var totalWorkCategoryCost = Model.TaskCategories.Sum(x => x.Total);
 }
 <div class="row">
     <div class="col-lg-12">
@@ -69,7 +70,7 @@
                 <td>
                     <div class="table-responsive my-3" id="laborTable">
                         <table class="table table-bordered dataTable">
-                            <thead>@* class="thead-primary" *@
+                            <thead>
                                 <tr>
                                     <th>Labor</th>
                                     <th>Hours</th>
@@ -107,9 +108,9 @@
                 <td>
                     <div class="table-responsive my-3" id="materialTable">
                         <table class="table table-bordered dataTable">
-                            <thead>@* class="thead-primary" *@
+                            <thead>
                                 <tr>
-                                    <th>Material</th>
+                                    <th>Variable Costs</th>
                                     <th>Cost</th>
                                     <th class="text-center" style="width: 20px;">Actions</th>
                                 </tr>
@@ -125,7 +126,7 @@
                                     <td colspan="3">
                                         <div class="col-lg-12">
                                             <div class="form-group text-right d-flex justify-content-end align-items-center">
-                                                <label class="form-label fw-600 me-5">Total Material</label>
+                                                <label class="form-label fw-600 me-5">Total Variable Costs</label>
                                                 <div class="mb-2 fw-600">$<span id="material-total">@totalMaterialCost</span></div>
                                             </div>
                                         </div>
@@ -134,16 +135,16 @@
                             </tfoot>
                         </table>
                         <div class="text-start">
-                            <button type="button" id="addMaterial" class="btn btn-sm btn-primary"><i class="fa-regular fa-square-plus"></i> Add Material</button>
+                            <button type="button" id="addMaterial" class="btn btn-sm btn-primary"><i class="fa-regular fa-square-plus"></i> Add Variable Costs</button>
                         </div>
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <td>
                     <div class="table-responsive my-3" id="equipmentTable">
                         <table class="table table-bordered dataTable">
-                            <thead>@* class="thead-primary" *@
+                            <thead>
                                 <tr>
                                     <th>Equipment</th>
                                     <th>Cost</th>
@@ -175,6 +176,47 @@
                     </div>
                 </td>
             </tr>
+            
+             <tr>
+                <td>
+                    <div class="table-responsive my-3" id="WsCategoryTable">
+                        <table class="table table-bordered dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Qty</th>
+                                    <th>Rate</th>
+                                    <th>Total</th>
+                                    <th class="text-center" style="width: 20px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="task-WsCategory-tbody">
+                                @for (var i = 0; i < Model.TaskCategories.Count(); i++)
+                                {
+                                    @await Html.PartialAsync("~/Views/TaskType/_TaskCategoryRow.cshtml", Model.TaskCategories[i], new ViewDataDictionary(ViewData) { { "RowNumber", i } })
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="col-lg-12">
+                                            <div class="form-group text-right d-flex justify-content-end align-items-center">
+                                                <label class="form-label fw-600 me-5">Total Category</label>
+                                                <div class="mb-2 fw-600">$<span id="ws-cat-total">@totalWorkCategoryCost</span></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div class="text-start">
+                            <button type="button" id="addWsCategory" class="btn btn-sm btn-primary"><i class="fa-regular fa-square-plus"></i> Add Category</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            
             <tr>
                 <td>
                     <div class="col-lg-12">
@@ -200,12 +242,15 @@
         </tbody>
     </table>
 
+
+
 </div>
 
 <input type="hidden" asp-for="Id" />
 <input type="hidden" asp-for="Code" />
 <script src="~/js/custom/select2/select2-methods.js"></script>
 <partial name="~/Views/Shared/Select2/CraftSkill/_CraftSkillJs.cshtml" />
+<partial name="~/Views/Shared/Select2/WorkStepCategory/_WorkStepCategoryJs.cshtml" />
 <script src="~/js/views/work-steps/task-work-step.js"></script>
 
 <script>
@@ -213,6 +258,7 @@
     $(function () {
         updateTotalHours();
         updateTotalCost();
+
         //labor
         $(document).off("click", "#addLabor");
         $(document).on("click", "#addLabor", function () {
@@ -225,10 +271,29 @@
                 });
         });
 
+
+        //Category
+        $(document).off("click", "#addWsCategory");
+        $(document).on("click", "#addWsCategory", function () {
+            var rowNumber = $(".cat-labor-row").length;
+            SendAjax(this, rowNumber, "/TaskType/_TaskWorkStepRow", "#WsCategoryTable tbody")
+                .done(function () {
+                    //updateTotalHours();
+                    removeCurrencyMasking();
+                    addCurrencyMasking();
+                });
+        });
+
         $(document).off("click", ".remove-labor");
         $(document).on("click", ".remove-labor", function () {
             $(this).closest("tr").remove();
             RefreshInputIndexes("#laborTable tr", "", "TaskLabors");
+        });
+
+        $(document).off("click", ".remove-workstep-cat");
+        $(document).on("click", ".remove-workstep-cat", function () {
+            $(this).closest("tr").remove();
+            RefreshInputIndexes("#WsCategoryTable tr", "", "TaskCategories");
         });
 
         $(document).on('input', '.hour', function () {
@@ -243,6 +308,34 @@
                 $row.find('.total').val('');
             }
         });
+
+
+         $(document).on('input', '.qty', function () {
+            var $row = $(this).closest('tr');
+            var qty = parseFloat($(this).val());
+            var rate = parseFloat(currencyToDouble($row.find('.catrate').val()));
+
+            if (!isNaN(qty) && !isNaN(rate)) {
+                var total = rate * qty;
+                $row.find('.total').val(total.toFixed(2));
+            } else {
+                $row.find('.total').val('');
+            }
+        });
+
+        $(document).on('input', '.catrate', function () {
+            var $row = $(this).closest('tr');
+            var rate = parseFloat(currencyToDouble($(this).val()));
+            var qty = parseFloat($row.find('.qty').val());
+
+            if (!isNaN(qty) && !isNaN(rate)) {
+                var total = rate * qty;
+                $row.find('.total').val(total.toFixed(2));
+            } else {
+                $row.find('.total').val('');
+            }
+        });
+
 
         //material
         $(document).off("click", "#addMaterial");
@@ -280,6 +373,18 @@
         $(document).on('input change', '.hour', function () {
             updateTotalHours();
             updateTotalLabor(this);
+            updateTotalCost();
+        });
+
+         $(document).on('input change', '.qty', function () {
+            //updateTotalHours();
+            updateTotalcategory(this);
+            updateTotalCost();
+        });
+
+        $(document).on('input change', '.catrate', function () {
+            //updateTotalHours();
+            updateTotalcategory(this);
             updateTotalCost();
         });
 
@@ -402,8 +507,30 @@
         updateTotalCost();
     }
 
+     function categoryAfterSelect(element, event, recordId, modelPropertyName, model) {
+        const rate = 0;
+        const row = $(element).closest('tr');
+        row.find('.catrate').val(rate);
+        updateTotalcategory(element);
+        updateTotalCost();
+    }
+
+    function updateTotalcategory(element) {
+        const row = $(element).closest('tr');
+        const qty = parseFloat(row.find('.qty').val());
+        const rate = currencyToDouble(row.find('.catrate').val());
+        if (!isNaN(qty)) {
+            let total = rate * qty;
+            row.find('.total').val(total.toFixed(2));
+        }
+        let totalLabors = 0;
+        $('.total-ws-cat').each(function () {
+            totalLabors += parseFloat(currencyToDouble($(this).val())) || 0;
+        });
+        $('#ws-cat-total').html(totalLabors.toFixed(2));
+    }
+
     function currencyToDouble(value) {
         return value.replace(/^\$|,/g, "");
     }
-
 </script>
